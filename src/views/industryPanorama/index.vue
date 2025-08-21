@@ -97,15 +97,15 @@
     </div>
 </template>
 <script setup>
-import {shallowRef, ref, reactive, onMounted, onBeforeUnmount, nextTick} from "vue"
-import mapScene from "./map.vue"
+import {shallowRef, ref, reactive, onMounted, onBeforeUnmount} from "vue"
+import mapScene from "@/views/gdMap/map.vue"
 import mHeader from "@/components/mHeader/index.vue"
 import mMenu from "@/components/mMenu/index.vue"
 import mRadar from "@/components/mRadar/index.vue"
 import mMenuItem from "@/components/mMenuItem/index.vue"
 import mSvglineAnimation from "@/components/mSvglineAnimation/index.vue"
 
-import { Assets } from "./assets.js"
+import { Assets } from "@/views/gdMap/assets.js"
 import emitter from "@/utils/emitter"
 import gsap from "gsap"
 import autofit from "autofit.js"
