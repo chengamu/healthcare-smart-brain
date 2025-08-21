@@ -123,7 +123,7 @@ const option = ref({
 })
 
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .population-proportion {
   display: flex;
   height: 100%;

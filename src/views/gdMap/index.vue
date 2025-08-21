@@ -3,7 +3,7 @@
         <!-- 地图 -->
         <mapScene ref="mapSceneRef"></mapScene>
         <div class="large-screen-wrap" id="large-screen">
-            <m-header title="绍兴医疗健康产业社区" sub-text="Shaoxing Medical And Health Industry Community">
+            <m-header title="绍兴医疗健康产业大脑" sub-text="Shaoxing Medical And Health Industry Community">
                 <!--左侧 天气 -->
                 <template v-slot:left>
                     <!--          <div class="m-header-weather"><span>小雨</span><span>27℃</span></div>-->
@@ -203,31 +203,31 @@ import emitter from "@/utils/emitter"
 import gsap from "gsap"
 import autofit from "autofit.js"
 import { useCurrentTime } from "@/hooks/useCurrentTime.js"
-import IndustryUnion from "@/views/gdMap/components/industryPanorama/IndustryUnion.vue";
-import TalentUnion from "@/views/gdMap/components/industryPanorama/TalentUnion.vue";
-import FinancialCapitalHelp from "@/views/gdMap/components/InnovationEcosystem/FinancialCapitalHelp.vue";
+import IndustryUnion from "@/views/industryPanorama/components/IndustryUnion.vue";
+import TalentUnion from "@/views/industryPanorama/components/TalentUnion.vue";
+import FinancialCapitalHelp from "@/views/innovationEcosystem/components/FinancialCapitalHelp.vue";
 import UtilizationRateOfSharedEquipment
-    from "@/views/gdMap/components/industryPanorama/UtilizationRateOfSharedEquipment.vue";
+    from "@/views/industryPanorama/components/UtilizationRateOfSharedEquipment.vue";
 import StrongChainSupplyChainProgress
-    from "@/views/gdMap/components/industryPanorama/StrongChainSupplyChainProgress.vue";
-import NewDrugsApprovalProgress from "@/views/gdMap/components/industryPanorama/NewDrugsApprovalProgress.vue";
-import HighTechEnterpriseGrowth from "@/views/gdMap/components/industryPanorama/HighTechEnterpriseGrowth.vue";
-import SatisfactionWithLifeServices from "@/views/gdMap/components/InnovationEcosystem/SatisfactionWithLifeServices.vue";
-import KeyEnterprise from "@/views/gdMap/components/industryUnion/KeyEnterprise.vue";
-import IndustryUnionDevelopment from "@/views/gdMap/components/industryUnion/IndustryUnionDevelopment.vue";
-import ProjectIntroduction from "@/views/gdMap/components/industryUnion/ProjectIntroduction.vue";
-import AnnualRDInvestment from "@/views/gdMap/components/industryUnion/AnnualRDInvestment.vue";
-import KeyTalent from "@/views/gdMap/components/talentUnion/keyTalent.vue";
-import TalentUnionStructure from "@/views/gdMap/components/talentUnion/TalentUnionStructure.vue";
-import TalentIntroductionProgress from "@/views/gdMap/components/talentUnion/TalentIntroductionProgress.vue";
-import TalentNewTrend from "@/views/gdMap/components/talentUnion/TalentNewTrend.vue";
+    from "@/views/industryPanorama/components/StrongChainSupplyChainProgress.vue";
+import NewDrugsApprovalProgress from "@/views/industryPanorama/components/NewDrugsApprovalProgress.vue";
+import HighTechEnterpriseGrowth from "@/views/industryPanorama/components/HighTechEnterpriseGrowth.vue";
+import SatisfactionWithLifeServices from "@/views/innovationEcosystem/components/SatisfactionWithLifeServices.vue";
+import KeyEnterprise from "@/views/industryUnion/components/KeyEnterprise.vue";
+import IndustryUnionDevelopment from "@/views/industryUnion/components/IndustryUnionDevelopment.vue";
+import ProjectIntroduction from "@/views/industryUnion/components/ProjectIntroduction.vue";
+import AnnualRDInvestment from "@/views/industryUnion/components/AnnualRDInvestment.vue";
+import KeyTalent from "@/views/talentUnion/components/keyTalent.vue";
+import TalentUnionStructure from "@/views/talentUnion/components/TalentUnionStructure.vue";
+import TalentIntroductionProgress from "@/views/talentUnion/components/TalentIntroductionProgress.vue";
+import TalentNewTrend from "@/views/talentUnion/components/TalentNewTrend.vue";
 import TechnologicalHurdlesOvercome
-    from "@/views/gdMap/components/InnovationEcosystem/TechnologicalHurdlesOvercome.vue";
+    from "@/views/innovationEcosystem/components/TechnologicalHurdlesOvercome.vue";
 import MedicalEnterpriseCooperationProject
-    from "@/views/gdMap/components/InnovationEcosystem/MedicalEnterpriseCooperationProject.vue";
-import InnovationResultConversion from "@/views/gdMap/components/InnovationEcosystem/InnovationResultConversion.vue";
-import SpecialPolicySupport from "@/views/gdMap/components/InnovationEcosystem/SpecialPolicySupport.vue";
-import CorridorGauge from "@/views/gdMap/components/CorridorGauge.vue";
+    from "@/views/innovationEcosystem/components/MedicalEnterpriseCooperationProject.vue";
+import InnovationResultConversion from "@/views/innovationEcosystem/components/InnovationResultConversion.vue";
+import SpecialPolicySupport from "@/views/innovationEcosystem/components/SpecialPolicySupport.vue";
+import CorridorGauge from "@/views/industryPanorama/components/CorridorGauge.vue";
 
 const assets = shallowRef(null)
 const mapSceneRef = ref(null)

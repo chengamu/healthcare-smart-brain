@@ -12,7 +12,7 @@ import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
 
 const progressData = ref([
-  { label: '行业顶尖专家', current: 14, goal: 100, unit: '人',
+  { label: '行业顶尖专家', current: 14, goal: 50, unit: '人',
     color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
       { offset: 0, color: "rgba(3,65,128,1)" },
       { offset: 1, color: "rgba(115,208,255,1)" },
@@ -23,7 +23,7 @@ const progressData = ref([
       { offset: 1, color: "rgba(77, 255, 181, 1)" },
     ])
   },
-  { label: '专业技能人才和青年人才', current: 17, goal: 100, unit: '人',
+  { label: '专业技能人才和青年人才', current: 17, goal: 150, unit: '人',
     color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
       { offset: 0, color: "rgba(117, 117, 117, 1)" },
       { offset: 1, color: "rgba(230, 230, 230, 1)" },
@@ -80,8 +80,21 @@ const option = ref({
     textStyle: {
       color: "#ffffff",
       fontSize: 10,
-      lineHeight: 156,
+      lineHeight: 16,
     },
+
+      formatter: (params) => {
+          const item = adjustedProgressData[params[0].dataIndex];
+          return `
+          <div class="tooltip-container">
+            <div class="tooltip-title">${params[0].axisValue}</div>
+            <div class="tooltip-item">
+              ${params[0].marker}
+              <span class="tooltip-item-value">${item.current}${item.unit}</span>
+            </div>
+          </div>
+          `
+      },
   },
   xAxis: [
     {

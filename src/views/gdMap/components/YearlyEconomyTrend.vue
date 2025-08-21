@@ -76,7 +76,7 @@ function getNumber(slotProps) {
 
 
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .pie-chat-wrap {
   width: 100%;
   height: 100%;
@@ -117,58 +117,6 @@ function getNumber(slotProps) {
       color: #fff;
       font-size: 12px;
       text-align: center;
-    }
-  }
-}
-// 饼图3d legend
-.pie-legend {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 5px 0;
-  &-item {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    box-sizing: border-box;
-
-    .icon {
-      width: 10px;
-      height: 10px;
-      border-radius: 10px;
-      border: 2px solid #17e6c3;
-      box-sizing: border-box;
-      margin-right: 10px;
-    }
-    .name {
-      font-weight: 500;
-      font-size: 12px;
-      color: #ffffff;
-      width: 100px;
-    }
-    .value {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: flex-end;
-      justify-content: flex-end;
-      width: 40px;
-      text-align: right;
-
-      font-weight: bold;
-      color: #ffffff;
-      font-family: D-DIN;
-      font-weight: bold;
-      font-size: 16px;
-      .unit {
-        font-family: D-DIN;
-        font-weight: 400;
-        font-size: 10px;
-        color: #ffffff;
-        opacity: 0.5;
-        padding-left: 10px;
-      }
     }
   }
 }

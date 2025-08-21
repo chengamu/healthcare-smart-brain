@@ -53,7 +53,7 @@ const props = defineProps({
     },
     goalValue: {
         type: Number,
-        default: 200
+        default: 500
     },
     animationDuration: {
         type: Number,

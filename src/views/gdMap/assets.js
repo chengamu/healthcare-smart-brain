@@ -56,15 +56,20 @@ export class Assets {
       //   name: "mapStroke",
       //   path: base_url + "assets/json/广东省-轮廓.json",
       // },
-      {
-        type: "File",
-        name: "mapJson",
-        path: base_url + "assets/json/绍兴市.json",
-      },
+      // {
+      //   type: "File",
+      //   name: "mapJson",
+      //   path: base_url + "assets/json/绍兴市.json",
+      // },
       {
         type: "File",
         name: "mapStroke",
         path: base_url + "assets/json/绍兴市-轮廓.json",
+      },
+      {
+        type: "File",
+        name: "mapJson",
+        path: base_url + "assets/json/yhly.json",
       },
 
       { type: "Texture", name: "huiguang", path: huiguang },

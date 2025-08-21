@@ -4,8 +4,19 @@
       <Teleport to="body">
           <div v-if="showDialog" class="dialog-overlay" @click="closeDialog">
               <div class="dialog-content" @click.stop>
-                  <m-card :title="selectedEnterprise?.name" width="800" height="600">
-                    <img :src="selectedEnterprise?.img" style="width: 100%; height: 100%" />
+                  <m-card :title="selectPoint?.name" width="800" height="530">
+                      <div class="select-point-container">
+                          <div class="select-point-info">
+                              <div class="select-point-title-intro">简&emsp;介：</div>
+                              <div class="select-point-content-intro">{{ selectPoint?.intro }}</div>
+                          </div>
+                          <div class="select-point-info">
+                              <div class="select-point-title-img">示意图：</div>
+                              <div class="select-point-content-img">
+                                  <img :src="selectPoint?.img" style="width: 100%; height: 100%" alt="" />
+                              </div>
+                          </div>
+                      </div>
                   </m-card>
               </div>
           </div>
@@ -37,19 +48,19 @@ function loadMap(assets) {
 
 // 控制弹窗显示的状态
 const showDialog = ref(false)
-const selectedEnterprise = ref(null)
+const selectPoint = ref(null)
 
 function handleBarLabelClick(item) {
     // 当接收到barLabelClick事件时，可以在这里处理
     console.log('接收到点击事件，名称：', item);
     showDialog.value = true
-    selectedEnterprise.value = item
+    selectPoint.value = item
 }
 
 // 关闭弹窗
 const closeDialog = () => {
     showDialog.value = false
-    selectedEnterprise.value = null
+    selectPoint.value = null
 }
 async function play() {
   canvasMap.value.time.resume();
@@ -158,19 +169,23 @@ defineExpose({
       justify-content: space-between;
       align-items: center;
       padding: 0 18px;
-      width: 200px;
-      height: 53px;
-      border-radius: 30px 30px 0px 30px;
+      width: 300px;
+      height: 80px;
+      border-radius: 30px 30px 30px 30px;
       background: rgba(0, 0, 0, 0.4);
     }
+      &-wrap.park {
+          background: rgba(255, 215, 0, 0.4);
+      }
     .number {
       color: #fff;
-      font-size: 30px;
+      font-size: 45px;
       font-weight: 700;
+        flex-shrink: 0;
 
       .unit {
         color: #fff;
-        font-size: 12px;
+        font-size: 18px;
         font-weight: 400;
         opacity: 0.5;
         padding-left: 5px;
@@ -178,14 +193,14 @@ defineExpose({
     }
     .name {
       color: #fff;
-      font-size: 16px;
+      font-size: 24px;
       font-weight: 700;
       span {
         display: block;
       }
       .en {
         color: #fff;
-        font-size: 10px;
+        font-size: 15px;
         opacity: 0.5;
         font-weight: 700;
       }
@@ -290,5 +305,37 @@ defineExpose({
     max-width: 800px;
     max-height: 80%;
     overflow: hidden;
+}
+.select-point-container {
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    .select-point-info {
+        display: flex;
+        .select-point-title-intro, .select-point-title-img {
+            flex-shrink: 0;
+            color: #fff;
+            font-size: 16px;
+            line-height: 20px;
+            font-family: "PingFangSc";
+            font-weight: 600;
+            background: -webkit-linear-gradient(rgba(219, 249, 255, 1), rgba(169, 240, 255, 1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .select-point-content-intro {
+            font-size: 16px;
+            line-height: 24px;
+            color: #ffffff;
+        }
+        .select-point-content-img {
+            flex-grow: 1;
+        }
+    }
 }
 </style>

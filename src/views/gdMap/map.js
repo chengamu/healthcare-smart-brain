@@ -61,23 +61,38 @@ export class World extends Mini3d {
   constructor(canvas, assets) {
     super(canvas)
     // 中心坐标
-    // this.geoProjectionCenter = [113.280637, 23.125178]
-    this.geoProjectionCenter = [120.582112, 29.597117]
+    // this.geoProjectionCenter = [113.280637, 23.125178] //广东省
+    this.geoProjectionCenter = [120.582112, 29.597117] //绍兴市
+    this.geoProjectionCenter = [120.4521, 30.0873] //一核两翼,以柯桥区为中心点
     // 缩放比例
-    this.geoProjectionScale = 500
+    // this.geoProjectionScale = 120 //广东省
+    // this.geoProjectionScale = 500 //绍兴市
+    this.geoProjectionScale = 1000 //一核两翼
     // 飞线中心
-    // this.flyLineCenter = [113.544372, 23.329249]
-    // this.flyLineCenter = [120.582112, 29.997117]
-    this.flyLineCenter = [120.523549, 30.126093]
-    // 地图拉伸高度
+    // this.flyLineCenter = [113.544372, 23.329249] //广东省
+    // this.flyLineCenter = [120.523549, 30.126093] //绍兴市
+    this.flyLineCenter = [120.523549, 30.126093] //一核两翼
+
+    // 地图拉伸高度-广东省
     // this.depth = 0.5
+    // this.mapFocusLabelInfo = {
+    //   name: "广东省",
+    //   enName: "GUANGDONG PROVINCE",
+    //   center: [113.280637, 20.625178],
+    // }
+    // 地图拉伸高度-绍兴市
     this.depth = 0.75
+    // this.mapFocusLabelInfo = {
+    //   name: "一核两翼",
+    //   enName: "ONE CORE, TWO WINGS",
+    //   center: [120.582112, 30.497117],
+    // } //绍兴市（由北向南视角）
     this.mapFocusLabelInfo = {
       name: "一核两翼",
       enName: "ONE CORE, TWO WINGS",
-      // center: [113.280637, 20.625178],
-      center: [120.582112, 30.497117],
-    }
+      center: [120.4521, 29.5873],
+    } //绍兴市（由南向北视角）
+
     // 是否点击
     this.clicked = false
     // 雾
@@ -86,7 +101,8 @@ export class World extends Mini3d {
     this.scene.background = new Color(0x102736)
 
     // 相机初始位置
-    this.camera.instance.position.set(-13.767695123014105, 12.990152163077308, -39.28228164159694)
+    // this.camera.instance.position.set(-13.767695123014105, 12.990152163077308, -39.28228164159694) //绍兴市（由北向南视角）
+    this.camera.instance.position.set(-13.767695123014105, 12.990152163077308, 39.28228164159694)
     this.camera.instance.near = 1
     this.camera.instance.far = 10000
     this.camera.instance.updateProjectionMatrix()
@@ -140,7 +156,7 @@ export class World extends Mini3d {
     // 创建信息点
     this.createInfoPoint()
     // 创建轮廓
-    this.createStorke()
+    // this.createStorke()
     // this.time.on("tick", () => {
     //   console.log(this.camera.instance.position);
     // });
@@ -157,12 +173,22 @@ export class World extends Mini3d {
       duration: 2,
       x: -0.17427287762525134,
       y: 13.678992786206543,
-      z: -20.688611202093714,
+      z: 20.688611202093714,
       ease: "circ.out",
       onStart: () => {
         this.flyLineFocusGroup.visible = false
       },
     })
+    // tl.to(this.camera.instance.position, {
+    //   duration: 2,
+    //   x: -0.17427287762525134,
+    //   y: 13.678992786206543,
+    //   z: -20.688611202093714,
+    //   ease: "circ.out",
+    //   onStart: () => {
+    //     this.flyLineFocusGroup.visible = false
+    //   },
+    // }) //绍兴市（由北向南视角）
     tl.to(
         this.focusMapGroup.position,
         {
@@ -627,18 +653,20 @@ export class World extends Mini3d {
   }
   createBar() {
     let self = this
-    // let data = sortByValue(provincesData).filter((item, index) => index < 7)
-    let data = sortByValue(ShaoXingCityData).filter((item, index) => index < 7)
-    const barGroup = new Group()
-    this.barGroup = barGroup
     const factor = 0.7
     const height = 4.0 * factor
-    const max = data[0].value
     this.allBar = []
     this.allBarMaterial = []
     this.allGuangquan = []
     this.allProvinceLabel = []
-    data.map((item, index) => {
+
+    //一核两翼点
+    // let data = sortByValue(provincesData).filter((item, index) => index < 7)
+    let parkData = ShaoXingCityData.filter(item => item.type === 'park')
+    const max = sortByValue(ShaoXingCityData)[0].value
+    const parkBarGroup = new Group()
+    this.parkBarGroup = parkBarGroup
+    parkData.map((item, index) => {
       let geoHeight = height * (item.value / max)
       let material = new MeshBasicMaterial({
         color: 0xffffff,
@@ -665,8 +693,8 @@ export class World extends Mini3d {
       let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
       let hg = this.createHUIGUANG(geoHeight, index > 3 ? 0xfffef4 : 0x77fbf5)
       areaBar.add(...hg)
-      barGroup.add(areaBar)
-      barGroup.rotation.x = -Math.PI / 2
+      parkBarGroup.add(areaBar)
+      parkBarGroup.rotation.x = -Math.PI / 2
       let barLabel = labelStyle04(item, index, new Vector3(x + item.offsetX, -y, this.depth + 1.1 + geoHeight))
       // 确保启用指针事件
       barLabel.element.style.pointerEvents = 'auto';
@@ -682,12 +710,12 @@ export class World extends Mini3d {
       this.allGuangquan.push(guangQuan)
       this.allProvinceLabel.push(barLabel)
     })
-    this.scene.add(barGroup)
+    this.scene.add(parkBarGroup)
     function labelStyle04(data, index, position) {
       let label = self.label3d.create("", "provinces-label", false)
       label.init(
           `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
-      <div class="provinces-label-wrap">
+      <div class="provinces-label-wrap park">
         <div class="number"><span class="value">${data.value}</span><span class="unit">亿元</span></div>
         <div class="name">
           <span class="zh">${data.name}</span>
@@ -700,7 +728,78 @@ export class World extends Mini3d {
       )
       /*<div class="no">${index + 1}</div>*/
       self.label3d.setLabelStyle(label, 0.01, "x")
-      self.label3d.setLabelStyle(label, 0.01, "y", Math.PI)
+      // self.label3d.setLabelStyle(label, 0.01, "y", Math.PI) //绍兴市（由北向南视角）
+      label.setParent(self.labelGroup)
+      return label
+    }
+
+    //重点企业点
+    // let data = sortByValue(provincesData).filter((item, index) => index < 7)
+    let enterpriseData = ShaoXingCityData.filter(item => item.type === 'enterprise')
+    const enterpriseBarGroup = new Group()
+    this.enterpriseBarGroup = enterpriseBarGroup
+    enterpriseData.map((item, index) => {
+      let geoHeight = height * (item.value / max)
+      let material = new MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0,
+        depthTest: false,
+        fog: false,
+      })
+      new GradientShader(material, {
+        uColor1: index > 3 ? 0xfbdf88 : 0x50bbfe,
+        uColor2: index > 3 ? 0xfffef4 : 0x77fbf5,
+        size: geoHeight,
+        dir: "y",
+      })
+      const geo = new BoxGeometry(0.1 * factor, 0.1 * factor, geoHeight)
+      geo.translate(0, 0, geoHeight / 2)
+      const mesh = new Mesh(geo, material)
+      mesh.renderOrder = 5
+      let areaBar = mesh
+      let [x, y] = this.geoProjection(item.centroid)
+      areaBar.position.set(x, -y, this.depth + 0.45)
+      areaBar.scale.set(1, 1, 0)
+      areaBar.userData = { ...item }
+      let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
+      let hg = this.createHUIGUANG(geoHeight, index > 3 ? 0xfffef4 : 0x77fbf5)
+      areaBar.add(...hg)
+      enterpriseBarGroup.add(areaBar)
+      enterpriseBarGroup.rotation.x = -Math.PI / 2
+      let barLabel = labelStyle05(item, index, new Vector3(x + item.offsetX, -y, this.depth + 1.1 + geoHeight))
+      // // 确保启用指针事件
+      // barLabel.element.style.pointerEvents = 'auto';
+      //
+      // // 添加点击事件监听器
+      // barLabel.element.addEventListener('click', (event) => {
+      //   console.log('点击了标签:', item.name);
+      //   // 使用emitter触发事件，传递item
+      //   emitter.$emit('barLabelClick', item);
+      // });
+      this.allBar.push(areaBar)
+      this.allBarMaterial.push(material)
+      this.allGuangquan.push(guangQuan)
+      this.allProvinceLabel.push(barLabel)
+    })
+    this.scene.add(enterpriseBarGroup)
+    function labelStyle05(data, index, position) {
+      let label = self.label3d.create("", "provinces-label", false)
+      label.init(
+          `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
+      <div class="provinces-label-wrap">
+        <div class="number"><span class="value">${data.value}</span><span class="unit">亿元</span></div>
+        <div class="name">
+          <span class="zh">${data.name}</span>
+        </div>
+        
+      </div>
+    </div>`,
+          position
+      )
+      /*<div class="no">${index + 1}</div>*/
+      self.label3d.setLabelStyle(label, 0.01, "x")
+      // self.label3d.setLabelStyle(label, 0.01, "y", Math.PI) //绍兴市（由北向南视角）
       label.setParent(self.labelGroup)
       return label
     }
@@ -961,7 +1060,7 @@ export class World extends Mini3d {
       )
       // 修改旋转轴和角度以解决镜像问题
       label3d.setLabelStyle(label, 0.015, "x", Math.PI / 2)
-      label3d.setLabelStyle(label, 0.015, "y", Math.PI)
+      // label3d.setLabelStyle(label, 0.015, "y", Math.PI) //绍兴市（由北向南视角）
       label.setParent(labelGroup)
       return label
     }
@@ -1070,7 +1169,7 @@ export class World extends Mini3d {
     })
     // provincesData
     ShaoXingCityData
-        .filter((item, index) => index < 7)
+        .filter(item => item.type === 'park')
         .map((city) => {
           let [x, y] = this.geoProjection(city.centroid)
           let point = new Vector3(x, -y, 0)
