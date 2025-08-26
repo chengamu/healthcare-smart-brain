@@ -58,7 +58,7 @@ function sortByValue(data) {
   return data
 }
 export class World extends Mini3d {
-  constructor(canvas, assets) {
+  constructor(canvas, assets, showPark, showEnterprise) {
     super(canvas)
     // 中心坐标
     // this.geoProjectionCenter = [113.280637, 23.125178] //广东省
@@ -110,6 +110,8 @@ export class World extends Mini3d {
     this.interactionManager = new InteractionManager(this.renderer.instance, this.camera.instance, this.canvas)
 
     this.assets = assets
+    this.showPark = showPark
+    this.showEnterprise = showEnterprise
     // 创建环境光
     this.initEnvironment()
     this.init()
@@ -659,62 +661,62 @@ export class World extends Mini3d {
     this.allBarMaterial = []
     this.allGuangquan = []
     this.allProvinceLabel = []
+    let max = sortByValue(ShaoXingCityData)[0].value
+    if(this.showPark) {
+      //一核两翼点
+      // let data = sortByValue(provincesData).filter((item, index) => index < 7)
+      let parkData = ShaoXingCityData.filter(item => item.type === 'park')
+      const parkBarGroup = new Group()
+      this.parkBarGroup = parkBarGroup
+      parkData.map((item, index) => {
+        let geoHeight = height * (item.value / max)
+        let material = new MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0,
+          depthTest: false,
+          fog: false,
+        })
+        new GradientShader(material, {
+          uColor1: index > 3 ? 0xfbdf88 : 0x50bbfe,
+          uColor2: index > 3 ? 0xfffef4 : 0x77fbf5,
+          size: geoHeight,
+          dir: "y",
+        })
+        const geo = new BoxGeometry(0.1 * factor, 0.1 * factor, geoHeight)
+        geo.translate(0, 0, geoHeight / 2)
+        const mesh = new Mesh(geo, material)
+        mesh.renderOrder = 5
+        let areaBar = mesh
+        let [x, y] = this.geoProjection(item.centroid)
+        areaBar.position.set(x, -y, this.depth + 0.45)
+        areaBar.scale.set(1, 1, 0)
+        areaBar.userData = { ...item }
+        let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
+        let hg = this.createHUIGUANG(geoHeight, index > 3 ? 0xfffef4 : 0x77fbf5)
+        areaBar.add(...hg)
+        parkBarGroup.add(areaBar)
+        parkBarGroup.rotation.x = -Math.PI / 2
+        let barLabel = labelStyle04(item, index, new Vector3(x + item.offsetX, -y, this.depth + 1.1 + geoHeight))
+        // 确保启用指针事件
+        barLabel.element.style.pointerEvents = 'auto';
 
-    //一核两翼点
-    // let data = sortByValue(provincesData).filter((item, index) => index < 7)
-    let parkData = ShaoXingCityData.filter(item => item.type === 'park')
-    const max = sortByValue(ShaoXingCityData)[0].value
-    const parkBarGroup = new Group()
-    this.parkBarGroup = parkBarGroup
-    parkData.map((item, index) => {
-      let geoHeight = height * (item.value / max)
-      let material = new MeshBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0,
-        depthTest: false,
-        fog: false,
+        // 添加点击事件监听器
+        barLabel.element.addEventListener('click', (event) => {
+          console.log('点击了标签:', item.name);
+          // 使用emitter触发事件，传递item
+          emitter.$emit('barLabelClick', item);
+        });
+        this.allBar.push(areaBar)
+        this.allBarMaterial.push(material)
+        this.allGuangquan.push(guangQuan)
+        this.allProvinceLabel.push(barLabel)
       })
-      new GradientShader(material, {
-        uColor1: index > 3 ? 0xfbdf88 : 0x50bbfe,
-        uColor2: index > 3 ? 0xfffef4 : 0x77fbf5,
-        size: geoHeight,
-        dir: "y",
-      })
-      const geo = new BoxGeometry(0.1 * factor, 0.1 * factor, geoHeight)
-      geo.translate(0, 0, geoHeight / 2)
-      const mesh = new Mesh(geo, material)
-      mesh.renderOrder = 5
-      let areaBar = mesh
-      let [x, y] = this.geoProjection(item.centroid)
-      areaBar.position.set(x, -y, this.depth + 0.45)
-      areaBar.scale.set(1, 1, 0)
-      areaBar.userData = { ...item }
-      let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
-      let hg = this.createHUIGUANG(geoHeight, index > 3 ? 0xfffef4 : 0x77fbf5)
-      areaBar.add(...hg)
-      parkBarGroup.add(areaBar)
-      parkBarGroup.rotation.x = -Math.PI / 2
-      let barLabel = labelStyle04(item, index, new Vector3(x + item.offsetX, -y, this.depth + 1.1 + geoHeight))
-      // 确保启用指针事件
-      barLabel.element.style.pointerEvents = 'auto';
-
-      // 添加点击事件监听器
-      barLabel.element.addEventListener('click', (event) => {
-        console.log('点击了标签:', item.name);
-        // 使用emitter触发事件，传递item
-        emitter.$emit('barLabelClick', item);
-      });
-      this.allBar.push(areaBar)
-      this.allBarMaterial.push(material)
-      this.allGuangquan.push(guangQuan)
-      this.allProvinceLabel.push(barLabel)
-    })
-    this.scene.add(parkBarGroup)
-    function labelStyle04(data, index, position) {
-      let label = self.label3d.create("", "provinces-label", false)
-      label.init(
-          `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
+      this.scene.add(parkBarGroup)
+      function labelStyle04(data, index, position) {
+        let label = self.label3d.create("", "provinces-label", false)
+        label.init(
+            `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
       <div class="provinces-label-wrap park">
         <div class="number"><span class="value">${data.value}</span><span class="unit">亿元</span></div>
         <div class="name">
@@ -724,69 +726,74 @@ export class World extends Mini3d {
         
       </div>
     </div>`,
-          position
-      )
-      /*<div class="no">${index + 1}</div>*/
-      self.label3d.setLabelStyle(label, 0.01, "x")
-      // self.label3d.setLabelStyle(label, 0.01, "y", Math.PI) //绍兴市（由北向南视角）
-      label.setParent(self.labelGroup)
-      return label
+            position
+        )
+        /*<div class="no">${index + 1}</div>*/
+        self.label3d.setLabelStyle(label, 0.01, "x")
+        // self.label3d.setLabelStyle(label, 0.01, "y", Math.PI) //绍兴市（由北向南视角）
+        label.setParent(self.labelGroup)
+        return label
+      }
     }
 
-    //重点企业点
-    // let data = sortByValue(provincesData).filter((item, index) => index < 7)
-    let enterpriseData = ShaoXingCityData.filter(item => item.type === 'enterprise')
-    const enterpriseBarGroup = new Group()
-    this.enterpriseBarGroup = enterpriseBarGroup
-    enterpriseData.map((item, index) => {
-      let geoHeight = height * (item.value / max)
-      let material = new MeshBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0,
-        depthTest: false,
-        fog: false,
+    if(this.showEnterprise) {
+      //重点企业点
+      // let data = sortByValue(provincesData).filter((item, index) => index < 7)
+      let enterpriseData = ShaoXingCityData.filter(item => item.type === 'enterprise')
+      if(!this.showPark) {
+        max = sortByValue(enterpriseData)[0].value
+      }
+      const enterpriseBarGroup = new Group()
+      this.enterpriseBarGroup = enterpriseBarGroup
+      enterpriseData.map((item, index) => {
+        let geoHeight = height * (item.value / max)
+        let material = new MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0,
+          depthTest: false,
+          fog: false,
+        })
+        new GradientShader(material, {
+          uColor1: index > 3 ? 0xfbdf88 : 0x50bbfe,
+          uColor2: index > 3 ? 0xfffef4 : 0x77fbf5,
+          size: geoHeight,
+          dir: "y",
+        })
+        const geo = new BoxGeometry(0.1 * factor, 0.1 * factor, geoHeight)
+        geo.translate(0, 0, geoHeight / 2)
+        const mesh = new Mesh(geo, material)
+        mesh.renderOrder = 5
+        let areaBar = mesh
+        let [x, y] = this.geoProjection(item.centroid)
+        areaBar.position.set(x, -y, this.depth + 0.45)
+        areaBar.scale.set(1, 1, 0)
+        areaBar.userData = { ...item }
+        let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
+        let hg = this.createHUIGUANG(geoHeight, index > 3 ? 0xfffef4 : 0x77fbf5)
+        areaBar.add(...hg)
+        enterpriseBarGroup.add(areaBar)
+        enterpriseBarGroup.rotation.x = -Math.PI / 2
+        let barLabel = labelStyle05(item, index, new Vector3(x + item.offsetX, -y, this.depth + 1.1 + geoHeight))
+        // // 确保启用指针事件
+        // barLabel.element.style.pointerEvents = 'auto';
+        //
+        // // 添加点击事件监听器
+        // barLabel.element.addEventListener('click', (event) => {
+        //   console.log('点击了标签:', item.name);
+        //   // 使用emitter触发事件，传递item
+        //   emitter.$emit('barLabelClick', item);
+        // });
+        this.allBar.push(areaBar)
+        this.allBarMaterial.push(material)
+        this.allGuangquan.push(guangQuan)
+        this.allProvinceLabel.push(barLabel)
       })
-      new GradientShader(material, {
-        uColor1: index > 3 ? 0xfbdf88 : 0x50bbfe,
-        uColor2: index > 3 ? 0xfffef4 : 0x77fbf5,
-        size: geoHeight,
-        dir: "y",
-      })
-      const geo = new BoxGeometry(0.1 * factor, 0.1 * factor, geoHeight)
-      geo.translate(0, 0, geoHeight / 2)
-      const mesh = new Mesh(geo, material)
-      mesh.renderOrder = 5
-      let areaBar = mesh
-      let [x, y] = this.geoProjection(item.centroid)
-      areaBar.position.set(x, -y, this.depth + 0.45)
-      areaBar.scale.set(1, 1, 0)
-      areaBar.userData = { ...item }
-      let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
-      let hg = this.createHUIGUANG(geoHeight, index > 3 ? 0xfffef4 : 0x77fbf5)
-      areaBar.add(...hg)
-      enterpriseBarGroup.add(areaBar)
-      enterpriseBarGroup.rotation.x = -Math.PI / 2
-      let barLabel = labelStyle05(item, index, new Vector3(x + item.offsetX, -y, this.depth + 1.1 + geoHeight))
-      // // 确保启用指针事件
-      // barLabel.element.style.pointerEvents = 'auto';
-      //
-      // // 添加点击事件监听器
-      // barLabel.element.addEventListener('click', (event) => {
-      //   console.log('点击了标签:', item.name);
-      //   // 使用emitter触发事件，传递item
-      //   emitter.$emit('barLabelClick', item);
-      // });
-      this.allBar.push(areaBar)
-      this.allBarMaterial.push(material)
-      this.allGuangquan.push(guangQuan)
-      this.allProvinceLabel.push(barLabel)
-    })
-    this.scene.add(enterpriseBarGroup)
-    function labelStyle05(data, index, position) {
-      let label = self.label3d.create("", "provinces-label", false)
-      label.init(
-          `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
+      this.scene.add(enterpriseBarGroup)
+      function labelStyle05(data, index, position) {
+        let label = self.label3d.create("", "provinces-label", false)
+        label.init(
+            `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
       <div class="provinces-label-wrap">
         <div class="number"><span class="value">${data.value}</span><span class="unit">亿元</span></div>
         <div class="name">
@@ -795,14 +802,16 @@ export class World extends Mini3d {
         
       </div>
     </div>`,
-          position
-      )
-      /*<div class="no">${index + 1}</div>*/
-      self.label3d.setLabelStyle(label, 0.01, "x")
-      // self.label3d.setLabelStyle(label, 0.01, "y", Math.PI) //绍兴市（由北向南视角）
-      label.setParent(self.labelGroup)
-      return label
+            position
+        )
+        /*<div class="no">${index + 1}</div>*/
+        self.label3d.setLabelStyle(label, 0.01, "x")
+        // self.label3d.setLabelStyle(label, 0.01, "y", Math.PI) //绍兴市（由北向南视角）
+        label.setParent(self.labelGroup)
+        return label
+      }
     }
+
   }
   createEvent() {
     let objectsHover = []

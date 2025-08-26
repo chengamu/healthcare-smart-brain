@@ -69,5 +69,10 @@ export default ({ mode }) => {
     },
     envDir: 'env',
     plugins: [vue()],
+    server: {
+      host: true,
+      port: 8084,
+      open: true,
+    }
   });
 };

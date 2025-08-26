@@ -1,11 +1,22 @@
 <script setup>
 import mCard from "@/components/mCard/index.vue"
 import keyTalent from "@/views/gdMap/map/keyTalent.js";
+
+const props = defineProps({
+    title: {
+        type: String,
+        default: '联盟重点人才'
+    },
+    height: {
+        type: Number,
+        default: 838
+    }
+})
 </script>
 
 <template>
   <div class="right-card">
-    <m-card title="联盟重点人才" :height="838">
+    <m-card :title="title" :height="height">
       <div class="key-talent-container" v-auto-scroll>
         <div class="image-list">
           <div

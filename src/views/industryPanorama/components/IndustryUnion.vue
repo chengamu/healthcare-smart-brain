@@ -1,5 +1,5 @@
 <template>
-  <div class="left-card">
+  <div :class="`${position}-card`">
     <m-card title="产业联盟构成">
       <div class="population-proportion">
         <div class="population-proportion-chart">
@@ -22,6 +22,13 @@ import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+
+const props = defineProps({
+    position: {
+        type: String,
+        default: 'left'
+    }
+})
 
 const state = reactive({
   pieDataColor: ["#17E6C3", "#40CFFF", "#1979FF", "#FFC472", "#E673FF", "#FF8C42", "#73FFFE"],

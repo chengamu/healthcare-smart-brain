@@ -1,6 +1,6 @@
 <template>
   <div class="left-card">
-    <m-card title="产业链群发展">
+    <m-card :title="title">
       <v-chart ref="vChart" :option="option" :autoresize="true" />
     </m-card>
   </div>
@@ -10,6 +10,13 @@ import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+
+const props = defineProps({
+    title: {
+        type: String,
+        default: '产业链群发展'
+    },
+})
 
 const option = ref({
   title: {

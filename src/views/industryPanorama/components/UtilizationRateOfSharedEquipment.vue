@@ -1,5 +1,5 @@
 <template>
-  <div class="left-card">
+  <div :class="`${position}-card`">
     <m-card title="共享设备使用率">
       <div class="devices-container">
         <div class="devices-wrapper">
@@ -31,6 +31,13 @@ import VChart from "vue-echarts"
 
 // 引入水球圖擴充套件
 import 'echarts-liquidfill';
+
+const props = defineProps({
+    position: {
+        type: String,
+        default: 'left'
+    }
+})
 
 const colorGold = '#d09c42', colorBlue = '#4292c8', colorGreen = '#35c084';
 

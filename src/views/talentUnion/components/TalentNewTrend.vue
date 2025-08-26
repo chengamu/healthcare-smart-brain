@@ -1,5 +1,5 @@
 <template>
-  <div class="left-card">
+  <div :class="`${position}-card`">
     <m-card title="人才新增趋势">
       <v-chart ref="vChart" :option="option" :autoresize="true" />
     </m-card>
@@ -10,6 +10,13 @@ import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+
+const props = defineProps({
+    position: {
+        type: String,
+        default: "left"
+    }
+})
 
 const option = ref({
   title: {

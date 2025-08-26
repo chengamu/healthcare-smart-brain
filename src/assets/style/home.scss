@@ -102,7 +102,7 @@ body {
     .left-wrap {
       position: absolute;
       z-index: 4;
-      width: 398px;
+      width: 448px;
       left: 32px;
       top: 126px;
       bottom: 50px;
@@ -129,7 +129,7 @@ body {
     .right-wrap {
       position: absolute;
       z-index: 4;
-      width: 398px;
+      width: 448px;
       right: 32px;
       top: 126px;
       bottom: 50px;
@@ -150,6 +150,15 @@ body {
           margin-bottom: 12px;
         }
       }
+    }
+
+    .center-wrap {
+      position: absolute;
+      z-index: 4;
+      left: 480px;
+      right: 480px;
+      top: 126px;
+      bottom: 50px;
     }
     .bottom-tray {
       position: absolute;

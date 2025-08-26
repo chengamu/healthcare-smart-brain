@@ -30,6 +30,17 @@ import { World } from "./map.js";
 import emitter from "@/utils/emitter";
 const canvasMap = shallowRef(null);
 
+const props = defineProps({
+  showPark: {
+    type: Boolean,
+    default: false,
+  },
+  showEnterprise: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 onMounted(() => {
   emitter.$on("loadMap", loadMap);
     // 监听barLabelClick事件
@@ -42,7 +53,7 @@ onBeforeUnmount(() => {
     emitter.$off("barLabelClick", handleBarLabelClick);
 });
 function loadMap(assets) {
-  canvasMap.value = new World(document.getElementById("canvasMap"), assets);
+  canvasMap.value = new World(document.getElementById("canvasMap"), assets, props.showPark, props.showEnterprise);
   canvasMap.value.time.pause();
 }
 

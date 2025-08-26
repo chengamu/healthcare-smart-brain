@@ -118,7 +118,7 @@ defineProps({
   &-right {
     color: #fff;
     position: absolute;
-    top: 47px;
+    top: 20px;
     right: 32px;
   }
   &-line {

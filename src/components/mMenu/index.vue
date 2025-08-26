@@ -1,5 +1,5 @@
 <template>
-  <div class="m-menu">
+  <div class="m-menu" :class="{'large': large}">
     <slot></slot>
   </div>
 </template>
@@ -11,6 +11,10 @@ const props = defineProps({
     type: [String, Number],
     default: "",
   },
+    large: {
+        type: Boolean,
+        default: false,
+    },
 });
 const activeIndex = ref(props.defaultActive);
 // 提供一个方法来供子组件调用，用于更新活动项
@@ -89,5 +93,20 @@ watch(
     transform: scale(1.1, 1.2);
     opacity: 0;
   }
+}
+.m-menu.large {
+    .m-menu-item {
+        width: 150px;
+        height: 48px;
+        &.is-active {
+            &:after {
+                width: 150px;
+                height: 48px;
+                margin-left: -75px;
+                margin-top: -24px;
+                border-radius: 48px;
+            }
+        }
+    }
 }
 </style>

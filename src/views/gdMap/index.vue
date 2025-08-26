@@ -1,7 +1,7 @@
 <template>
     <div class="large-screen">
         <!-- 地图 -->
-        <mapScene ref="mapSceneRef"></mapScene>
+        <mapScene ref="mapSceneRef" show-enterprise show-park></mapScene>
         <div class="large-screen-wrap" id="large-screen">
             <m-header title="绍兴医疗健康产业大脑" sub-text="Shaoxing Medical And Health Industry Community">
                 <!--左侧 天气 -->

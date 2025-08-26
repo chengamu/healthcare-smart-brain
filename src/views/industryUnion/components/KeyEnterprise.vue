@@ -3,6 +3,17 @@ import { ref } from "vue"
 import mCard from "@/components/mCard/index.vue"
 import keyEnterpriseData from "@/views/gdMap/map/keyEnterpriseData.js";
 
+const props = defineProps({
+    title: {
+        type: String,
+        default: '联盟重点企业'
+    },
+    height: {
+        type: Number,
+        default: 838
+    }
+})
+
 // 控制弹窗显示的状态
 const showDialog = ref(false)
 // 当前选中的企业信息
@@ -30,7 +41,7 @@ const getCurrentIndustry = () => {
 
 <template>
     <div class="right-card">
-        <m-card title="联盟重点企业" :height="838">
+        <m-card :title="title" :height="height">
             <div class="key-enterprise-container" v-auto-scroll>
                 <div
                     v-for="group in keyEnterpriseData"

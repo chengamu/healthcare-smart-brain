@@ -1,6 +1,6 @@
 <template>
   <div class="left-card">
-    <m-card title="年R&D投入">
+    <m-card :title="title">
       <v-chart ref="vChart" :option="option" :autoresize="true" />
     </m-card>
   </div>
@@ -10,6 +10,13 @@ import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+
+const props = defineProps({
+    title: {
+        type: String,
+        default: "年R&D投入",
+    },
+})
 
 const option = ref({
   title: {
@@ -24,7 +31,7 @@ const option = ref({
   grid: {
     left: "12%",
     top: "25%",
-    width: "82%",
+    width: "70%",
     height: "55%",
   },
   tooltip: {
@@ -106,6 +113,31 @@ const option = ref({
         fontSize: 9,
       },
     },
+    {
+      type: "value",
+      name: "增长率",
+      nameTextStyle: {
+        color: "#D3F8F2",
+        fontWeight: 'bold',
+        fontSize: 8,
+        padding: [0, 0, 0, 20],
+      },
+      nameGap: 15,
+      axisLine: {
+        show: false,
+      },
+      axisTick: {
+        show: false,
+      },
+      splitLine: {
+        show: false,
+      },
+      axisLabel: {
+        color: "#8B9EA4",
+        fontSize: 9,
+        formatter: '{value}%'
+      },
+    }
   ],
   series: [
     {
@@ -161,6 +193,31 @@ const option = ref({
         ]),
       },
     },
+    {
+      name: '增长率',
+      type: 'bar',
+      yAxisIndex: 1,
+      data: [75, 150, 44, 38.9],
+      barWidth: 10,
+      itemStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#FFD700' },
+          { offset: 1, color: '#FF8C00' }
+        ])
+      },
+      label: {
+        show: false,
+        position: 'top',
+        color: '#FFD700',
+        fontSize: 10,
+        formatter: '{c}%'
+      },
+      emphasis: {
+        label: {
+          show: true
+        }
+      }
+    }
   ]
 })
 </script>

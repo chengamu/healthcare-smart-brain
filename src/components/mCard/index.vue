@@ -291,7 +291,7 @@ import { computed, ref, getCurrentInstance, onMounted } from "vue"
 const props = defineProps({
   width: {
     type: Number,
-    default: 398,
+    default: 448,
   },
   height: {
     type: Number,

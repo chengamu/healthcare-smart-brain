@@ -11,6 +11,11 @@ body,
   overflow: hidden;
 }
 
+@font-face {
+  font-family: 'LCdd';
+  src: url('@/assets/font/LCdd.TTF');
+}
+
 .tooltip-container {
   width: 120px;
 }

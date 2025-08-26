@@ -1,6 +1,6 @@
 <template>
   <div class="left-card">
-    <m-card title="人才联盟构成">
+    <m-card :title="title">
       <div class="population-proportion">
         <div class="population-proportion-chart">
           <v-chart ref="vChart" :option="option" :autoresize="true" />
@@ -22,6 +22,13 @@ import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+
+const props = defineProps({
+    title: {
+      type: String,
+      default: "人才联盟构成",
+    },
+})
 
 const state = reactive({
   pieDataColor: ["#17E6C3", "#40CFFF", "#1979FF"],
