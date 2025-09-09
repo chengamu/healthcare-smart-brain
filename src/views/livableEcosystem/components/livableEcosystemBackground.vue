@@ -53,6 +53,6 @@ onBeforeUnmount(() => {
     right: 0;
     bottom: 0;
     background: url(@/assets/images/livableEcosystem/ac-bj.jpg) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
 }
 </style>

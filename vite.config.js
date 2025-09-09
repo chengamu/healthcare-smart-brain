@@ -10,6 +10,7 @@ import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { OUTPUT_DIR } from './build/constant';
 import path from "path";
+import createVitePlugins from './vite/plugins'
 
 const TimeStamp = new Date().getTime();
 
@@ -17,7 +18,7 @@ function resolve(url) {
   return path.resolve(__dirname, url);
 }
 // https://vitejs.dev/config/
-export default ({ mode }) => {
+export default ({ mode, command }) => {
   // 获取环境变量
   const env = loadEnv(mode, process.cwd());
   return defineConfig({
@@ -67,12 +68,19 @@ export default ({ mode }) => {
         }
       }
     },
-    envDir: 'env',
-    plugins: [vue()],
+    plugins: createVitePlugins(env, command === 'build'),
     server: {
       host: true,
       port: 8084,
       open: true,
+      proxy: {
+        // https://cn.vitejs.dev/config/#server-proxy
+        '/dev-api': {
+          target: 'http://192.168.120.165:8080',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/dev-api/, '')
+        }
+      }
     }
   });
 };

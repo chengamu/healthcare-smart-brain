@@ -12,6 +12,14 @@ import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
 
+// 定义组件属性
+const props = defineProps({
+    talentData: {
+        type: Array,
+        default: () => []
+    }
+})
+
 const pointerData = 55; // 仪表指针数据
 const pointerMaxData = 150; // 仪表指针最大数据
 

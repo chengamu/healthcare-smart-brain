@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
     width: 50rem;
     height: 50rem;
     background: url(@/assets/images/funnel/circle.png) no-repeat center;
-    background-size: 100%;
+    background-size: 100% 100%;
     position: absolute;
     top: 20%;
     left: 50%;
@@ -141,21 +141,21 @@ onBeforeUnmount(() => {
 }
 .innovation-container .cicle8 {
     background: url(@/assets/images/funnel/circle1.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     color: #f29701;
     animation: rotateTriangle1 15s linear infinite;
 }
 
 .innovation-container .cicle9 {
     background: url(@/assets/images/funnel/circle2.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     color: #0ac1c7;
     animation: rotateTriangle2 15s linear infinite;
 }
 
 .innovation-container .cicle10 {
     background: url(@/assets/images/funnel/circle1.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     color: #f29701;
     animation: rotateTriangle3 15s linear infinite;
 }

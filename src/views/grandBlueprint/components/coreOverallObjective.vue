@@ -2,6 +2,10 @@
 import { ref, onMounted } from "vue"
 import mCard from "@/components/mCard/index.vue"
 import mCountTo from "@/components/mCountTo/index.js"
+import { listFundTypeAll, listFundDataAll } from "@/api/brain.js"
+
+const cygmTypeId = ref('')
+const jhztzTypeId = ref('')
 
 const kpiData = ref([
   { title: '产业规模', value: 500, unit: '亿', progress: 85 },
@@ -14,19 +18,42 @@ const startCount = ref([false, false, false])
 const progressPercents = ref([0, 0, 0])
 
 onMounted(() => {
-  // 依次显示卡片，每张卡片间隔400ms
-  showCards.value.forEach((_, index) => {
-    setTimeout(() => {
-      showCards.value[index] = true
-      // 延迟一点时间开始数字动画
-      setTimeout(() => {
-        startCount.value[index] = true
-        // 同时开始进度条动画
-        animateProgress(index)
-      }, 500)
-    }, index * 400)
-  })
+    init()
 })
+
+async function init() {
+    await getListFundTypeAll()
+    await getListFundDataAll(cygmTypeId.value, 0)
+    await getListFundDataAll(jhztzTypeId.value, 1)
+
+    // 依次显示卡片，每张卡片间隔400ms
+    showCards.value.forEach((_, index) => {
+        setTimeout(() => {
+            showCards.value[index] = true
+            // 延迟一点时间开始数字动画
+            setTimeout(() => {
+                startCount.value[index] = true
+                // 同时开始进度条动画
+                animateProgress(index)
+            }, 500)
+        }, index * 400)
+    })
+}
+
+function getListFundTypeAll() {
+    return listFundTypeAll().then(response => {
+        cygmTypeId.value = response.find(it => it.code === 'cygm').id;
+        jhztzTypeId.value = response.find(it => it.code === 'jhztz').id;
+    });
+}
+
+function getListFundDataAll(id, index) {
+    return listFundDataAll({ fundTypeId: id }).then(response => {
+        let current = response[response.length - 1].value
+        let progress = Math.round(current / kpiData.value[index].value * 100)
+        kpiData.value[index].progress = progress
+    });
+}
 
 const animateProgress = (index) => {
   const target = kpiData.value[index].progress

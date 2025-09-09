@@ -15,6 +15,10 @@ const props = defineProps({
     position: {
         type: String,
         default: "left"
+    },
+    talentData: {
+        type: Array,
+        default: () => []
     }
 })
 

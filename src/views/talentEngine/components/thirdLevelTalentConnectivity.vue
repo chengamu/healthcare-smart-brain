@@ -323,7 +323,7 @@ const getArrowPoints = (startPercent, endPercent) => {
     right: 0;
     bottom: 0;
     background: url(@/assets/images/talentEngine/bj.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     //background-color: rgba(0, 0, 0, 0.7);
 }
 .funnel-container .left {

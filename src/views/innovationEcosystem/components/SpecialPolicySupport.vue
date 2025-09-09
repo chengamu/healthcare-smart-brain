@@ -47,6 +47,7 @@ import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue"
 import mCard from "@/components/mCard/index.vue"
 import mPie from "@/components/mPie/index.vue"
 import mCountTo from "@/components/mCountTo/index.js"
+import {countPolicyByType} from "@/api/brain.js";
 
 const pie = ref(null)
 const state = reactive({
@@ -66,6 +67,26 @@ const state = reactive({
     },
   ],
 })
+
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    await getCountPolicyByType()
+}
+
+function getCountPolicyByType() {
+    return countPolicyByType().then(response => {
+        state.pieData = response.data.map((it, index) => {
+            return {
+                name: it.dictLabel,
+                value: it.count
+            }
+        })
+    });
+}
+
 function getNumber(slotProps) {
   return Number(((slotProps.data.value / slotProps.data.count) * 100).toFixed(2))
 }

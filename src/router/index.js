@@ -19,6 +19,7 @@ const livableEcosystem = () => import("@/views/livableEcosystem/index.vue")
 const redCoreLeadership = () => import("@/views/redCoreLeadership/index.vue")
 
 const gdMap = () => import("@/views/gdMap/index.vue")
+const login = () => import("@/views/login.vue")
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -77,6 +78,10 @@ const router = createRouter({
         {
             path: "/gdMap",
             component: gdMap,
+        },
+        {
+            path: "/login",
+            component: login,
         },
         {
             path: "/:pathMatch(.*)",

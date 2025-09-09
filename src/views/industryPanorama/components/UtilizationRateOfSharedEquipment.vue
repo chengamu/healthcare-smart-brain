@@ -28,6 +28,7 @@ import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+import {listEquipmentAll} from "@/api/brain.js";
 
 // 引入水球圖擴充套件
 import 'echarts-liquidfill';
@@ -107,6 +108,28 @@ const getDeviceOption = (value) => ({
     }
   ]
 })
+
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    await getListEquipmentAll()
+}
+
+async function getListEquipmentAll() {
+    try {
+        const response = await listEquipmentAll()
+        console.log(response)
+        devices.value = response.slice(0, 8).map(item => ({
+            name: item.name,
+            value: item.usageRate / 100
+        }))
+    } catch (error) {
+        console.error('获取共享设备数据失败:', error)
+        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+    }
+}
 </script>
 
 <style scoped lang="scss">

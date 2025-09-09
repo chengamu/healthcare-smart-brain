@@ -22,14 +22,19 @@ import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+import {countDrugByPhase} from "@/api/brain.js";
+
+const emit = defineEmits(['update:drugData'])
+
+const drugData = ref('')
 
 const state = reactive({
     pieDataColor: ["#17E6C3", "#40CFFF", "#1979FF", "#FFD700", "#FF6347"],
     pieData: [
-        {
-            name: "临床前",
-            value: 1,
-        },
+        // {
+        //     name: "临床前",
+        //     value: 1,
+        // },
         {
             name: "I期",
             value: 1,
@@ -48,6 +53,34 @@ const state = reactive({
         },
     ],
 })
+
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    await getCountDrugByPhase()
+}
+
+async function getCountDrugByPhase() {
+    try {
+        const response = await countDrugByPhase()
+        state.pieData = response.data.map((it, index) => {
+            option.value.series[0].data[index].value = it.count
+            option.value.series[0].data[index].name = it.dictLabel
+            return {
+                name: it.dictLabel,
+                value: it.count
+            }
+        })
+        // 计算所有pieData的value总和并赋值给drugData
+        drugData.value = state.pieData.reduce((total, item) => total + item.value, 0)
+        emit('update:drugData', drugData.value)
+    } catch (error) {
+        console.error('获取创新药数据失败:', error)
+        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+    }
+}
 const option = ref({
     tooltip: {
         trigger: "axis",
@@ -78,17 +111,17 @@ const option = ref({
             color: ["#17E6C3", "#40CFFF", "#1979FF", "#FFD700", "#FF6347"],
 
             data: [
-                {
-                    value: 1,
-                    name: "临床前",
-                    itemStyle: {
-                        //颜色渐变
-                        color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-                            { offset: 0, color: "rgba(3,65,128,1)" },
-                            { offset: 1, color: "rgba(115,208,255,1)" },
-                        ]),
-                    },
-                },
+                // {
+                //     value: 1,
+                //     name: "临床前",
+                //     itemStyle: {
+                //         //颜色渐变
+                //         color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+                //             { offset: 0, color: "rgba(3,65,128,1)" },
+                //             { offset: 1, color: "rgba(115,208,255,1)" },
+                //         ]),
+                //     },
+                // },
                 {
                     value: 1,
                     name: "I期",

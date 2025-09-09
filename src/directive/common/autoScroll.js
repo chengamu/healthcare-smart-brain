@@ -1,5 +1,4 @@
 // src/directive/autoScroll.js
-import { onBeforeUnmount } from 'vue'
 
 const autoScroll = {
     mounted(el, binding) {
@@ -38,12 +37,18 @@ const autoScroll = {
         el.addEventListener('mouseenter', stopScroll)
         el.addEventListener('mouseleave', startScroll)
 
+        // 将stopScroll函数存储在元素上，以便在指令卸载时使用
+        el._scrollStop = stopScroll
+    },
+    
+    unmounted(el) {
         // 指令卸载时清除定时器
-        onBeforeUnmount(() => {
-            stopScroll()
-            el.removeEventListener('mouseenter', stopScroll)
-            el.removeEventListener('mouseleave', startScroll)
-        })
+        if (el._scrollStop) {
+            el._scrollStop()
+            el.removeEventListener('mouseenter', el._scrollStop)
+            el.removeEventListener('mouseleave', el._scrollStop)
+            el._scrollStop = null
+        }
     }
 }
 

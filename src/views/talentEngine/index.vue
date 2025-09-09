@@ -30,11 +30,18 @@
             <div class="left-wrap">
                 <div class="left-wrap-3d">
                     <!--人才总量与结构（人才联盟-人才联盟构成）-->
-                    <talent-union-structure title="人才总量与结构"></talent-union-structure>
+                    <talent-union-structure 
+                        title="人才总量与结构" 
+                        :talent-data="state.talentData">
+                    </talent-union-structure>
                     <!--顶尖专家引进目标-->
-                    <top-expert-introduction-target></top-expert-introduction-target>
+                    <top-expert-introduction-target 
+                        :talent-data="state.talentData">
+                    </top-expert-introduction-target>
                     <!--青年人才引育目标-->
-                    <the-goal-of-attracting-and-nurturing-young-talents></the-goal-of-attracting-and-nurturing-young-talents>
+                    <the-goal-of-attracting-and-nurturing-young-talents 
+                        :talent-data="state.talentData">
+                    </the-goal-of-attracting-and-nurturing-young-talents>
                 </div>
             </div>
             <!-- 中间布局 -->
@@ -46,11 +53,24 @@
             <div class="right-wrap">
                 <div class="right-wrap-3d">
                     <!--领军人才名录（人才联盟-联盟重点人才）-->
-                    <key-talent title="领军人才名录" :height="272"></key-talent>
+                    <key-talent 
+                        title="领军人才名录" 
+                        :height="272" 
+                        :talent-data="state.talentData">
+                    </key-talent>
                     <!--医疗领域人才TOP5-->
-                    <medical-field-talent-top5></medical-field-talent-top5>
+<!--                    <medical-field-talent-top5 -->
+<!--                        :talent-data="state.talentData">-->
+<!--                    </medical-field-talent-top5>-->
+                    <!--医疗领域人才分布-->
+                    <medical-field-talent-distribution
+                        :talent-data="state.talentData">
+                    </medical-field-talent-distribution>
                     <!--人才新增趋势-->
-                    <talent-new-trend position="right"></talent-new-trend>
+                    <talent-new-trend 
+                        position="right" 
+                        :talent-data="state.talentData">
+                    </talent-new-trend>
                 </div>
             </div>
             <!-- 底部托盘 -->
@@ -105,7 +125,7 @@
     </div>
 </template>
 <script setup>
-import {shallowRef, ref, reactive, onMounted, onBeforeUnmount} from "vue"
+import {shallowRef, ref, reactive, onMounted, onBeforeUnmount, nextTick} from "vue"
 import mHeader from "@/components/mHeader/index.vue"
 import mCountCard from "@/components/mCountCard/index.vue"
 import mMenu from "@/components/mMenu/index.vue"
@@ -127,6 +147,9 @@ import MedicalFieldTalentTop5 from "@/views/talentEngine/components/medicalField
 import ThirdLevelTalentConnectivity from "@/views/talentEngine/components/thirdLevelTalentConnectivity.vue";
 import TalentEngineBackground from "@/views/talentEngine/components/talentEngineBackground.vue";
 import TalentEngineCenter from "@/views/talentEngine/components/talentEngineCenter.vue";
+import {listEnterpriseAll, listTalentAll} from '@/api/brain.js'
+import {listDictData} from "@/api/system.js";
+import MedicalFieldTalentDistribution from "@/views/talentEngine/components/medicalFieldTalentDistribution.vue";
 
 const { currentTime } = useCurrentTime('YYYY-MM-DD HH:mm:ss')
 const router = useRouter()
@@ -159,9 +182,16 @@ const state = reactive({
             unit: "名",
         },
     ],
+    // 人才数据
+    talentData: [],
 })
 
+const enterpriseList = ref([])
+const dictList = ref([{
+    name: 'brain_talent_type', data: []
+}])
 onMounted(() => {
+    init()
     // 自动适配
     autofit.init({
         dh: 1080,
@@ -173,6 +203,64 @@ onMounted(() => {
     // 模拟加载过程
     simulateLoading()
 })
+
+async function init() {
+    await getListEnterpriseAll()
+    await getListDictData('brain_talent_type', 0)
+    await getListTalentAll()
+}
+
+const getListDictData = async (dictName, index) => {
+    try {
+        const response = await listDictData(dictName)
+        let data = response.data.map((item, index) => {
+            return {
+                label: item.dictLabel,
+                value: item.dictValue
+            }
+        });
+        dictList.value[index].data = data
+    } catch (error) {
+        console.error('获取企业类别数据失败:', error)
+        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+    }
+};
+
+async function getListEnterpriseAll() {
+    try {
+        const response = await listEnterpriseAll()
+        enterpriseList.value = response
+    } catch (error) {
+        console.error('获取企业列表数据失败:', error)
+        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+    }
+}
+
+async function getListTalentAll() {
+    try {
+        const response = await listTalentAll()
+        // 根据position字段中是否包含"院士"来计算"专家院士"数量
+        const expertAcademicianCount = response.filter(item => item.position && item.position.includes('院士')).length
+        // 根据数据长度计算"人才专家"数量
+        const talentExpertCount = response.length
+        
+        // 更新统计数据
+        state.totalView[0].value = expertAcademicianCount
+        state.totalView[2].value = talentExpertCount
+        
+        // 保存人才数据供子组件使用
+        state.talentData = response.map(item => {
+            return {
+                ...item,
+                typeName: dictList.value[0].data.find(type => type.value === item.type)?.label,
+                enterpriseName: enterpriseList.value.find(enterprise => enterprise.id === item.enterpriseId)?.name,
+            }
+        })
+    } catch (error) {
+        console.error('获取人才数据失败:', error)
+        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+    }
+}
 
 // 模拟加载过程
 function simulateLoading() {

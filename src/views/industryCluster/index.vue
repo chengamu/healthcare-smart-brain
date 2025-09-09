@@ -1,7 +1,6 @@
 <template>
     <div class="large-screen">
-        <!-- 地图 -->
-        <mapScene ref="mapSceneRef" show-park show-enterprise></mapScene>
+        <industry-cluster-background></industry-cluster-background>
         <div class="large-screen-wrap" id="large-screen">
             <m-header title="绍兴医疗健康产业大脑" sub-text="Shaoxing Medical And Health Industry Community">
                 <!--右侧 日期 -->
@@ -36,13 +35,19 @@
                     <project-introduction></project-introduction>
                 </div>
             </div>
+            <!-- 中间布局 -->
+            <div class="center-wrap">
+                <industry-cluster-center></industry-cluster-center>
+            </div>
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
                 <div class="right-wrap-3d">
                     <!--产业联盟构成（产业全景-产业联盟构成）-->
                     <industry-union position="right"></industry-union>
+                    <!--企业发展方向TOP5-->
+                    <development-direction-top5></development-direction-top5>
                     <!--龙头企业矩阵（产业联盟-联盟重点企业）-->
-                    <key-enterprise title="龙头企业矩阵" :height="272"></key-enterprise>
+<!--                    <key-enterprise title="龙头企业矩阵" :height="272"></key-enterprise>-->
                     <!--专项政策支持（生态建设-专项政策支持）-->
                     <special-policy-support></special-policy-support>
                 </div>
@@ -100,30 +105,27 @@
 </template>
 <script setup>
 import {shallowRef, ref, reactive, onMounted, onBeforeUnmount} from "vue"
-import mapScene from "@/views/gdMap/map.vue"
 import mHeader from "@/components/mHeader/index.vue"
 import mMenu from "@/components/mMenu/index.vue"
 import mRadar from "@/components/mRadar/index.vue"
 import mMenuItem from "@/components/mMenuItem/index.vue"
 import mSvglineAnimation from "@/components/mSvglineAnimation/index.vue"
 
-import { Assets } from "@/views/gdMap/assets.js"
-import emitter from "@/utils/emitter"
 import gsap from "gsap"
 import autofit from "autofit.js"
 import { useCurrentTime } from "@/hooks/useCurrentTime.js"
 import { useRouter } from "vue-router"
 import CompletionStatusOfTotalInvestment
     from "@/views/industryCluster/components/CompletionStatusOfTotalInvestment.vue";
-import CorridorGauge from "@/views/industryPanorama/components/CorridorGauge.vue";
 import ProjectIntroduction from "@/views/industryUnion/components/ProjectIntroduction.vue";
 import IndustryUnion from "@/views/industryPanorama/components/IndustryUnion.vue";
 import KeyEnterprise from "@/views/industryUnion/components/KeyEnterprise.vue";
 import SpecialPolicySupport from "@/views/innovationEcosystem/components/SpecialPolicySupport.vue";
 import IndustryUnionDevelopment from "@/views/industryUnion/components/IndustryUnionDevelopment.vue";
+import DevelopmentDirectionTop5 from "@/views/industryCluster/components/developmentDirectionTop5.vue";
+import IndustryClusterBackground from "@/views/industryCluster/components/industryClusterBackground.vue";
+import IndustryClusterCenter from "@/views/industryCluster/components/industryClusterCenter.vue";
 
-const assets = shallowRef(null)
-const mapSceneRef = ref(null)
 const { currentTime } = useCurrentTime('YYYY-MM-DD HH:mm:ss')
 const router = useRouter()
 const state = reactive({
@@ -133,48 +135,30 @@ const state = reactive({
     activeIndex: "left-2",
 })
 onMounted(() => {
-    // 监听地图播放完成，执行事件
-    emitter.$on("mapPlayComplete", handleMapPlayComplete)
     // 自动适配
-    assets.value = autofit.init({
+    autofit.init({
         dh: 1080,
         dw: 1920,
         el: "#large-screen",
         resize: true,
     })
-    // 初始化资源
-    initAssets(async () => {
-        // 加载地图
-        emitter.$emit("loadMap", assets.value)
-        // 隐藏loading
-        await hideLoading()
-        // 播放场景
-        mapSceneRef.value.play()
-    })
+
+    // 模拟加载过程
+    simulateLoading()
 })
-onBeforeUnmount(() => {
-    emitter.$off("mapPlayComplete", handleMapPlayComplete)
-})
-// 初始化加载资源
-function initAssets(onLoadCallback) {
-    assets.value = new Assets()
-    // 资源加载进度
-    let params = {
-        progress: 0,
-    }
-    assets.value.instance.on("onProgress", (path, itemsLoaded, itemsTotal) => {
-        let p = Math.floor((itemsLoaded / itemsTotal) * 100)
-        gsap.to(params, {
-            progress: p,
-            onUpdate: () => {
-                state.progress = Math.floor(params.progress)
-            },
-        })
-    })
-    // 资源加载完成
-    assets.value.instance.on("onLoad", () => {
-        onLoadCallback && onLoadCallback()
-    })
+
+// 模拟加载过程
+function simulateLoading() {
+    let progress = 0
+    const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 10) + 1
+        if (progress >= 100) {
+            progress = 100
+            clearInterval(interval)
+            hideLoading()
+        }
+        state.progress = progress
+    }, 100)
 }
 
 // 隐藏loading
@@ -200,6 +184,8 @@ async function hideLoading() {
             },
             "-=1"
         )
+        // 加载完成后触发动画
+        tl.eventCallback("onComplete", handlePageLoadComplete)
     })
 }
 
@@ -228,8 +214,16 @@ function handleMenuSelect(index) {
         }
     }
 }
-// 地图开始动画播放完成
-function handleMapPlayComplete(noCountCard = false) {
+
+// 页面加载完成
+function handlePageLoadComplete() {
+    // 触发自定义事件，通知子组件开始动画
+    const event1 = new CustomEvent('backgroundLoaded');
+    window.dispatchEvent(event1);
+
+    const event2 = new CustomEvent('pageLoaded');
+    window.dispatchEvent(event2);
+
     let tl = gsap.timeline({ paused: false })
     let leftCards = gsap.utils.toArray(".left-card")
     let rightCards = gsap.utils.toArray(".right-card")
@@ -253,7 +247,7 @@ function handleMapPlayComplete(noCountCard = false) {
     tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "-=2")
     tl.to(leftCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
     tl.to(rightCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
-    if(!noCountCard) {
+    if(countCards.length > 0) {
         tl.to(
             countCards,
             {
@@ -354,5 +348,8 @@ function handleMapPlayComplete(noCountCard = false) {
 .bottom-radar {
     transform: translateY(100%);
     opacity: 0;
+}
+.large-screen-wrap {
+    pointer-events: auto;
 }
 </style>

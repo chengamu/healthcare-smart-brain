@@ -12,6 +12,14 @@ import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
 
+// 定义组件属性
+const props = defineProps({
+    talentData: {
+        type: Array,
+        default: () => []
+    }
+})
+
 const information = {
     color: "#069DFD",
     area: ["药学", "免疫学", "肿瘤学", "医疗影像", "医疗器械"],

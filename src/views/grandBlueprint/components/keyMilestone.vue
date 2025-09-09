@@ -1,5 +1,22 @@
 <script setup>
 import mCard from "@/components/mCard/index.vue"
+import {onMounted} from "vue";
+import {listEventAll} from "@/api/brain.js";
+
+const eventList = ref([])
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    await getListEventAll()
+}
+
+function getListEventAll() {
+    return listEventAll({ visible: '1' }).then(response => {
+        eventList.value = response
+    });
+}
 </script>
 
 <template>
@@ -14,18 +31,28 @@ import mCard from "@/components/mCard/index.vue"
                             <div class="flow-stream stream2"></div>
                             <div class="flow-stream stream3"></div>
                         </div>
-                        <div id="m1" class="milestone">
-                            <div class="label">2023 | 基金成立</div>
-                            <div class="dot"></div>
+                        <div :id="`m${index + 1}`" class="milestone" v-for="(item, index) in eventList" :key="index">
+                            <template v-if="index % 2 === 1">
+                                <div class="dot"></div>
+                                <div class="label">{{ item.time }}<br>{{ item.name }}</div>
+                            </template>
+                            <template v-else>
+                                <div class="label">{{ item.time }}<br>{{ item.name }}</div>
+                                <div class="dot"></div>
+                            </template>
                         </div>
-                        <div id="m2" class="milestone">
-                            <div class="dot"></div>
-                            <div class="label">2024 | 重大项目签约</div>
-                        </div>
-                        <div id="m3" class="milestone">
-                            <div class="label">龙头企业入驻</div>
-                            <div class="dot"></div>
-                        </div>
+<!--                        <div id="m1" class="milestone">-->
+<!--                            <div class="label">2023 | 基金成立</div>-->
+<!--                            <div class="dot"></div>-->
+<!--                        </div>-->
+<!--                        <div id="m2" class="milestone">-->
+<!--                            <div class="dot"></div>-->
+<!--                            <div class="label">2024 | 重大项目签约</div>-->
+<!--                        </div>-->
+<!--                        <div id="m3" class="milestone">-->
+<!--                            <div class="label">龙头企业入驻</div>-->
+<!--                            <div class="dot"></div>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -87,8 +114,9 @@ body, html {
 .milestone { position: absolute; color: white; text-align: center; animation: appear 1s ease-out forwards; opacity: 0; transform: translateY(-50%); }
 .milestone .dot { width: 8px; height: 8px; background: #48D1CC; border-radius: 50%; margin: 0 auto 5px; box-shadow: 0 0 10px #48D1CC; }
 .milestone .label { font-size: 16px; }
-#m1 { left: 15%; top: -12px; animation-delay: 0.5s; }
-#m2 { left: 45%; top: calc(100% + 20px); animation-delay: 1s; }
-#m3 { left: 75%; top: -12px; animation-delay: 1.5s; }
+#m1 { left: 0%; top: -25px; animation-delay: 0.5s; }
+#m2 { left: 5%; top: calc(100% + 30px); animation-delay: 1s; }
+#m3 { left: 45%; top: -25px; animation-delay: 1.5s; }
+#m4 { left: 50%; top: calc(100% + 30px); animation-delay: 2s; }
 @keyframes appear { to { opacity: 1; } }
 </style>

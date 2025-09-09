@@ -28,25 +28,35 @@
             <div class="left-wrap">
                 <div class="left-wrap-3d">
                     <!--研发投入(R&D)增长（产业联盟-年R&D投入）-->
-                    <annual-r-d-investment title="研发投入(R&D)增长"></annual-r-d-investment>
+                    <annual-r-d-investment 
+                        title="研发投入(R&D)增长" 
+                        @update:yftrTypeData="handleYftrTypeData">
+                    </annual-r-d-investment>
                     <!--创新平台支撑-->
                     <innovation-platform-support></innovation-platform-support>
                     <!--“四题一评”创新机制-->
-                    <innovation-mechanism></innovation-mechanism>
+<!--                    <innovation-mechanism></innovation-mechanism>-->
+                    <!--技术合作-->
+                    <technology-cooperation @update:technologyData="handleTechnologyData"></technology-cooperation>
                 </div>
             </div>
             <!-- 中间布局 -->
             <div class="center-wrap">
                 <!--全链条创新转化漏斗-->
-                <innovation-driven-center></innovation-driven-center>
+                <innovation-driven-center
+                    :rd-investment-value="yftrTypeData"
+                    :instrument-value="instrumentData"
+                    :technology-value="technologyData"
+                    :drug-value="drugData"
+                ></innovation-driven-center>
             </div>
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
                 <div class="right-wrap-3d">
                     <!--一类新药研发进度-->
-                    <progress-of-new-drug-development></progress-of-new-drug-development>
+                    <progress-of-new-drug-development @update:drugData="handleDrugData"></progress-of-new-drug-development>
                     <!--医疗器械获批进度-->
-                    <progress-of-medical-device-approval></progress-of-medical-device-approval>
+                    <progress-of-medical-device-approval @update:instrumentData="handleInstrumentData"></progress-of-medical-device-approval>
                     <!--共享设备使用率（生态建设-共享设备使用率）-->
                     <utilization-rate-of-shared-equipment position="right"></utilization-rate-of-shared-equipment>
                 </div>
@@ -122,6 +132,7 @@ import InnovationPlatformSupport from "@/views/innovationDriven/components/innov
 import InnovationMechanism from "@/views/innovationDriven/components/innovationMechanism.vue";
 import InnovationDrivenBackground from "@/views/innovationDriven/components/innovationDrivenBackground.vue";
 import InnovationDrivenCenter from "@/views/innovationDriven/components/innovationDrivenCenter.vue";
+import TechnologyCooperation from "@/views/innovationDriven/components/technologyCooperation.vue";
 
 const { currentTime } = useCurrentTime('YYYY-MM-DD HH:mm:ss')
 const router = useRouter()
@@ -131,6 +142,15 @@ const state = reactive({
     // 当前顶部导航索引
     activeIndex: "left-3",
 })
+
+// 存储从子组件传递来的yftrTypeData数据
+const yftrTypeData = ref('')
+// 存储从子组件传递来的technologyData数据
+const technologyData = ref('')
+// 存储从子组件传递来的drugData数据
+const drugData = ref('')
+// 存储从子组件传递来的instrumentData数据
+const instrumentData = ref('')
 
 onMounted(() => {
     // 自动适配
@@ -211,6 +231,30 @@ function handleMenuSelect(index) {
                 break;
         }
     }
+}
+
+// 处理从AnnualRDInvestment组件传递来的yftrTypeData数据
+function handleYftrTypeData(data) {
+    yftrTypeData.value = data
+    console.log('接收到的yftrTypeData数据:', data)
+}
+
+// 处理从technologyCooperation组件传递来的technologyData数据
+function handleTechnologyData(data) {
+    technologyData.value = data
+    console.log('接收到的technologyData数据:', data)
+}
+
+// 处理从progressOfNewDrugDevelopment组件传递来的drugData数据
+function handleDrugData(data) {
+    drugData.value = data
+    console.log('接收到的drugData数据:', data)
+}
+
+// 处理从progressOfMedicalDeviceApproval组件传递来的instrumentData数据
+function handleInstrumentData(data) {
+    instrumentData.value = data
+    console.log('接收到的instrumentData数据:', data)
 }
 
 // 页面加载完成

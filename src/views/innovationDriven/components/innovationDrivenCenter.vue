@@ -1,6 +1,26 @@
 <script setup>
-import { nextTick, onMounted, onBeforeUnmount } from "vue";
+import {nextTick, onMounted, onBeforeUnmount, watch} from "vue";
 import gsap from "gsap";
+
+// 添加props定义，接收来自父组件的数据
+const props = defineProps({
+    rdInvestmentValue: {
+        type: [String, Number],
+        default: ''
+    },
+    instrumentValue: {
+        type: [String, Number],
+        default: 0
+    },
+    technologyValue: {
+        type: [String, Number],
+        default: 0
+    },
+    drugValue: {
+        type: [String, Number],
+        default: 0
+    },
+})
 
 function dashed() {
     var canvas = document.querySelector('.dashed')
@@ -191,19 +211,19 @@ onBeforeUnmount(() => {
     <div class="innovation-container">
         <div class="data1">
             <span>一类创新药/个</span>
-            <p>1</p>
+            <p>{{ drugValue }}</p>
         </div>
         <div class="data2">
-            <span>关键技术攻坚/个</span>
-            <p>5</p>
+            <span>技术合作/个</span>
+            <p>{{ technologyValue }}</p>
         </div>
         <div class="data3">
             <span>二、三类医疗器械/个</span>
-            <p>7</p>
+            <p>{{ instrumentValue }}</p>
         </div>
         <div class="data4">
             <span>研发投入/亿元</span>
-            <p>2.5</p>
+            <p>{{ rdInvestmentValue }}</p>
         </div>
         <canvas class="dashed"></canvas>
         <div class="sphere">
@@ -318,7 +338,7 @@ onBeforeUnmount(() => {
     width: 50rem;
     height: 50rem;
     background: url(@/assets/images/funnel/circle.png) no-repeat center;
-    background-size: 100%;
+    background-size: 100% 100%;
     position: absolute;
     top: 20%;
     left: 50%;
@@ -334,7 +354,7 @@ onBeforeUnmount(() => {
     left: 50%;
     transform-style: preserve-3d;
     background: url(@/assets/images/funnel/53gqright.png) no-repeat center;
-    background-size: 100%;
+    background-size: 100% 100%;
     transform: translateX(-50%) rotateX(75deg);
     animation: rotate3 2s linear infinite;
 }
@@ -346,7 +366,7 @@ onBeforeUnmount(() => {
     left: 50%;
     transform-style: preserve-3d;
     background: url(@/assets/images/funnel/53gqleft.png) no-repeat center;
-    background-size: 100%;
+    background-size: 100% 100%;
     transform: translateX(-50%) rotateX(75deg);
     animation: rotate4 2s linear infinite;
 }
@@ -358,7 +378,7 @@ onBeforeUnmount(() => {
     left: 50%;
     transform-style: preserve-3d;
     background: url(@/assets/images/funnel/535gqbottomright.png) no-repeat center;
-    background-size: 100%;
+    background-size: 100% 100%;
     transform: translateX(-50%) rotateX(75deg);
     animation: rotate3 2s linear infinite;
 }
@@ -370,7 +390,7 @@ onBeforeUnmount(() => {
     left: 50%;
     transform-style: preserve-3d;
     background: url(@/assets/images/funnel/53gqbottomleft.png) no-repeat center;
-    background-size: 100%;
+    background-size: 100% 100%;
     transform: translateX(-50%) rotateX(75deg);
     animation: rotate4 2s linear infinite;
 }
@@ -407,25 +427,25 @@ onBeforeUnmount(() => {
 }
 .innovation-container .cicle8 {
     background: url(@/assets/images/funnel/circle1.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     animation: rotate5 20s linear infinite;
     color: #f29701;
 }
 .innovation-container .cicle9 {
     background: url(@/assets/images/funnel/circle2.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     animation: rotate6 20s linear infinite;
     color: #0ac1c7;
 }
 .innovation-container .cicle10 {
     background: url(@/assets/images/funnel/circle1.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     animation: rotate7 20s linear infinite;
     color: #f29701;
 }
 .innovation-container .cicle11 {
     background: url(@/assets/images/funnel/circle2.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
     color: #0ac1c7;
     animation: rotate8 20s linear infinite;
 }

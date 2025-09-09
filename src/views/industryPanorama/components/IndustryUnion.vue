@@ -22,13 +22,7 @@ import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
-
-const props = defineProps({
-    position: {
-        type: String,
-        default: 'left'
-    }
-})
+import {countEnterpriseByType} from "@/api/brain.js";
 
 const state = reactive({
   pieDataColor: ["#17E6C3", "#40CFFF", "#1979FF", "#FFC472", "#E673FF", "#FF8C42", "#73FFFE"],
@@ -62,6 +56,34 @@ const state = reactive({
       value: 4,
     },
   ],
+})
+
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    await getCountEnterpriseByType()
+}
+
+function getCountEnterpriseByType() {
+    return countEnterpriseByType().then(response => {
+        state.pieData = response.data.map((it, index) => {
+            option.value.series[0].data[index].value = it.count
+            option.value.series[0].data[index].name = it.dictLabel
+            return {
+                name: it.dictLabel,
+                value: it.count
+            }
+        })
+    });
+}
+
+const props = defineProps({
+    position: {
+        type: String,
+        default: 'left'
+    }
 })
 const option = ref({
   tooltip: {

@@ -1,15 +1,12 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import {ref, onMounted, onUnmounted, watch, nextTick} from 'vue';
 import mCard from "@/components/mCard/index.vue"
 import * as echarts from 'echarts';
 import { gsap } from 'gsap';
+import {listFundDataAll, listFundTypeAll} from "@/api/brain.js";
 
 // Props for the component to be dynamic
 const props = defineProps({
-    currentValue: {
-        type: Number,
-        required: true
-    },
     goalValue: {
         type: Number,
         default: 200
@@ -23,6 +20,9 @@ const props = defineProps({
 const gaugeChartRef = ref(null);
 let gaugeChartInstance = null;
 const animatedValue = ref(0.0);
+
+const jhztzTypeId = ref('')
+const jhztzData = ref('')
 
 // ECharts option based on the provided HTML
 const getOption = (value) => {
@@ -107,6 +107,16 @@ const getOption = (value) => {
 
 // Lifecycle hooks
 onMounted(() => {
+    init()
+});
+
+async function init() {
+    await getListFundTypeAll()
+    await getListFundDataAll(jhztzTypeId.value)
+    // 数据加载完成后刷新图表
+    await nextTick()
+    // 图表会在v-if条件满足后自动渲染，无需手动调用setOption
+
     // Initialize ECharts instance on component mount
     gaugeChartInstance = echarts.init(gaugeChartRef.value);
     gaugeChartInstance.setOption(getOption(0)); // Initialize with 0 to show the animation
@@ -120,14 +130,34 @@ onMounted(() => {
             gaugeChartInstance.resize();
         }
     });
-});
+}
+
+async function getListFundTypeAll() {
+    try {
+        const response = await listFundTypeAll()
+        jhztzTypeId.value = response.find(it => it.code === 'jhztz').id;
+    } catch (error) {
+        console.error('获取基金类型数据失败:', error)
+        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+    }
+}
+
+async function getListFundDataAll(id) {
+    try {
+        const response = await listFundDataAll({fundTypeId: id})
+        jhztzData.value =  response[response.length - 1].value
+    } catch (error) {
+        console.error(`获取基金数据失败 (id: ${id}, index: ${index}):`, error)
+        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+    }
+}
 
 // Function to run the animations for both number and gauge
 const animateValues = () => {
     // Use GSAP for a smooth number count-up animation
     gsap.to(animatedValue, {
         duration: props.animationDuration,
-        value: props.currentValue,
+        value: jhztzData.value,
         onUpdate: () => {
             // Ensure the animated value is formatted correctly
             animatedValue.value = parseFloat(animatedValue.value.toFixed(1));
@@ -138,8 +168,8 @@ const animateValues = () => {
     if (gaugeChartInstance) {
         gaugeChartInstance.setOption({
             series: [
-                { data: [{ value: props.currentValue }] },
-                { data: [{ value: props.currentValue }] }
+                { data: [{ value: jhztzData.value }] },
+                { data: [{ value: jhztzData.value }] }
             ]
         });
     }
@@ -158,8 +188,8 @@ onUnmounted(() => {
     });
 });
 
-// Watch for changes in the 'currentValue' prop to trigger new animations
-watch(() => props.currentValue, () => {
+// Watch for changes in the 'jhztzData' prop to trigger new animations
+watch(() => jhztzData.value, () => {
     animateValues();
 });
 
