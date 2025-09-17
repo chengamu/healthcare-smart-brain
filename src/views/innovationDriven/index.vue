@@ -1,6 +1,7 @@
 <template>
     <div class="large-screen">
-        <innovation-driven-background></innovation-driven-background>
+        <!-- 背景组件初始隐藏，3D加载完成后显示 -->
+        <innovation-driven-background class="page-background"></innovation-driven-background>
         <div class="large-screen-wrap" id="large-screen">
             <m-header title="绍兴医疗健康产业大脑" sub-text="Shaoxing Medical And Health Industry Community">
                 <!--右侧 日期 -->
@@ -34,21 +35,98 @@
                     </annual-r-d-investment>
                     <!--创新平台支撑-->
                     <innovation-platform-support></innovation-platform-support>
-                    <!--“四题一评”创新机制-->
-<!--                    <innovation-mechanism></innovation-mechanism>-->
                     <!--技术合作-->
                     <technology-cooperation @update:technologyData="handleTechnologyData"></technology-cooperation>
                 </div>
             </div>
-            <!-- 中间布局 -->
+            <!-- 中间布局：满屏3D分子结构背景 -->
             <div class="center-wrap">
-                <!--全链条创新转化漏斗-->
-                <innovation-driven-center
+                <!--全链条创新转化分子结构背景-->
+                <innovation-molecule-center
                     :rd-investment-value="yftrTypeData"
                     :instrument-value="instrumentData"
                     :technology-value="technologyData"
-                    :drug-value="drugData"
-                ></innovation-driven-center>
+                    :drug-value="drugValue"
+                ></innovation-molecule-center>
+                
+                <!-- 顶部数据大屏展示 -->
+                <div class="top-data-dashboard">
+                    <div class="dashboard-header">
+                        <div class="title-section">
+                            <div class="main-title">创新生态分子结构</div>
+                            <div class="sub-title">绍兴医疗健康产业创新网络可视化</div>
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">⚡</div>
+                            <div class="metric-content">
+                                <div class="metric-label">研发投入核心</div>
+                                <div class="metric-value">{{ yftrTypeData }}<span class="unit">亿元</span></div>
+                                <!-- <div class="metric-trend">同比增长 12.5%</div> -->
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon">💊</div>
+                            <div class="metric-content">
+                                <div class="metric-label">一类新药研发</div>
+                                <div class="metric-value">{{ drugData }}<span class="unit">个</span></div>
+                                <!-- <div class="metric-trend">在研项目 15 个</div> -->
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon">🏥</div>
+                            <div class="metric-content">
+                                <div class="metric-label">医疗器械器械</div>
+                                <div class="metric-value">{{ instrumentData }}<span class="unit">个</span></div>
+                                <!-- <div class="metric-trend">二三类器械产品</div> -->
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon">🤝</div>
+                            <div class="metric-content">
+                                <div class="metric-label">技术合作网络</div>
+                                <div class="metric-value">{{ technologyData }}<span class="unit">项</span></div>
+                                <!-- <div class="metric-trend">涉及企业 28 家</div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 底部元素类型说明 -->
+                <div class="bottom-molecule-legend">
+                    <div class="legend-title">元素类型说明</div>
+                    <div class="legend-elements">
+                        <div class="element-item">
+                            <div class="element-atom core">C</div>
+                            <span>研发核心</span>
+                        </div>
+                        <div class="element-item">
+                            <div class="element-atom platform">N</div>
+                            <span>创新平台</span>
+                        </div>
+                        <div class="element-item">
+                            <div class="element-atom tech">S</div>
+                            <span>技术网络</span>
+                        </div>
+                        <div class="element-item">
+                            <div class="element-atom drug">Au</div>
+                            <span>新药研发</span>
+                        </div>
+                        <div class="element-item">
+                            <div class="element-atom device">Fe</div>
+                            <span>医疗器械</span>
+                        </div>
+                        <div class="element-item">
+                            <div class="element-atom support">K</div>
+                            <span>支撑设施</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
@@ -129,9 +207,9 @@ import UtilizationRateOfSharedEquipment from "@/views/industryPanorama/component
 import ProgressOfMedicalDeviceApproval from "@/views/innovationDriven/components/progressOfMedicalDeviceApproval.vue";
 import ProgressOfNewDrugDevelopment from "@/views/innovationDriven/components/progressOfNewDrugDevelopment.vue";
 import InnovationPlatformSupport from "@/views/innovationDriven/components/innovationPlatformSupport.vue";
-import InnovationMechanism from "@/views/innovationDriven/components/innovationMechanism.vue";
+// 恢复背景组件，但在3D加载完成后才显示
 import InnovationDrivenBackground from "@/views/innovationDriven/components/innovationDrivenBackground.vue";
-import InnovationDrivenCenter from "@/views/innovationDriven/components/innovationDrivenCenter.vue";
+import InnovationMoleculeCenter from "@/views/innovationDriven/components/innovationMoleculeCenter.vue";
 import TechnologyCooperation from "@/views/innovationDriven/components/technologyCooperation.vue";
 
 const { currentTime } = useCurrentTime('YYYY-MM-DD HH:mm:ss')
@@ -161,8 +239,16 @@ onMounted(() => {
         resize: true,
     })
     
+    // 监听3D分子结构动画完成事件
+    window.addEventListener('moleculeAnimationComplete', handleMoleculeAnimationComplete);
+    
     // 模拟加载过程
     simulateLoading()
+})
+
+onBeforeUnmount(() => {
+    // 清理事件监听器
+    window.removeEventListener('moleculeAnimationComplete', handleMoleculeAnimationComplete);
 })
 
 // 模拟加载过程
@@ -259,54 +345,92 @@ function handleInstrumentData(data) {
 
 // 页面加载完成
 function handlePageLoadComplete() {
-    // 触发自定义事件，通知子组件开始动画
-    const event1 = new CustomEvent('backgroundLoaded');
-    window.dispatchEvent(event1);
-
+    console.log('页面加载完成，开始3D分子结构动画')
+    // 首先触发中心分子结构的震撼开场动画
     const event2 = new CustomEvent('pageLoaded');
     window.dispatchEvent(event2);
     
+    // 移除固定延时，改为事件驱动
+    // 等待3D分子结构动画自己完成后触发 moleculeAnimationComplete 事件
+}
+
+// 3D分子结构动画完成回调
+function handleMoleculeAnimationComplete() {
+    console.log('3D分子结构动画完成，开始加载背景和UI元素')
+    showBackgroundAndUI()
+}
+
+// 显示背景和UI元素的动画
+function showBackgroundAndUI() {
     let tl = gsap.timeline({ paused: false })
     let leftCards = gsap.utils.toArray(".left-card")
     let rightCards = gsap.utils.toArray(".right-card")
     let countCards = gsap.utils.toArray(".count-card")
-    tl.addLabel("start", 0.5)
-    tl.addLabel("menu", 0.5)
-    tl.addLabel("card", 1)
-    tl.addLabel("countCard", 3)
-    tl.to(".m-header", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "start")
-    tl.to(".bottom-tray", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "start")
-    tl.to(
-        ".top-menu",
-        {
+    
+    tl.addLabel("background", 0)
+    tl.addLabel("ui-start", 0.5)
+    tl.addLabel("menu", 0.7)
+    tl.addLabel("cards", 1.2)
+    tl.addLabel("dashboard", 1.5)
+    tl.addLabel("bottom", 2.0)
+    
+    // 首先显示背景
+    tl.to(".page-background", { opacity: 1, duration: 2, ease: "power2.out" }, "background")
+    
+    // 顶部元素登场
+    tl.to(".m-header", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "ui-start")
+    tl.to(".top-menu", {
+        y: 0,
+        opacity: 1,
+        duration: 1.5,
+        ease: "power4.out",
+    }, "menu")
+    
+    // 左右卡片登场
+    tl.to(leftCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "cards")
+    tl.to(rightCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "cards")
+    
+    // 数据面板登场
+    tl.to(".top-data-dashboard", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power4.out"
+    }, "dashboard")
+    
+    if(countCards.length > 0) {
+        tl.to(countCards, {
             y: 0,
             opacity: 1,
+            stagger: 0.2,
             duration: 1.5,
             ease: "power4.out",
-        },
-        "-=1"
-    )
-    tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "-=2")
-    tl.to(leftCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
-    tl.to(rightCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
-    if(countCards.length > 0) {
-        tl.to(
-            countCards,
-            {
-                y: 0,
-                opacity: 1,
-                stagger: 0.2,
-                duration: 1.5,
-                ease: "power4.out",
-            },
-            "card"
-        )
+        }, "cards")
     }
+    
+    // 底部元素登场
+    tl.to(".bottom-tray", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "bottom")
+    tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "bottom")
+    tl.to(".bottom-molecule-legend", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power4.out"
+    }, "bottom")
 }
 </script>
 
 <style lang="scss">
 @import "~@/assets/style/home.scss";
+
+/* 整体页面纯黑色背景，无任何装饰 */
+.large-screen {
+    background: #000000 !important;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
 .m-header-weather,
 .m-header-date {
     span {
@@ -362,6 +486,233 @@ function handlePageLoadComplete() {
     margin-right: inherit;
     margin-left: -5px;
 }
+/* 数据面板样式 */
+.top-data-dashboard {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1400px;
+    background: linear-gradient(135deg, 
+        rgba(0, 0, 0, 0.85) 0%, 
+        rgba(48, 220, 255, 0.08) 50%,
+        rgba(0, 0, 0, 0.85) 100%);
+    border: 2px solid rgba(48, 220, 255, 0.4);
+    border-radius: 16px;
+    padding: 24px 32px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+        0 8px 32px rgba(48, 220, 255, 0.2),
+        0 0 60px rgba(48, 220, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    z-index: 10;
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100px);
+    
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 24px;
+        
+        .title-section {
+            .main-title {
+                font-size: 28px;
+                font-weight: bold;
+                color: #30DCFF;
+                text-shadow: 
+                    0 0 20px rgba(48, 220, 255, 0.8),
+                    0 0 40px rgba(48, 220, 255, 0.4);
+                margin-bottom: 8px;
+                letter-spacing: 2px;
+            }
+            
+            .sub-title {
+                font-size: 16px;
+                color: rgba(255, 255, 255, 0.8);
+                font-weight: 300;
+            }
+        }
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        
+        .metric-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.03) 0%, 
+                rgba(48, 220, 255, 0.05) 50%,
+                rgba(255, 255, 255, 0.03) 100%);
+            border: 1px solid rgba(48, 220, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            
+            &:hover {
+                transform: translateY(-2px);
+                border-color: rgba(48, 220, 255, 0.4);
+                box-shadow: 0 8px 25px rgba(48, 220, 255, 0.15);
+            }
+            
+            &.primary {
+                background: linear-gradient(135deg, 
+                    rgba(48, 220, 255, 0.15) 0%, 
+                    rgba(48, 220, 255, 0.08) 50%,
+                    rgba(48, 220, 255, 0.15) 100%);
+                border-color: rgba(48, 220, 255, 0.4);
+                
+                .metric-value {
+                    font-size: 36px !important;
+                    color: #30DCFF !important;
+                }
+            }
+            
+            .metric-icon {
+                font-size: 24px;
+                margin-bottom: 12px;
+                opacity: 0.8;
+            }
+            
+            .metric-content {
+                .metric-label {
+                    font-size: 14px;
+                    color: rgba(255, 255, 255, 0.8);
+                    margin-bottom: 8px;
+                    font-weight: 500;
+                }
+                
+                .metric-value {
+                    font-size: 28px;
+                    font-weight: bold;
+                    color: #30DCFF;
+                    text-shadow: 0 0 15px rgba(48, 220, 255, 0.5);
+                    margin-bottom: 6px;
+                    
+                    .unit {
+                        font-size: 14px;
+                        color: #00FF88;
+                        margin-left: 4px;
+                        font-weight: normal;
+                    }
+                }
+                
+                .metric-trend {
+                    font-size: 12px;
+                    color: rgba(0, 255, 136, 0.8);
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+}
+
+/* 底部元素说明 */
+.bottom-molecule-legend {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, 
+        rgba(0, 0, 0, 0.9) 0%, 
+        rgba(0, 255, 136, 0.08) 50%,
+        rgba(0, 0, 0, 0.9) 100%);
+    border: 2px solid rgba(0, 255, 136, 0.3);
+    border-radius: 16px;
+    padding: 16px 32px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 6px 24px rgba(0, 255, 136, 0.15);
+    z-index: 10;
+    opacity: 0;
+    transform: translateX(-50%) translateY(100px);
+    
+    .legend-title {
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        color: #00FF88;
+        margin-bottom: 16px;
+        text-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
+    }
+    
+    .legend-elements {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+        
+        .element-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            
+            .element-atom {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: bold;
+                font-family: 'Consolas', monospace;
+                margin-bottom: 8px;
+                text-shadow: 0 0 10px currentColor;
+                
+                &.core {
+                    background: linear-gradient(135deg, #30DCFF, #1a8cff);
+                    color: white;
+                    box-shadow: 0 0 20px rgba(48, 220, 255, 0.6);
+                }
+                
+                &.platform {
+                    background: linear-gradient(135deg, #00FF88, #00cc6a);
+                    color: white;
+                    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+                }
+                
+                &.tech {
+                    background: linear-gradient(135deg, #8B5CF6, #6d28d9);
+                    color: white;
+                    box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+                }
+                
+                &.drug {
+                    background: linear-gradient(135deg, #FFD700, #f59e0b);
+                    color: #000;
+                    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+                }
+                
+                &.device {
+                    background: linear-gradient(135deg, #FF6B6B, #ef4444);
+                    color: white;
+                    box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+                }
+                
+                &.support {
+                    background: linear-gradient(135deg, #4ECDC4, #06b6d4);
+                    color: white;
+                    box-shadow: 0 0 20px rgba(78, 205, 196, 0.6);
+                }
+            }
+            
+            span {
+                font-size: 11px;
+                text-align: center;
+                white-space: nowrap;
+            }
+        }
+    }
+}
+
+/* 背景组件初始隐藏 */
+.page-background {
+    opacity: 0;
+}
+
 /* 初始化动画开始位置 */
 .m-header {
     transform: translateY(-100%);
@@ -374,6 +725,11 @@ function handlePageLoadComplete() {
 .count-card {
     transform: translateY(150%);
     opacity: 0;
+}
+/* 中心组件初始可见，让分子结构作为背景 */
+.center-wrap {
+    opacity: 1;
+    transform: scale(1);
 }
 .left-card {
     transform: translateX(-150%);

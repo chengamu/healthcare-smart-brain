@@ -1,12 +1,13 @@
 <template>
   <div class="right-card">
     <m-card title="创新成果转化">
-      <v-chart ref="vChart" :option="option" :autoresize="true" />
+      <v-chart ref="vChart" :option="option" :autoresize="true"/>
     </m-card>
   </div>
 </template>
+
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
+import { ref } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
@@ -39,7 +40,6 @@ const option = ref({
     },
     data: ["重医大研究中心", "绍兴生物医药创新中心"],
   },
-
   tooltip: {
     trigger: "axis",
     axisPointer: {
@@ -59,7 +59,6 @@ const option = ref({
   xAxis: [
     {
       type: "category",
-
       axisLine: {
         show: false,
         lineStyle: {
@@ -80,19 +79,9 @@ const option = ref({
       },
       data: ['2022', '2023', '2024', '2025'],
     },
-    {
-      axisLine: {
-        show: false,
-        lineStyle: {
-          color: "rgba(0,0,0,0)",
-        },
-      },
-      data: [],
-    },
   ],
   yAxis: {
     type: "value",
-
     axisLine: {
       show: false,
     },
@@ -120,17 +109,9 @@ const option = ref({
       data: [35, 45, 60, 70],
       type: "line",
       smooth: true,
-      symbol:
-          "image://data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAQ5JREFUOE+1la1OQ0EQRs8kCFIQdVCCxIBpCK1AInkDHC+B4QkwvASub4GsaE0NGCRpKhGFVDQZ+Mjem9vNbkphmWTMfjNnd3b2x0iYuxuwH7wNbIewBfAGzORm5nG6ElfM3QU6AXZSkzXG3oEnMxO8thWgux8DR2tAsfxiZs/VYA38Jazi1NBvYCizv+HK4vCRyrfQgIsf7Nm6+bSnjwIeAGeZaGnXQDfoE+ABmGbixwKeAoeJAMHuv3w30ubATQb6KqDKjZPEuAXOMysZAncJbS7gJbCVEAdAKwP8AK4S2vJfgMVLLt6UDtAreWx0W8od7OJXryq16OPwR2j6+WpAyz2wDagape7vARt9AZ+G3HmhiKS3xwAAAABJRU5ErkJggg==",
-      symbolSize: 10,
-      showSymbol: false, // 是否显示 symbol, 如果 false 则只有在 tooltip hover 的时候显示。
-      xAxisIndex: 1,
-      z: 3,
-      // 设置高亮样式
-      emphasis: {
-        focus: "none",
-        itemStyle: { color: "white" },
-      },
+      symbol: "circle",
+      symbolSize: 6,
+      showSymbol: false,
       label: {
         show: true,
         position: "top",
@@ -138,32 +119,22 @@ const option = ref({
         color: "#ffffff",
         fontSize: 8,
       },
-
       lineStyle: {
         shadowColor: "rgba(115, 208, 255, 1)",
         shadowBlur: 20,
         shadowOffsetY: 0,
-        width: 1,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: "rgba(115, 208, 255, 1)",
-          },
-          {
-            offset: 1,
-            color: "rgba(18,60,98,1)",
-          },
-        ]),
+        width: 2,
+        color: "#6BC7F6",
       },
       areaStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
           {
             offset: 0,
-            color: "rgba(25, 255, 236, 0.4)",
+            color: "rgba(107, 199, 246, 0.4)",
           },
           {
-            color: "rgba(51, 153, 255, 0)",
             offset: 1,
+            color: "rgba(107, 199, 246, 0)",
           },
         ]),
       },
@@ -173,17 +144,9 @@ const option = ref({
       data: [40, 48, 52, 65],
       type: "line",
       smooth: true,
-      symbol:
-          "image://data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAQ5JREFUOE+1la1OQ0EQRs8kCFIQdVCCxIBpCK1AInkDHC+B4QkwvASub4GsaE0NGCRpKhGFVDQZ+Mjem9vNbkphmWTMfjNnd3b2x0iYuxuwH7wNbIewBfAGzORm5nG6ElfM3QU6AXZSkzXG3oEnMxO8thWgux8DR2tAsfxiZs/VYA38Jazi1NBvYCizv+HK4vCRyrfQgIsf7Nm6+bSnjwIeAGeZaGnXQDfoE+ABmGbixwKeAoeJAMHuv3w30ubATQb6KqDKjZPEuAXOMysZAncJbS7gJbCVEAdAKwP8AK4S2vJfgMVLLt6UDtAreWx0W8od7OJXryq16OPwR2j6+WpAyz2wDagape7vARt9AZ+G3HmhiKS3xwAAAABJRU5ErkJggg==",
-      symbolSize: 10,
-      showSymbol: false, // 是否显示 symbol, 如果 false 则只有在 tooltip hover 的时候显示。
-      xAxisIndex: 1,
-      z: 0,
-      // 设置高亮样式
-      emphasis: {
-        focus: "none",
-        itemStyle: { color: "white" },
-      },
+      symbol: "circle",
+      symbolSize: 6,
+      showSymbol: false,
       label: {
         show: true,
         position: "top",
@@ -191,32 +154,22 @@ const option = ref({
         color: "#ffffff",
         fontSize: 8,
       },
-
       lineStyle: {
-        shadowColor: "rgba(69, 233, 164, 1)",
+        shadowColor: "rgba(68, 230, 162, 1)",
         shadowBlur: 20,
         shadowOffsetY: 0,
-        width: 1,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: "#45E9A4",
-          },
-          {
-            offset: 1,
-            color: "rgba(19,99,61,1)",
-          },
-        ]),
+        width: 2,
+        color: "#44E6A2",
       },
       areaStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
           {
             offset: 0,
-            color: "rgba(25, 255, 236, 0.4)",
+            color: "rgba(68, 230, 162, 0.4)",
           },
           {
-            color: "rgba(51, 153, 255, 0)",
             offset: 1,
+            color: "rgba(68, 230, 162, 0)",
           },
         ]),
       },
@@ -225,4 +178,6 @@ const option = ref({
 })
 </script>
 
-<style lang="scss"></style>
+<style scoped lang="scss">
+  
+</style>

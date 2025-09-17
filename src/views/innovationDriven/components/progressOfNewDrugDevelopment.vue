@@ -29,12 +29,8 @@ const emit = defineEmits(['update:drugData'])
 const drugData = ref('')
 
 const state = reactive({
-    pieDataColor: ["#17E6C3", "#40CFFF", "#1979FF", "#FFD700", "#FF6347"],
+    pieDataColor: ["#30DCFF", "#00FF88", "#8B5CF6", "#FFD700", "#FF6B6B"],
     pieData: [
-        // {
-        //     name: "临床前",
-        //     value: 1,
-        // },
         {
             name: "I期",
             value: 1,
@@ -82,20 +78,23 @@ async function getCountDrugByPhase() {
     }
 }
 const option = ref({
+    animationDuration: 2000,
+    animationEasing: 'cubicOut',
     tooltip: {
-        trigger: "axis",
-        axisPointer: {
-            type: "shadow",
-            shadowStyle: { opacity: 0 },
-        },
-        backgroundColor: "rgba(0,0,0,1)",
+        trigger: "item",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
         borderWidth: 1,
-        borderColor: "#999999",
+        borderColor: "#30DCFF",
         textStyle: {
             color: "#ffffff",
-            fontSize: 10,
+            fontSize: 12,
         },
-        formatter: '{b}: {c}个 ({d}%)'
+        formatter: function(params) {
+            const percent = params.percent.toFixed(1);
+            return `<div style="font-weight: bold; margin-bottom: 5px;">${params.name}</div>
+                     <div>数量: <span style="color: ${params.color}; font-weight: bold;">${params.value}个</span></div>
+                     <div>占比: <span style="color: #30DCFF; font-weight: bold;">${percent}%</span></div>`;
+        }
     },
 
     series: [
@@ -103,67 +102,74 @@ const option = ref({
             name: "一类新药研发进度",
             type: "pie",
             itemStyle: {
-                borderWidth: 5,
-                borderColor: "rgba(26, 57, 77,1)",
+                borderWidth: 3,
+                borderColor: "rgba(0, 0, 0, 0.8)",
             },
             label: { show: false },
             radius: ["55%", "70%"],
-            color: ["#17E6C3", "#40CFFF", "#1979FF", "#FFD700", "#FF6347"],
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 15,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(48, 220, 255, 0.6)'
+                },
+                scale: true,
+                scaleSize: 5
+            },
+            animationDuration: 2000,
+            animationEasing: 'cubicOut',
 
             data: [
-                // {
-                //     value: 1,
-                //     name: "临床前",
-                //     itemStyle: {
-                //         //颜色渐变
-                //         color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-                //             { offset: 0, color: "rgba(3,65,128,1)" },
-                //             { offset: 1, color: "rgba(115,208,255,1)" },
-                //         ]),
-                //     },
-                // },
                 {
                     value: 1,
                     name: "I期",
                     itemStyle: {
-                        //颜色渐变
                         color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-                            { offset: 0, color: "rgba(11, 77, 44, 1)" },
-                            { offset: 1, color: "rgba(77, 255, 181, 1)" },
+                            { offset: 0, color: "#30DCFF" },
+                            { offset: 0.5, color: "#20B2FF" },
+                            { offset: 1, color: "#1A90FF" },
                         ]),
+                        shadowColor: '#30DCFF',
+                        shadowBlur: 8
                     },
                 },
                 {
                     value: 1,
                     name: "II期",
                     itemStyle: {
-                        //颜色渐变
                         color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-                            { offset: 0, color: "rgba(117, 117, 117, 1)" },
-                            { offset: 1, color: "rgba(230, 230, 230, 1)" },
+                            { offset: 0, color: "#00FF88" },
+                            { offset: 0.5, color: "#00E077" },
+                            { offset: 1, color: "#00C266" },
                         ]),
+                        shadowColor: '#00FF88',
+                        shadowBlur: 8
                     },
                 },
                 {
                     value: 1,
                     name: "III期",
                     itemStyle: {
-                        //颜色渐变
                         color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-                            { offset: 0, color: "rgba(150, 80, 10, 1)" },
-                            { offset: 1, color: "rgba(255, 215, 0, 1)" },
+                            { offset: 0, color: "#8B5CF6" },
+                            { offset: 0.5, color: "#7C3AED" },
+                            { offset: 1, color: "#6D28D9" },
                         ]),
+                        shadowColor: '#8B5CF6',
+                        shadowBlur: 8
                     },
                 },
                 {
                     value: 1,
                     name: "获批",
                     itemStyle: {
-                        //颜色渐变
                         color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-                            { offset: 0, color: "rgba(180, 30, 30, 1)" },
-                            { offset: 1, color: "rgba(255, 99, 71, 1)" },
+                            { offset: 0, color: "#FFD700" },
+                            { offset: 0.5, color: "#FFB700" },
+                            { offset: 1, color: "#FF9500" },
                         ]),
+                        shadowColor: '#FFD700',
+                        shadowBlur: 8
                     },
                 },
             ],
@@ -194,8 +200,10 @@ const option = ref({
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            color: #c4e3fd;
+            font-size: 14px;
+            color: #30DCFF;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(48, 220, 255, 0.6);
         }
         &:after {
             position: absolute;
@@ -214,6 +222,42 @@ const option = ref({
     }
     .pie-legend {
         padding-left: 30px;
+        
+        .pie-legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            
+            .icon {
+                width: 12px;
+                height: 12px;
+                border-radius: 2px;
+                margin-right: 8px;
+                border: 2px solid;
+            }
+            
+            .name {
+                flex: 1;
+                font-size: 14px;
+                color: #30DCFF;
+                font-weight: 500;
+                text-shadow: 0 0 6px rgba(48, 220, 255, 0.4);
+                margin-right: 10px;
+            }
+            
+            .value {
+                font-size: 16px;
+                font-weight: bold;
+                color: #ffffff;
+                text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+                
+                .unit {
+                    font-size: 12px;
+                    color: rgba(255, 255, 255, 0.7);
+                    margin-left: 2px;
+                }
+            }
+        }
     }
 }
 </style>

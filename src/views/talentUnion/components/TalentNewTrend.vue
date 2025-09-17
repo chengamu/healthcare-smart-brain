@@ -66,7 +66,7 @@ const option = ref({
       lineHeight: 156,
     },
   },
-  color: ["#73D0FF", "#FFC107", "#DC143C"],
+  color: ["#00FF88", "#30DCFF", "#8B5CF6"],
   xAxis: [
     {
       type: "category",

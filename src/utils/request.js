@@ -76,7 +76,7 @@ service.interceptors.response.use(res => {
     if (res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer') {
       return res.data
     }
-    if (code === 401 || (code === 500 && msg === '未能读取到有效 token')) {
+    if (code === 401 || (code === 500 && (msg === '未能读取到有效 token' || msg.indexOf('token 无效') === 0 ))) {
       // 登录过期直接跳转到登录页面
       useUserStore().logOut().then(() => {
         // 获取当前路由路径

@@ -74,56 +74,78 @@ async function getListFundDataAll(id, index) {
 const option = computed(() => ({
     title: {
         text: "亿元",
-        left: "5%",
-        top: "8%",
+        left: "8%",
+        top: "12%",
         textStyle: {
-            color: "#D3F8F2",
-            fontSize: 8,
+            color: "#30DCFF",
+            fontSize: 12,
+            fontWeight: 'bold'
         },
     },
     grid: {
-        left: "12%",
+        left: "15%",
         top: "25%",
-        width: "82%",
-        height: "55%",
+        width: "78%",
+        height: "60%",
     },
     legend: {
-        top: "4%",
+        top: "8%",
         icon: "circle",
-        itemWidth: 8,
-        itemHeight: 8,
+        itemWidth: 10,
+        itemHeight: 10,
+        itemGap: 20,
         textStyle: {
-            color: "#90979c",
-            fontSize: 12,
-            lineHeight: 20,
+            color: "#ffffff",
+            fontSize: 13,
+            fontWeight: '500'
         },
-        data: ["产业规模", "总投资"],
+        data: [
+            {
+                name: "产业规模",
+                itemStyle: { color: '#30DCFF' }
+            },
+            {
+                name: "总投资",
+                itemStyle: { color: '#00FF88' }
+            }
+        ],
     },
-
     tooltip: {
         trigger: "axis",
         axisPointer: {
-            type: "shadow",
-            shadowStyle: {opacity: 0.2},
+            type: "line",
+            lineStyle: {
+                color: '#30DCFF',
+                width: 2
+            }
         },
-        backgroundColor: "rgba(0,0,0,1)",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
         borderWidth: 1,
-        borderColor: "#999999",
+        borderColor: "#30DCFF",
         textStyle: {
             color: "#ffffff",
-            fontSize: 10,
-            lineHeight: 156,
+            fontSize: 12
         },
+        formatter: function(params) {
+            let result = `<div style="font-weight: bold; margin-bottom: 5px;">${params[0].axisValue}年</div>`;
+            params.forEach(param => {
+                result += `<div style="margin: 3px 0;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background: ${param.color}; border-radius: 50%; margin-right: 8px;"></span>
+                    ${param.seriesName}: <span style="color: ${param.color}; font-weight: bold;">${param.value}亿元</span>
+                </div>`;
+            });
+            return result;
+        }
     },
-    color: ["#6BC7F6", "#44E6A2"],
+    color: ["#30DCFF", "#00FF88"],
     xAxis: [
         {
             type: "category",
-
             axisLine: {
-                show: false,
+                show: true,
                 lineStyle: {
-                    color: "#435459",
+                    color: "rgba(48, 220, 255, 0.3)",
+                    width: 1
                 },
             },
             axisTick: {
@@ -134,25 +156,15 @@ const option = computed(() => ({
             },
             axisLabel: {
                 color: "#ffffff",
-                fontSize: 10,
+                fontSize: 11,
                 interval: 0,
-                padding: [0, 0, 0, 0],
+                fontWeight: '500'
             },
             data: xAxisData.value,
-        },
-        {
-            axisLine: {
-                show: false,
-                lineStyle: {
-                    color: "rgba(0,0,0,0)",
-                },
-            },
-            data: [],
-        },
+        }
     ],
     yAxis: {
         type: "value",
-
         axisLine: {
             show: false,
         },
@@ -162,16 +174,15 @@ const option = computed(() => ({
         splitLine: {
             show: true,
             lineStyle: {
-                type: [2, 2],
-                dashOffset: 5,
-                color: ["rgba(255, 255, 255, 1)"],
-                opacity: 1,
-                width: 0.3,
+                type: 'dashed',
+                color: ["rgba(48, 220, 255, 0.2)"],
+                width: 1,
             },
         },
         axisLabel: {
-            color: "#8B9EA4",
-            fontSize: 9,
+            color: "#ffffff",
+            fontSize: 10,
+            opacity: 0.8
         },
     },
     series: [
@@ -180,109 +191,101 @@ const option = computed(() => ({
             data: yAxisData.value[0],
             type: xAxisData.value.length === 1 ? "bar" : "line",
             smooth: true,
-            symbol:
-                "image://data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAQ5JREFUOE+1la1OQ0EQRs8kCFIQdVCCxIBpCK1AInkDHC+B4QkwvASub4GsaE0NGCRpKhGFVDQZ+Mjem9vNbkphmWTMfjNnd3b2x0iYuxuwH7wNbIewBfAGzORm5nG6ElfM3QU6AXZSkzXG3oEnMxO8thWgux8DR2tAsfxiZs/VYA38Jazi1NBvYCizv+HK4vCRyrfQgIsf7Nm6+bSnjwIeAGeZaGnXQDfoE+ABmGbixwKeAoeJAMHuv3w30ubATQb6KqDKjZPEuAXOMysZAncJbS7gJbCVEAdAKwP8AK4S2vJfgMVLLt6UDtAreWx0W8od7OJXryq16OPwR2j6+WpAyz2wDagape7vARt9AZ+G3HmhiKS3xwAAAABJRU5ErkJggg==",
-            symbolSize: 10,
-            showSymbol: false, // 是否显示 symbol, 如果 false 则只有在 tooltip hover 的时候显示。
-            xAxisIndex: 1,
-            z: 3,
-            // 设置高亮样式
+            symbol: 'circle',
+            symbolSize: 8,
+            showSymbol: true,
+            lineStyle: {
+                width: 3,
+                shadowColor: '#30DCFF',
+                shadowBlur: 10
+            },
+            itemStyle: {
+                color: '#30DCFF',
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                shadowColor: '#30DCFF',
+                shadowBlur: 8
+            },
+            areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(48, 220, 255, 0.3)' },
+                    { offset: 1, color: 'rgba(48, 220, 255, 0.05)' }
+                ])
+            },
             emphasis: {
-                focus: "none",
-                itemStyle: {color: "white"},
+                focus: "series",
+                itemStyle: { 
+                    color: "#ffffff",
+                    borderColor: '#30DCFF',
+                    shadowBlur: 15
+                },
             },
             label: {
                 show: true,
                 position: "top",
-                distance: 10,
-                color: "#ffffff",
-                fontSize: 8,
+                distance: 8,
+                color: "#30DCFF",
+                fontSize: 10,
+                fontWeight: 'bold',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                padding: [2, 4],
+                borderRadius: 3
             },
-
-            lineStyle: {
-                shadowColor: "rgba(115, 208, 255, 1)",
-                shadowBlur: 20,
-                shadowOffsetY: 0,
-                width: 1,
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                        offset: 0,
-                        color: "rgba(115, 208, 255, 1)",
-                    },
-                    {
-                        offset: 1,
-                        color: "rgba(18,60,98,1)",
-                    },
-                ]),
-            },
-            areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                        offset: 0,
-                        color: "rgba(25, 255, 236, 0.4)",
-                    },
-                    {
-                        color: "rgba(51, 153, 255, 0)",
-                        offset: 1,
-                    },
-                ]),
-            },
+            animationDuration: 2000,
+            animationEasing: 'cubicOut'
         },
         {
             name: "总投资",
             data: yAxisData.value[1],
             type: xAxisData.value.length === 1 ? "bar" : "line",
             smooth: true,
-            symbol:
-                "image://data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAQ5JREFUOE+1la1OQ0EQRs8kCFIQdVCCxIBpCK1AInkDHC+B4QkwvASub4GsaE0NGCRpKhGFVDQZ+Mjem9vNbkphmWTMfjNnd3b2x0iYuxuwH7wNbIewBfAGzORm5nG6ElfM3QU6AXZSkzXG3oEnMxO8thWgux8DR2tAsfxiZs/VYA38Jazi1NBvYCizv+HK4vCRyrfQgIsf7Nm6+bSnjwIeAGeZaGnXQDfoE+ABmGbixwKeAoeJAMHuv3w30ubATQb6KqDKjZPEuAXOMysZAncJbS7gJbCVEAdAKwP8AK4S2vJfgMVLLt6UDtAreWx0W8od7OJXryq16OPwR2j6+WpAyz2wDagape7vARt9AZ+G3HmhiKS3xwAAAABJRU5ErkJggg==",
-            symbolSize: 10,
-            showSymbol: false, // 是否显示 symbol, 如果 false 则只有在 tooltip hover 的时候显示。
-            xAxisIndex: 1,
-            z: 0,
-            // 设置高亮样式
+            symbol: 'circle',
+            symbolSize: 8,
+            showSymbol: true,
+            lineStyle: {
+                width: 3,
+                shadowColor: '#00FF88',
+                shadowBlur: 10
+            },
+            itemStyle: {
+                color: '#00FF88',
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                shadowColor: '#00FF88',
+                shadowBlur: 8
+            },
+            areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(0, 255, 136, 0.3)' },
+                    { offset: 1, color: 'rgba(0, 255, 136, 0.05)' }
+                ])
+            },
             emphasis: {
-                focus: "none",
-                itemStyle: {color: "white"},
+                focus: "series",
+                itemStyle: { 
+                    color: "#ffffff",
+                    borderColor: '#00FF88',
+                    shadowBlur: 15
+                },
             },
             label: {
                 show: true,
                 position: "top",
-                distance: 10,
-                color: "#ffffff",
-                fontSize: 8,
+                distance: 8,
+                color: "#00FF88",
+                fontSize: 10,
+                fontWeight: 'bold',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                padding: [2, 4],
+                borderRadius: 3
             },
-
-            lineStyle: {
-                shadowColor: "rgba(69, 233, 164, 1)",
-                shadowBlur: 20,
-                shadowOffsetY: 0,
-                width: 1,
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                        offset: 0,
-                        color: "#45E9A4",
-                    },
-                    {
-                        offset: 1,
-                        color: "rgba(19,99,61,1)",
-                    },
-                ]),
-            },
-            areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                        offset: 0,
-                        color: "rgba(25, 255, 236, 0.4)",
-                    },
-                    {
-                        color: "rgba(51, 153, 255, 0)",
-                        offset: 1,
-                    },
-                ]),
-            },
+            animationDuration: 2000,
+            animationDelay: 500,
+            animationEasing: 'cubicOut'
         },
     ],
-}))
+}));
+
 </script>
 
 <style lang="scss"></style>

@@ -64,16 +64,97 @@ const serviceData = ref([
     justify-content: space-around;
     width: 100%;
     height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(220, 38, 38, 0.05) 0%, 
+        rgba(239, 68, 68, 0.05) 50%,
+        rgba(185, 28, 28, 0.05) 100%);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    box-sizing: border-box;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #dc2626, transparent);
+        animation: shimmer 3s infinite;
+    }
 }
 
 .service-data {
-    width: 12.5rem;
-    height: 10rem;
-    background-image: url("@/assets/images/redCore/bg_data_1.png");
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+    width: 13rem;
+    height: 11rem;
+    background: linear-gradient(135deg, 
+        rgba(220, 38, 38, 0.8) 0%, 
+        rgba(239, 68, 68, 0.7) 50%,
+        rgba(185, 28, 28, 0.8) 100%);
+    border: 2px solid rgba(220, 38, 38, 0.6);
+    border-radius: 16px;
     color: #ffffff;
-    /*padding: 2rem 1.5rem;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 16px;
+    box-sizing: border-box;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: slide 4s infinite;
+    }
+    
+    &::after {
+        content: '🎆';
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        font-size: 16px;
+        animation: twinkle 2s infinite;
+    }
+    
+    &:hover {
+        transform: translateY(-8px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(220, 38, 38, 0.5);
+        border-color: rgba(239, 68, 68, 0.8);
+    }
+    
+    &:nth-child(1) {
+        border-left: 4px solid #22c55e;
+        
+        &::after {
+            content: '🏦';
+        }
+    }
+    
+    &:nth-child(2) {
+        border-left: 4px solid #f97316;
+        
+        &::after {
+            content: '🔧';
+        }
+    }
+    
+    &:nth-child(3) {
+        border-left: 4px solid #ef4444;
+        
+        &::after {
+            content: '📊';
+        }
+    }
 }
 
 .service-top, .service-bottom {
@@ -81,34 +162,72 @@ const serviceData = ref([
     align-items: center;
     justify-content: center;
     width: 100%;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 0.4rem;
+    margin-bottom: 0.8rem;
+    position: relative;
+    z-index: 2;
 }
 
 .service-bottom {
-    align-items: end;
+    align-items: center;
+    flex-direction: column;
 }
 
 .service-icon {
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+}
+
+.service-name {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
 }
 
 .service-num {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
+    font-size: 2.5rem;
+    line-height: 3rem;
     font-weight: bold;
+    background: linear-gradient(45deg, #fbbf24, #ffffff, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+        animation: glow 2s infinite alternate;
+    }
 }
 
 .service-unit {
-    font-size: 0.875rem;
-    line-height: 2rem;
-    font-weight: 400;
-    /*color: rgb(3, 83, 176);*/
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 500;
+    color: #f3f4f6;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
+
 .main-container {
     display: flex;
     align-items: center;
@@ -121,5 +240,30 @@ const serviceData = ref([
     display: flex;
     height: calc(100% - 3rem);
     gap: 0.25rem;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes slide {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes twinkle {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 5px #fbbf24; }
+    to { box-shadow: 0 0 15px #fbbf24; }
 }
 </style>

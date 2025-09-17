@@ -1,11 +1,10 @@
 <script setup>
-import {ref, onMounted, onUnmounted, watch, nextTick} from 'vue';
+import {ref, onMounted, computed, watch, nextTick} from 'vue';
 import mCard from "@/components/mCard/index.vue"
-import * as echarts from 'echarts';
+import CountTo from "@/components/mCountTo/index.js"
 import { gsap } from 'gsap';
 import {listFundDataAll, listFundTypeAll} from "@/api/brain.js";
 
-// Props for the component to be dynamic
 const props = defineProps({
     goalValue: {
         type: Number,
@@ -13,95 +12,29 @@ const props = defineProps({
     },
     animationDuration: {
         type: Number,
-        default: 2
+        default: 3
     }
 });
 
-const gaugeChartRef = ref(null);
-let gaugeChartInstance = null;
 const animatedValue = ref(0.0);
-
 const jhztzTypeId = ref('')
 const jhztzData = ref('')
 
-// ECharts option based on the provided HTML
-const getOption = (value) => {
+// 计算属性
+const progressPercentage = computed(() => {
+    return Math.min((animatedValue.value / props.goalValue) * 100, 100);
+});
+
+// 装饰数据点位置
+const getDataPointStyle = (index) => {
+    const angle = (index - 1) * 45; // 0, 45, 90, 135, 180度
+    const radius = 60 + Math.random() * 20;
+    const x = Math.cos(angle * Math.PI / 180) * radius;
+    const y = Math.sin(angle * Math.PI / 180) * radius;
     return {
-        series: [
-            {
-                type: 'gauge',
-                radius: '100%',
-                startAngle: 210,
-                endAngle: -30,
-                min: 0,
-                max: props.goalValue,
-                splitNumber: 10,
-                pointer: { show: false },
-                axisLine: {
-                    lineStyle: {
-                        width: 2,
-                        color: [[1, 'rgba(0, 191, 255, 0.3)']],
-                        shadowColor: 'rgba(0, 191, 255, 0.5)',
-                        shadowBlur: 15
-                    }
-                },
-                axisTick: {
-                    length: 6,
-                    lineStyle: { color: 'auto' }
-                },
-                splitLine: {
-                    length: 10,
-                    lineStyle: { color: 'auto' }
-                },
-                axisLabel: {
-                    color: '#fff',
-                    fontSize: 12
-                },
-                data: [{ value: value }],
-                detail: {
-                    show: true,
-                    fontSize: 20,
-                    color: '#fff',
-                    offsetCenter: [0, '0%'],
-                    fontWeight: 'bold',
-                    formatter: function (val) {
-                        return ((val / props.goalValue) * 100).toFixed(2) + '%';
-                    }
-                }
-            },
-            {
-                type: 'gauge',
-                radius: '85%',
-                startAngle: 210,
-                endAngle: -30,
-                min: 0,
-                max: props.goalValue,
-                pointer: { show: false },
-                axisLine: {
-                    lineStyle: {
-                        width: 12,
-                        color: [[1, 'rgba(100, 100, 100, 0.2)']]
-                    }
-                },
-                progress: {
-                    show: true,
-                    width: 12,
-                    itemStyle: {
-                        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-                            { offset: 0, color: '#FFA500' },
-                            { offset: 1, color: '#FFD700' }
-                        ]),
-                        shadowColor: 'rgba(255, 215, 0, 0.5)',
-                        shadowBlur: 10
-                    }
-                },
-                axisTick: { show: false },
-                splitLine: { show: false },
-                axisLabel: { show: false },
-                detail: { show: false },
-                data: [{ value: value }]
-            }
-        ]
+        left: `calc(50% + ${x}px)`,
+        top: `calc(50% + ${y}px)`,
+        animationDelay: `${index * 0.5}s`
     };
 };
 
@@ -113,23 +46,9 @@ onMounted(() => {
 async function init() {
     await getListFundTypeAll()
     await getListFundDataAll(jhztzTypeId.value)
-    // 数据加载完成后刷新图表
+    // 数据加载完成后启动动画
     await nextTick()
-    // 图表会在v-if条件满足后自动渲染，无需手动调用setOption
-
-    // Initialize ECharts instance on component mount
-    gaugeChartInstance = echarts.init(gaugeChartRef.value);
-    gaugeChartInstance.setOption(getOption(0)); // Initialize with 0 to show the animation
-
-    // Start the animations after a short delay
     setTimeout(animateValues, 500);
-
-    // Add a resize listener to make the chart responsive
-    window.addEventListener('resize', () => {
-        if (gaugeChartInstance) {
-            gaugeChartInstance.resize();
-        }
-    });
 }
 
 async function getListFundTypeAll() {
@@ -138,57 +57,44 @@ async function getListFundTypeAll() {
         jhztzTypeId.value = response.find(it => it.code === 'jhztz').id;
     } catch (error) {
         console.error('获取基金类型数据失败:', error)
-        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
     }
 }
 
 async function getListFundDataAll(id) {
     try {
         const response = await listFundDataAll({fundTypeId: id})
-        jhztzData.value =  response[response.length - 1].value
+        jhztzData.value = response[response.length - 1].value
     } catch (error) {
-        console.error(`获取基金数据失败 (id: ${id}, index: ${index}):`, error)
-        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+        console.error(`获取基金数据失败 (id: ${id}):`, error)
     }
 }
 
-// Function to run the animations for both number and gauge
+// 动画函数
 const animateValues = () => {
-    // Use GSAP for a smooth number count-up animation
+    // 使用GSAP实现平滑的数字动画
     gsap.to(animatedValue, {
         duration: props.animationDuration,
         value: jhztzData.value,
+        ease: "power2.out",
         onUpdate: () => {
-            // Ensure the animated value is formatted correctly
             animatedValue.value = parseFloat(animatedValue.value.toFixed(1));
         }
     });
-
-    // Update ECharts with the new value
-    if (gaugeChartInstance) {
-        gaugeChartInstance.setOption({
-            series: [
-                { data: [{ value: jhztzData.value }] },
-                { data: [{ value: jhztzData.value }] }
-            ]
-        });
-    }
+    
+    // 添加容器动画
+    gsap.fromTo('.investment-container', 
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1, duration: 1, ease: "back.out(1.7)" }
+    );
+    
+    // 添加信息项动画
+    gsap.fromTo('.info-item',
+        { x: 50, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1, stagger: 0.2, delay: 0.5, ease: "power3.out" }
+    );
 };
 
-onUnmounted(() => {
-    // Dispose of the ECharts instance to prevent memory leaks
-    if (gaugeChartInstance) {
-        gaugeChartInstance.dispose();
-    }
-    // Remove the resize listener
-    window.removeEventListener('resize', () => {
-        if (gaugeChartInstance) {
-            gaugeChartInstance.resize();
-        }
-    });
-});
-
-// Watch for changes in the 'jhztzData' prop to trigger new animations
+// 监听数据变化
 watch(() => jhztzData.value, () => {
     animateValues();
 });
@@ -198,130 +104,283 @@ watch(() => jhztzData.value, () => {
 <template>
     <div class="left-card">
         <m-card title="总投资完成情况">
-            <div class="count-card corridor-container">
-                <div class="timeline-axis">
-
-                    <!-- ECharts Gauge Section -->
-                    <div class="goal-section-echarts">
-                        <div id="echarts-gauge" ref="gaugeChartRef"></div>
-                        <div class="target-label-container">
-                            <div class="target-label-text">目标: {{ goalValue }}亿</div>
-                            <div class="target-label-base"></div>
+            <div class="investment-container">
+                <!-- 主要数值显示区域 -->
+                <div class="main-value-section">
+                    <div class="value-display">
+                        <div class="current-value">
+                            <CountTo 
+                                :startVal="0" 
+                                :endVal="animatedValue" 
+                                :decimals="1" 
+                                :duration="3000" 
+                                :autoplay="true"
+                                class="value-number"
+                            />
+                            <span class="value-unit">亿元</span>
+                        </div>
+                        <div class="value-label">当前完成投资</div>
+                    </div>
+                    
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
+                            <div class="progress-text">{{ progressPercentage.toFixed(1) }}%</div>
+                        </div>
+                        <div class="target-info">
+                            <span>目标：{{ props.goalValue }}亿元</span>
                         </div>
                     </div>
                 </div>
+                
+                <!-- 装饰性图形 -->
+                <div class="decoration-area">
+                    <div class="circle-decoration">
+                        <div class="circle circle-1"></div>
+                        <div class="circle circle-2"></div>
+                        <div class="circle circle-3"></div>
+                    </div>
+                    
+                    <!-- 数据点 -->
+                    <div class="data-points">
+                        <div class="data-point" v-for="i in 5" :key="i" :style="getDataPointStyle(i)"></div>
+                    </div>
+                </div>
+                
+                <!-- 底部信息 -->
+                <!-- <div class="info-section">
+                    <div class="info-item">
+                        <div class="info-label">增长率</div>
+                        <div class="info-value">+12.5%</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">项目数</div>
+                        <div class="info-value">45个</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">完成度</div>
+                        <div class="info-value">{{ progressPercentage.toFixed(0) }}%</div>
+                    </div>
+                </div> -->
             </div>
         </m-card>
     </div>
 </template>
 
 <style scoped lang="scss">
-/*
-  The CSS is copied directly from the original HTML file.
-  You can move this to a separate CSS file or keep it scoped.
-  Make sure to add the Orbitron font link in your main index.html file.
-*/
-
-body, html {
-    margin: 0; padding: 0; width: 100%; height: 100%;
-    background-color: #000411;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-}
-.corridor-container {
+.investment-container {
     width: 100%;
-    max-width: 1800px;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    perspective: 1500px;
-    padding: 0 !important;
-}
-.corridor-bg {
-    position: absolute; width: 100%; height: 1000px; top: 50%; left: 50%;
-    transform-style: preserve-3d; transform: translate(-50%, -50%) rotateX(80deg);
-    background-image:
-        linear-gradient(rgba(0,191,255,0.2) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,191,255,0.2) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: move-grid 8s linear infinite;
-}
-@keyframes move-grid { from { background-position: 0 0; } to { background-position: 0 -200px; } }
-
-/* --- 关键：调整Grid布局 --- */
-.timeline-axis {
-    width: 100%; height: 100%; position: relative;
-    display: grid;
-    grid-template-columns: 100%;
-    align-items: center;
-    gap: 0;
-    padding: 0 20px;
-    box-sizing: border-box;
-}
-
-.history-section {
-    grid-column: 1 / 2;
-    height: 40px; position: relative;
-}
-.glass-pipe {
-    width: 100%; height: 100%; border: 1px solid rgba(72, 209, 204, 0.3);
-    border-radius: 30px; position: relative; overflow: hidden;
-    background: linear-gradient(to right, rgba(72,209,204,0.05), rgba(72,209,204,0.15));
-    box-shadow: inset 0 0 15px rgba(72, 209, 204, 0.2);
-}
-.flow-stream { position: absolute; height: 3px; border-radius: 2px; background: linear-gradient(to right, transparent, #fff); animation: flow-right 5s linear infinite; }
-.stream1 { top: 35%; width: 20%; background: linear-gradient(to right, transparent, #FFD700); animation-duration: 4s; }
-.stream2 { top: 55%; width: 30%; background: linear-gradient(to right, transparent, #48D1CC); animation-duration: 6s; }
-.stream3 { top: 75%; width: 25%; background: linear-gradient(to right, transparent, #00BFFF); animation-duration: 5s; }
-@keyframes flow-right { from { left: -30%; } to { left: 110%; } }
-.milestone { position: absolute; color: white; text-align: center; animation: appear 1s ease-out forwards; opacity: 0; transform: translateY(-50%); }
-.milestone .dot { width: 8px; height: 8px; background: #48D1CC; border-radius: 50%; margin: 0 auto 5px; box-shadow: 0 0 10px #48D1CC; }
-.milestone .label { font-size: 18px; }
-#m1 { left: 15%; top: -12px; animation-delay: 0.5s; }
-#m2 { left: 45%; top: calc(100% + 20px); animation-delay: 1s; }
-#m3 { left: 75%; top: -12px; animation-delay: 1.5s; }
-@keyframes appear { to { opacity: 1; } }
-
-.goal-section-echarts {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
     position: relative;
-    grid-column: 1 / 2;
+    background: 
+        radial-gradient(ellipse at 20% 20%, rgba(48, 220, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(0, 255, 136, 0.06) 0%, transparent 50%);
+        box-sizing: border-box;
 }
-#echarts-gauge {
+
+.main-value-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.value-display {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.current-value {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.value-number {
+    font-size: 48px;
+    font-weight: bold;
+    color: #30DCFF;
+    text-shadow: 0 0 20px rgba(48, 220, 255, 0.6);
+    margin-right: 8px;
+}
+
+.value-unit {
+    font-size: 18px;
+    color: #00FF88;
+    font-weight: 500;
+}
+
+.value-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
+}
+
+.progress-bar-container {
+    width: 100%;
+    max-width: 300px;
+}
+
+.progress-bar {
+    position: relative;
+    width: 100%;
+    height: 12px;
+    background: rgba(48, 220, 255, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #30DCFF 0%, #00FF88 50%, #8B5CF6 100%);
+    border-radius: 6px;
+    transition: width 3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(48, 220, 255, 0.5);
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
     position: absolute;
     top: 0;
-    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+    border-radius: 0 6px 6px 0;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(0); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 300px;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.target-info {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.decoration-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.circle-decoration {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+}
+
+.circle {
+    position: absolute;
+    border: 1px solid;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: float 6s ease-in-out infinite;
+}
+
+.circle-1 {
+    width: 60px;
+    height: 60px;
+    border-color: #30DCFF;
+    animation-delay: 0s;
+}
+
+.circle-2 {
+    width: 40px;
+    height: 40px;
+    border-color: #00FF88;
+    top: 20px;
+    left: 20px;
+    animation-delay: 2s;
+}
+
+.circle-3 {
+    width: 80px;
+    height: 80px;
+    border-color: #8B5CF6;
+    top: -10px;
+    left: -10px;
+    animation-delay: 4s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.data-points {
+    position: absolute;
+    width: 100%;
     height: 100%;
 }
 
-.target-label-container {
+.data-point {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-    width: 200px;
+    width: 4px;
+    height: 4px;
+    background: #30DCFF;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #30DCFF;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+.info-section {
+    display: flex;
+    justify-content: space-around;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid rgba(48, 220, 255, 0.2);
+}
+
+.info-item {
     text-align: center;
+    flex: 1;
 }
-.target-label-text {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 24px;
-    color: #fff;
-    letter-spacing: 2px;
-    padding: 5px 15px;
+
+.info-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
 }
-.target-label-base {
-    height: 10px;
-    background: #00BFFF;
-    border-radius: 5px;
-    box-shadow: 0 0 20px #00BFFF;
-    animation: base-glow 3s infinite ease-in-out;
-}
-@keyframes base-glow {
-    50% { box-shadow: 0 0 30px 5px #00BFFF; }
+
+.info-value {
+    font-size: 14px;
+    color: #30DCFF;
+    font-weight: bold;
+    text-shadow: 0 0 6px rgba(48, 220, 255, 0.4);
 }
 </style>

@@ -51,7 +51,7 @@ import {countPolicyByType} from "@/api/brain.js";
 
 const pie = ref(null)
 const state = reactive({
-  pieDataColor: ["#17E6C3", "#40CFFF", "#1979FF"],
+  pieDataColor: ["#30DCFF", "#00FF88", "#8B5CF6"],
   pieData: [
     {
       name: "企业创新",

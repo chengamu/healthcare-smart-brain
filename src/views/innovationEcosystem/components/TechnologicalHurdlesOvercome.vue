@@ -1,19 +1,20 @@
 <template>
   <div class="left-card">
     <m-card title="关键技术攻坚">
-      <v-chart ref="vChart" :option="option" :autoresize="true" />
+      <v-chart ref="vChart" :option="option" :autoresize="true"/>
     </m-card>
   </div>
 </template>
+
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
+import { ref } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
 
 const colorMap = ref({
-  '技术瓶颈': '#4292c8', // 科技蓝
-  '技术突破': '#35c084', // 生命绿
+  '技术瓶颈': '#4292c8',
+  '技术突破': '#35c084',
 });
 
 const data = ref({
@@ -86,19 +87,9 @@ const option = ref({
       },
       data: ["2022", "2023", "2024", "2025"],
     },
-    {
-      axisLine: {
-        show: false,
-        lineStyle: {
-          color: "rgba(0,0,0,0)",
-        },
-      },
-      data: [],
-    },
   ],
   yAxis: {
     type: "value",
-
     axisLine: {
       show: false,
     },
@@ -122,50 +113,20 @@ const option = ref({
   },
   series: Object.keys(data.value).map(name => ({
     name: name,
-    type: 'pictorialBar',
-    // --- **关键：通过象形柱图模拟3D效果** ---
-    symbol: 'rect',
-    symbolSize: ['100%', '100%'],
+    type: 'bar',
     barWidth: 10,
     stack: 'total',
-    // --- **关键：加载时的“拔地而起”动画** ---
     animation: true,
     animationDuration: 1500,
     animationEasing: 'elasticOut',
-    animationDelay: (dataIndex, params) => params.index * 100,
-
     itemStyle: {
-      color: {
-        type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-        colorStops: [{
-          offset: 0, color: echarts.color.lift(colorMap.value[name], 0.3) // 顶部亮色
-        }, {
-          offset: 1, color: colorMap.value[name] // 底部主色
-        }]
-      },
-    },
-    // --- **关键：鼠标悬浮高亮效果** ---
-    emphasis: {
-      itemStyle: {
-        color: {
-          type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [{
-            offset: 0, color: echarts.color.lift(colorMap.value[name], 0.6)
-          }, {
-            offset: 1, color: echarts.color.lift(colorMap.value[name], 0.2)
-          }]
-        },
-        // 添加渐变色外圈
-        borderColor: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-          { offset: 0, color: '#FFFFFF' },
-          { offset: 1, color: colorMap.value[name] }
-        ]),
-        borderWidth: 3
-      }
+      color: colorMap.value[name],
     },
     data: data.value[name]
   }))
 })
-
 </script>
-<style lang="scss"></style>
+
+<style scoped lang="scss">
+
+</style>

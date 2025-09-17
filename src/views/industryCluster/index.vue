@@ -142,9 +142,17 @@ onMounted(() => {
         el: "#large-screen",
         resize: true,
     })
+    
+    // 监听北斗七星动画完成事件
+    window.addEventListener('starAnimationComplete', handleStarAnimationComplete);
 
     // 模拟加载过程
     simulateLoading()
+})
+
+onBeforeUnmount(() => {
+    // 清理事件监听
+    window.removeEventListener('starAnimationComplete', handleStarAnimationComplete);
 })
 
 // 模拟加载过程
@@ -215,50 +223,56 @@ function handleMenuSelect(index) {
     }
 }
 
+// 北斗七星动画完成回调
+function handleStarAnimationComplete() {
+    // 北斗七星动画完成后，立即启动背景和其他组件
+    const backgroundEvent = new CustomEvent('backgroundLoaded');
+    window.dispatchEvent(backgroundEvent);
+    
+    // 立即加载其他组件
+    loadOtherComponents();
+}
+
 // 页面加载完成
 function handlePageLoadComplete() {
-    // 触发自定义事件，通知子组件开始动画
-    const event1 = new CustomEvent('backgroundLoaded');
-    window.dispatchEvent(event1);
+    // 首先仅触发北斗七星动画
+    const starEvent = new CustomEvent('pageLoaded');
+    window.dispatchEvent(starEvent);
+    
+    // 不再设置延时，等待北斗七星动画自己完成后触发事件
+}
 
-    const event2 = new CustomEvent('pageLoaded');
-    window.dispatchEvent(event2);
-
+// 加载其他组件
+function loadOtherComponents() {
     let tl = gsap.timeline({ paused: false })
     let leftCards = gsap.utils.toArray(".left-card")
     let rightCards = gsap.utils.toArray(".right-card")
     let countCards = gsap.utils.toArray(".count-card")
-    tl.addLabel("start", 0.5)
+    
+    tl.addLabel("start", 0)
     tl.addLabel("menu", 0.5)
     tl.addLabel("card", 1)
-    tl.addLabel("countCard", 3)
+    tl.addLabel("countCard", 2)
+    
     tl.to(".m-header", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "start")
     tl.to(".bottom-tray", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "start")
-    tl.to(
-        ".top-menu",
-        {
-            y: 0,
-            opacity: 1,
-            duration: 1.5,
-            ease: "power4.out",
-        },
-        "-=1"
-    )
-    tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "-=2")
+    tl.to(".top-menu", {
+        y: 0,
+        opacity: 1,
+        duration: 1.5,
+        ease: "power4.out",
+    }, "menu")
+    tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "menu")
     tl.to(leftCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
     tl.to(rightCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
     if(countCards.length > 0) {
-        tl.to(
-            countCards,
-            {
-                y: 0,
-                opacity: 1,
-                stagger: 0.2,
-                duration: 1.5,
-                ease: "power4.out",
-            },
-            "card"
-        )
+        tl.to(countCards, {
+            y: 0,
+            opacity: 1,
+            stagger: 0.2,
+            duration: 1.5,
+            ease: "power4.out",
+        }, "countCard")
     }
 }
 </script>

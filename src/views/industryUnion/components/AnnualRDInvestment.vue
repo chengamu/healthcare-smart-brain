@@ -81,8 +81,9 @@ const option = computed(() => ({
         left: "5%",
         top: "8%",
         textStyle: {
-            color: "#D3F8F2",
-            fontSize: 8,
+            color: "#30DCFF",
+            fontSize: 12,
+            fontWeight: 'bold'
         },
     },
     grid: {
@@ -97,9 +98,10 @@ const option = computed(() => ({
         itemWidth: 8,
         itemHeight: 8,
         textStyle: {
-            color: "#90979c",
-            fontSize: 12,
+            color: "#30DCFF",
+            fontSize: 14,
             lineHeight: 20,
+            fontWeight: 'bold'
         },
         data: ["年R&D投入"],
     },
@@ -107,17 +109,45 @@ const option = computed(() => ({
     tooltip: {
         trigger: "axis",
         axisPointer: {
-            type: "shadow",
+            type: "line",
+            lineStyle: {
+                color: "#30DCFF",
+                width: 2,
+                type: "solid"
+            },
             shadowStyle: {opacity: 0.2},
         },
-        backgroundColor: "rgba(0,0,0,1)",
-        borderWidth: 1,
-        borderColor: "#999999",
+        backgroundColor: "rgba(0,0,0,0.85)",
+        borderWidth: 2,
+        borderColor: "#30DCFF",
+        borderRadius: 8,
+        padding: [12, 16],
         textStyle: {
             color: "#ffffff",
-            fontSize: 10,
-            lineHeight: 156,
+            fontSize: 13,
+            lineHeight: 18,
+            fontWeight: 'normal'
         },
+        formatter: function(params) {
+            if (params && params.length > 0) {
+                const data = params[0];
+                return `
+                    <div style="font-weight: bold; color: #30DCFF; margin-bottom: 8px; font-size: 14px;">
+                        ${data.axisValue}年 R&D投入情况
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #30DCFF; margin-right: 8px;"></span>
+                        <span style="color: #ffffff;">R&D投入金额：</span>
+                        <span style="color: #00FF88; font-weight: bold; margin-left: 4px;">${data.value} 亿元</span>
+                    </div>
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(48, 220, 255, 0.3); font-size: 11px; color: rgba(255, 255, 255, 0.7);">
+                        数据来源：绍兴医疗健康产业大脑
+                    </div>
+                `;
+            }
+            return '';
+        },
+        extraCssText: 'box-shadow: 0 8px 25px rgba(48, 220, 255, 0.3);'
     },
     color: ["#6BC7F6", "#44E6A2"],
     xAxis: [
@@ -137,10 +167,11 @@ const option = computed(() => ({
                 show: false,
             },
             axisLabel: {
-                color: "#ffffff",
-                fontSize: 10,
+                color: "#30DCFF",
+                fontSize: 12,
                 interval: 0,
                 padding: [0, 0, 0, 0],
+                fontWeight: '500'
             },
             data: xAxisData.value,
         },
@@ -174,8 +205,9 @@ const option = computed(() => ({
             },
         },
         axisLabel: {
-            color: "#8B9EA4",
-            fontSize: 9,
+            color: "#30DCFF",
+            fontSize: 11,
+            fontWeight: '500'
         },
     },
     series: [

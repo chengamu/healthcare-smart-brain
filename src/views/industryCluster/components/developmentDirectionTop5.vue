@@ -43,29 +43,55 @@ function getCountEnterpriseByDevelopment() {
             .slice(0, 5)  // 获取前5个数据
         option.value.yAxis[0].data = data.map(it => it.dictLabel)
         option.value.yAxis[1].data = data.map(it => it.count)
-        option.value.series[0].data = data.map(it => it.count).map((item) => {
+        
+        // 使用医疗健康主题渐变色
+        const colors = [
+            ['#30DCFF', '#00FF88'], // 医疗蓝到生物绿
+            ['#00FF88', '#8B5CF6'], // 生物绿到制药紫
+            ['#8B5CF6', '#30DCFF'], // 制药紫到医疗蓝
+            ['#30DCFF', '#00FF88'], 
+            ['#00FF88', '#8B5CF6']
+        ];
+        
+        option.value.series[0].data = data.map((item, index) => {
             return {
-                value: item,
+                value: item.count,
                 itemStyle: {
-                    borderRadius: 5,
-                    color: information.value.color,
+                    borderRadius: [0, 8, 8, 0],
+                    color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                        { offset: 0, color: colors[index][0] },
+                        { offset: 1, color: colors[index][1] }
+                    ]),
+                    shadowColor: colors[index][0],
+                    shadowBlur: 10,
+                    shadowOffsetX: 2
                 },
             };
         })
         option.value.series[1].data = data.map(it => it.count)
-        // information.value.dataArray = data.map(it => it.count)
     });
 }
 
 const option = ref({
     tooltip: {
-        show: false,
+        show: true,
+        trigger: 'axis',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        borderColor: '#30DCFF',
+        borderWidth: 1,
+        textStyle: {
+            color: '#ffffff',
+            fontSize: 12
+        },
+        formatter: function(params) {
+            return `${params[0].name}: ${params[0].value}家企业`;
+        }
     },
     grid: {
-        left: "5%",
-        right: "5%",
-        top: "10%",
-        bottom: "10%", // 特殊
+        left: "8%",
+        right: "8%",
+        top: "5%",
+        bottom: "5%",
         containLabel: true,
     },
     xAxis: [
@@ -87,62 +113,31 @@ const option = ref({
                 show: false,
             },
             inverse: true,
-            // data: information.value.area,
             data: [],
             axisLabel: {
-                color: "rgba(96, 98, 102, 1)",
-                margin: 10,
+                color: "rgba(255, 255, 255, 0.9)",
+                margin: 15,
                 formatter: (name, index) => {
                     const id = index + 1;
-                    if (id <5) {
-                        return `{id|${id}}{nameStyle|${name}}`;
-                    } else {
-                        return `{ids|${id}}{nameStyle|${name}}`;
-                    }
+                    const colors = ['#FFD700', '#C0C0C0', '#CD7F32', '#30DCFF', '#00FF88'];
+                    const color = colors[index] || '#ffffff';
+                    return `{id|${id}}{nameStyle|${name}}`;
                 },
                 rich: {
                     id:{
-                        padding: [0, 0, 0, 2],
-                        fontSize: 16,
-                        color: '#fff',
-                    },
-                    ids:{
-                        padding: [0, 0, 0, 2],
-                        fontSize: 16,
-                        color: '#b4bec8',
+                        padding: [2, 6, 2, 6],
+                        fontSize: 14,
+                        color: '#000000',
+                        backgroundColor: '#30DCFF',
+                        borderRadius: 10,
+                        fontWeight: 'bold'
                     },
                     nameStyle: {
-                        padding: [0, 10, 0, 2],
-                        fontSize: 16,
-                        color: '#fff',
-                    },
-                    rank: {
-                        ...style,
-                        backgroundColor: new echarts.graphic.LinearGradient(0, 1, 1, 1, [
-                            {
-                                offset: 0,
-                                color: '#E7F4FF',
-                            },
-                            {
-                                offset: 0.95,
-                                color: '#fff',
-                            },
-                        ]),
-                    },
-                    rank1: {
-                        ...style,
-                        color: "#FF992B",
-                        backgroundColor: new echarts.graphic.LinearGradient(0, 1, 1, 1, [
-                            {
-                                offset: 0,
-                                color: '#E7F4FF',
-                            },
-                            {
-                                offset: 0.95,
-                                color: '#fff',
-                            },
-                        ]),
-                    },
+                        padding: [0, 0, 0, 10],
+                        fontSize: 14,
+                        color: '#ffffff',
+                        fontWeight: '500'
+                    }
                 },
             },
         },
@@ -152,56 +147,50 @@ const option = ref({
             axisLine: "none",
             show: true,
             axisLabel: {
-                color: "#6bc7f6",
-                fontSize: 16,
-                margin: 16,
+                color: "#00FF88",
+                fontSize: 14,
+                margin: 20,
+                fontWeight: 'bold',
                 formatter: function (value) {
                     return value + '家';
                 },
             },
-            // data: information.value.dataArray,
             data: [],
         },
     ],
     series: [
         {
             type: "bar",
-            barWidth: 10, // 柱子宽度
+            barWidth: 16,
             MaxSize: 0,
             showBackground: true,
             backgroundStyle: {
-                color: "rgb(10, 51, 126)",
-                borderRadius: 5, //设置背景的圆角
+                color: "rgba(48, 220, 255, 0.1)",
+                borderRadius: [0, 8, 8, 0],
             },
-            // data: information.value.dataArray.map((item) => {
-            //     return {
-            //         value: item,
-            //         itemStyle: {
-            //             borderRadius: 5,
-            //             color: information.value.color,
-            //         },
-            //     };
-            // }),
             data: [],
+            animationDuration: 2000,
+            animationEasing: 'cubicOut'
         },
         {
             type: 'scatter',
             emphasis: {
                 scale: false
             },
-            symbol: 'rect',
+            symbol: 'circle',
             itemStyle: {
-                barBorderRadius: [30, 0, 0, 30],
-                color: '#fff',
-                shadowColor: '#fff',
-                shadowBlur: 1,
-                borderWidth: 1,
-                opacity: 1
+                color: '#ffffff',
+                shadowColor: '#30DCFF',
+                shadowBlur: 8,
+                borderWidth: 2,
+                borderColor: '#30DCFF',
+                opacity: 0.9
             },
-            symbolSize: [4, 10], // 进度条白点的大小
-            z: 2,
-            // data: information.value.dataArray,
+            symbolSize: 8,
+            z: 3,
             data: [],
+            animationDuration: 2500,
+            animationDelay: 500
         },
     ],
 });

@@ -166,13 +166,13 @@ onBeforeUnmount(() => {
 }
 @keyframes rotateAnimation {
     0% {
-        transform: translate3d(4px, 48px, 0) scale3d(0.8, 0.6, 1); /* 从0度开始旋转 */
+        transform: translate3d(4px, 48px, 0) scale3d(0.8, 0.6, 1);
     }
     50% {
-        transform: translate3d(4px, 48px, 0) scale3d(0.9, 0.65, 1); /* 旋转一周，360度 */
+        transform: translate3d(4px, 48px, 0) scale3d(0.9, 0.65, 1);
     }
-    0% {
-        transform: translate3d(4px, 48px, 0) scale3d(0.8, 0.6, 1); /* 从0度开始旋转 */
+    100% {
+        transform: translate3d(4px, 48px, 0) scale3d(0.8, 0.6, 1);
     }
 }
 

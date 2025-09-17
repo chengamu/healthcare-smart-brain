@@ -86,13 +86,15 @@ const props = defineProps({
     }
 })
 const option = ref({
+  animationDuration: 2000,
+  animationEasing: 'cubicOut',
   tooltip: {
     trigger: "axis",
     axisPointer: {
       type: "shadow",
       shadowStyle: { opacity: 0 },
     },
-    backgroundColor: "rgba(0,0,0,1)",
+    backgroundColor: "rgba(0,0,0,0.8)",
     borderWidth: 1,
     borderColor: "#999999",
     textStyle: {
@@ -112,6 +114,17 @@ const option = ref({
       label: { show: false },
       radius: ["55%", "70%"],
       color: ["#c487ee", "#deb140", "#49dff0", "#034079", "#6f81da", "#00ffb4"],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 15,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        },
+        scale: true,
+        scaleSize: 5
+      },
+      animationDuration: 2000,
+      animationEasing: 'cubicOut',
 
       data: [
         {

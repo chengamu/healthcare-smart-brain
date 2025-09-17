@@ -1,16 +1,64 @@
 <template>
     <div class="left-card">
         <m-card title="顶尖专家引进目标">
-            <v-chart ref="vChart" :option="option" :autoresize="true" />
+            <div class="expert-target-container">
+                <!-- 主要指标卡片 -->
+                <div class="main-target-card">
+                    <div class="target-header">
+                        <div class="target-icon">
+                            <i class="icon-expert">🎖️</i>
+                        </div>
+                        <div class="target-info">
+                            <div class="target-title">顶尖专家引进</div>
+                            <div class="target-subtitle">本年度目标</div>
+                        </div>
+                    </div>
+                    <div class="target-stats">
+                        <div class="current-count">
+                            <span class="number">{{ gaugeVal }}</span>
+                            <span class="unit">人</span>
+                        </div>
+                        <div class="target-count">
+                            <span class="label">目标:</span>
+                            <span class="value">{{ gaugeMaxVal }}人</span>
+                        </div>
+                    </div>
+                    <div class="progress-section">
+                        <div class="progress-bar">
+                            <div class="progress-fill" :style="{ width: (gaugeVal / gaugeMaxVal * 100) + '%' }">
+                                <div class="progress-glow"></div>
+                            </div>
+                        </div>
+                        <div class="progress-text">
+                            <span class="percentage">{{ Math.round(gaugeVal / gaugeMaxVal * 100) }}%</span>
+                            <span class="status">完成率</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 进度详情 -->
+                <!-- <div class="progress-details">
+                    <div class="detail-item">
+                        <div class="detail-label">已引进</div>
+                        <div class="detail-value highlight">{{ gaugeVal }}人</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">剩余目标</div>
+                        <div class="detail-value">{{ gaugeMaxVal - gaugeVal }}人</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">预期完成</div>
+                        <div class="detail-value success">Q4 2024</div>
+                    </div>
+                </div> -->
+            </div>
         </m-card>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick, computed, watch, defineProps } from "vue"
-import * as echarts from "echarts"
+import { ref, computed, defineProps } from "vue"
 import mCard from "@/components/mCard/index.vue"
-import VChart from "vue-echarts"
 
 // 定义组件属性
 const props = defineProps({
@@ -21,7 +69,6 @@ const props = defineProps({
 })
 
 const maxValue = 50
-const startAngle = 225
 
 // 计算属性，根据props.talentData计算相关值
 const gaugeVal = computed(() => {
@@ -31,234 +78,200 @@ const gaugeVal = computed(() => {
     return props.talentData || 0
 })
 
-const topBarVal = computed(() => {
-    return (gaugeVal.value / maxValue) * 270
-})
-
 const gaugeMaxVal = computed(() => maxValue)
-
-function seriesHandle() {
-    const barWidth = 15
-    const yhAngle = 232
-    
-    //上层圆环
-    const topyh = {
-        type: 'bar',
-        barWidth: barWidth,
-        data: [
-            {
-                value: topBarVal.value,
-                itemStyle: {
-                    color: '#1598FF'
-                }
-            }
-        ],
-        barGap: '-100%',
-        coordinateSystem: 'polar',
-        roundCap: true,
-        z: 10
-    }
-    
-    //下层圆环，显示最大值
-    const bottomyh = {
-        type: 'bar',
-        z: 8,
-        hoverAnimation: false,
-        barWidth: barWidth,
-        data: [
-            {
-                value: 270,
-                itemStyle: {
-                    color: '#e5f5ff',
-                    borderWidth: 4
-                }
-            }
-        ],
-        coordinateSystem: 'polar',
-        roundCap: true,
-        emphasis: { disabled: true }
-    }
-    
-    // 圆环的边框
-    const borderyh = [
-        {
-            type: 'pie',
-            z: 6,
-            radius: ['90%', '78%'],
-            center: ['50%', '50%'],
-            startAngle: yhAngle,
-            endAngle: yhAngle + 76,
-            data: [
-                {
-                    value: 1,
-                    itemStyle: {
-                        borderRadius: 10,
-                        color: '#ffffff'
-                    }
-                }
-            ],
-            emphasis: { scale: false }
-        },
-        {
-            type: 'pie',
-            z: 4,
-            radius: ['92%', '76%'],
-            center: ['50%', '50%'],
-            startAngle: yhAngle + 2,
-            endAngle: yhAngle + 74,
-            data: [
-                {
-                    value: 1,
-                    itemStyle: {
-                        borderRadius: 10,
-                        color: '#e8f7fc'
-                    }
-                }
-            ],
-            emphasis: { scale: false }
-        }
-    ]
-    
-    //仪表盘
-    const gauge = {
-        type: 'gauge',
-        z: 8,
-        startAngle: 225,
-        endAngle: -45,
-        radius: '35%',
-        axisLine: {
-            show: false
-        },
-        splitLine: {
-            show: false
-        },
-        axisTick: {
-            show: false
-        },
-        axisLabel: {
-            show: false
-        },
-        splitLabel: {
-            show: false
-        },
-        pointer: {
-            shadowColor: 'auto',
-            shadowBlur: 2,
-            length: '20%',
-            width: 3
-        },
-        itemStyle: {
-            color: '#1598FF',
-            borderColor: '#1598FF',
-            borderWidth: 30
-        },
-        data: [gaugeVal.value / gaugeMaxVal.value * 100],
-        detail: {
-            show: false
-        }
-    }
-    
-    //指针外环
-    const zzOut = {
-        type: 'pie',
-        hoverAnimation: false,
-        legendHoverLink: false,
-        radius: ['10%', '31%'],
-        z: 6,
-        label: {
-            show: false
-        },
-        labelLine: {
-            show: false
-        },
-        data: [
-            {
-                value: 20,
-                itemStyle: {
-                    color: '#e4f6fb'
-                }
-            }
-        ]
-    }
-    
-    //指针内环
-    const zzIn = {
-        type: 'pie',
-        emphasis: { scale: 0 },
-        legendHoverLink: false,
-        radius: ['0%', '25%'],
-        z: 10,
-        label: {
-            show: true
-        },
-        labelLine: {
-            show: false
-        },
-        data: [
-            {
-                value: 100,
-                label: {
-                    show: true,
-                    position: 'center',
-                    fontSize: 8,
-                    fontWeight: 'bold',
-                    formatter: function () {
-                        return `{total|${gaugeVal.value}/${gaugeMaxVal.value}}`
-                    },
-                    rich: {
-                        total: {
-                            fontSize: 16,
-                            fontWeight: 'bold',
-                            color: '#ffffff'
-                        }
-                    }
-                },
-                itemStyle: {
-                    color: '#0098ff'
-                }
-            }
-        ]
-    }
-    
-    return [topyh, bottomyh, ...borderyh, gauge, zzOut, zzIn]
-}
-
-const title = computed(() => [
-    {
-        text: '顶尖专家',
-        bottom: '10%',
-        x: 'center',
-        padding: [3, 7],
-        textStyle: {
-            fontWeight: 'bold',
-            fontSize: 16,
-            color: '#1598FF'
-        }
-    }
-])
-
-const angleAxis = {
-    show: false,
-    max: 360,
-    type: 'value',
-    startAngle,
-    splitLine: { show: false }
-}
-
-const option = computed(() => ({
-    title: title.value,
-    angleAxis,
-    barMaxWidth: 15,
-    radiusAxis: { show: false, type: 'category' },
-    polar: {
-        center: ['50%', '50%'],
-        radius: '167.5%'
-    },
-    series: seriesHandle()
-}))
-
 </script>
 
 <style scoped lang="scss">
+.expert-target-container {
+    padding: 16px;
+    height: 100%;
+    // position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+}
 
+.main-target-card {
+    background: rgba(48, 220, 255, 0.1);
+    border: 2px solid rgba(48, 220, 255, 0.3);
+    border-radius: 16px;
+    padding: 16px;
+    // margin-bottom: 20px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    height: 100%;
+
+    &:hover {
+        border-color: rgba(0, 255, 136, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(48, 220, 255, 0.2);
+    }
+
+    .target-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 10px;
+
+        .target-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .target-info {
+            .target-title {
+                font-size: 18px;
+                color: #30DCFF;
+                font-weight: bold;
+                text-shadow: 0 0 8px rgba(48, 220, 255, 0.5);
+            }
+
+            .target-subtitle {
+                font-size: 14px;
+                color: rgba(255, 255, 255, 0.7);
+                margin-top: 4px;
+            }
+        }
+    }
+
+    .target-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .current-count {
+            .number {
+                font-size: 36px;
+                color: #00FF88;
+                font-weight: bold;
+                text-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
+            }
+
+            .unit {
+                font-size: 16px;
+                color: rgba(255, 255, 255, 0.8);
+                margin-left: 5px;
+            }
+        }
+
+        .target-count {
+            text-align: right;
+
+            .label {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 14px;
+            }
+
+            .value {
+                color: #30DCFF;
+                font-size: 16px;
+                font-weight: bold;
+                margin-left: 8px;
+            }
+        }
+    }
+
+    .progress-section {
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #00FF88, #30DCFF);
+                border-radius: 6px;
+                transition: width 2s ease;
+                position: relative;
+
+                .progress-glow {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 20px;
+                    height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5));
+                    animation: shimmer 2s infinite;
+                }
+            }
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .percentage {
+                font-size: 16px;
+                color: #00FF88;
+                font-weight: bold;
+            }
+
+            .status {
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.7);
+            }
+        }
+    }
+}
+
+.progress-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+
+    .detail-item {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(48, 220, 255, 0.2);
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+        transition: all 0.3s ease;
+
+        &:hover {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: rgba(48, 220, 255, 0.05);
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #30DCFF;
+
+            &.highlight {
+                color: #00FF88;
+            }
+
+            &.success {
+                color: #00FF88;
+            }
+        }
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
 </style>

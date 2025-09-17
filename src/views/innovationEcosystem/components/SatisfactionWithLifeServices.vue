@@ -12,16 +12,11 @@
                         <div class="value">{{ item.value }}<span class="unit">%</span></div>
                     </div>
                 </div>
-                <!--        <div class="satisfaction-label-container">-->
-                <!--          <div class="list-item" v-for="(item, index) in data" :key="index" :style="'border-color: ' + item.color">-->
-                <!--            <span class="item-label">{{item.name}}</span>-->
-                <!--            <span class="item-value">{{item.value.toFixed(2)}}</span>-->
-                <!--          </div>-->
-                <!--        </div>-->
             </div>
         </m-card>
     </div>
 </template>
+
 <script setup>
 import {ref, onMounted, onBeforeUnmount, nextTick} from "vue"
 import * as echarts from "echarts"
@@ -72,7 +67,6 @@ const option = ref({
     },
     polar: {
         radius: '70%',
-        // --- **关键：增加蛛网背景** ---
         splitArea: {
             show: true,
             areaStyle: {
@@ -85,7 +79,6 @@ const option = ref({
             type: 'bar',
             data: data.value.map((item, index) => ({
                 value: item.value,
-                // --- **关键：应用独立的渐变色** ---
                 itemStyle: {
                     color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
                         {offset: 0, color: item.color[1]},
@@ -103,10 +96,9 @@ const option = ref({
             animationDuration: 1500,
             animationEasing: 'cubicOut'
         },
-        // --- **关键：增加内圈装饰环** ---
         {
             type: 'bar',
-            data: [100, 100, 100, 100, 100], // 满值
+            data: [100, 100, 100, 100, 100],
             coordinateSystem: 'polar',
             name: '内圈',
             stack: 'a',
@@ -116,27 +108,22 @@ const option = ref({
                 borderColor: 'rgba(0, 191, 255, 0.3)',
                 borderWidth: 1
             },
-            barWidth: 35, // 更宽的内圈
+            barWidth: 35,
         }
     ]
 })
 
-// 旋转相关变量
 let rotationTimer = null;
 let startAngle = 0;
 
-// 开始旋转动画
 const startRotation = () => {
     rotationTimer = setInterval(() => {
         startAngle += 0.5;
         if (startAngle >= 360) startAngle = 0;
-
-        // 更新 angleAxis 的 startAngle 值
         option.value.angleAxis.startAngle = startAngle;
-    }, 50); // 每50ms更新一次角度，可以根据需要调整速度
+    }, 50);
 };
 
-// 停止旋转动画
 const stopRotation = () => {
     if (rotationTimer) {
         clearInterval(rotationTimer);
@@ -145,16 +132,14 @@ const stopRotation = () => {
 };
 
 onMounted(() => {
-    // 组件挂载后开始旋转
     startRotation();
 });
 
 onBeforeUnmount(() => {
-    // 组件销毁前停止旋转
     stopRotation();
 });
-
 </script>
+
 <style lang="scss">
 .satisfaction-container {
     width: 100%;

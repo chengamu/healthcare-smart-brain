@@ -7,7 +7,7 @@ export class FlyLine {
     let defaultOptions = {
       centerPoint: [0, 0],
       middleHeight: 15,
-      speed: 0.003,
+      speed: 0.001, // 降低飞线速度，提升视觉体验
       texture: null,
       radius: 0.1,
       segments: 32,
@@ -17,7 +17,7 @@ export class FlyLine {
         color: 0xfbdf88,
         transparent: true,
         fog: false,
-        opacity: 1,
+        opacity: 0.8, // 降低透明度，减少过于刺眼
         depthTest: false,
         blending: AdditiveBlending,
       }),
@@ -42,9 +42,16 @@ export class FlyLine {
       mesh.renderOrder = 21
       this.instance.add(mesh)
     })
+    // 优化动画执行，减少频繁更新
+    let lastTime = 0
     this.time.on("tick", () => {
       if (this.run) {
-        texture.offset.x -= speed
+        const currentTime = performance.now()
+        // 每50ms才更新一次，提升性能
+        if (currentTime - lastTime > 50) {
+          texture.offset.x -= speed
+          lastTime = currentTime
+        }
       }
     })
   }

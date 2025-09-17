@@ -64,10 +64,10 @@ onBeforeUnmount(() => {
 // 背景视频样式
 .background-video {
     position: absolute;
-    top: 0;
+    top: 20%;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 80%;
     object-fit: cover;
     z-index: -1;
     pointer-events: none; // 屏蔽视频点击事件

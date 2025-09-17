@@ -39,7 +39,7 @@ const closeTalentDialog = () => {
 </script>
 
 <template>
-    <div class="right-card">
+    <div class="right-card enhanced-card">
         <m-card :title="title" :height="height">
             <div class="key-talent-container" v-auto-scroll>
                 <div class="image-list">
@@ -124,6 +124,7 @@ const closeTalentDialog = () => {
             width: 100%; // 确保宽度为100%
             aspect-ratio: auto; // 取消固定宽高比
             cursor: pointer;
+            box-sizing: border-box;
 
             img {
                 width: 60px; // 固定图片宽度
@@ -270,6 +271,79 @@ const closeTalentDialog = () => {
 
         .talent-image {
             width: 100%;
+        }
+    }
+}
+
+// 增强key-talent-container样式
+.key-talent-container {
+    position: relative;
+    z-index: 2;
+    
+    .image-item {
+        transition: all 0.3s ease;
+        padding: 8px;
+        background: rgba(48, 220, 255, 0.05);
+        border: 1px solid rgba(48, 220, 255, 0.2);
+        border-radius: 8px;
+        
+        &:hover {
+            background: rgba(48, 220, 255, 0.1);
+            border-color: rgba(0, 255, 136, 0.5);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(48, 220, 255, 0.3);
+        }
+        
+        img {
+            border: 2px solid rgba(48, 220, 255, 0.4) !important;
+        }
+        
+        .image-name {
+            color: #30DCFF !important;
+            text-shadow: 0 0 8px rgba(48, 220, 255, 0.5);
+        }
+        
+        .image-development {
+            color: #00FF88 !important;
+        }
+        
+        .image-identity {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+    }
+}
+
+// 增强弹窗样式
+.dialog-overlay {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(5px);
+}
+
+.dialog-content {
+    background: linear-gradient(135deg, 
+        rgba(0, 0, 0, 0.95) 0%, 
+        rgba(48, 220, 255, 0.1) 50%,
+        rgba(0, 0, 0, 0.95) 100%) !important;
+    border: 2px solid rgba(48, 220, 255, 0.6) !important;
+    backdrop-filter: blur(20px);
+}
+
+.talent-detail {
+    .talent-image img {
+        border: 3px solid rgba(48, 220, 255, 0.6) !important;
+    }
+    
+    .talent-info .info-item {
+        label {
+            color: #30DCFF !important;
+        }
+        
+        span {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .intro-text {
+            color: rgba(255, 255, 255, 0.8) !important;
         }
     }
 }

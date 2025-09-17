@@ -66,33 +66,41 @@ export class Focus extends Object3D {
   }
   //   开始动画
   startAnimate() {
+    // 中心圆环旋转 - 慢速平滑旋转
     let quanTween = gsap.to(this.animateElements.focusMidQuan.rotation, {
+      z: 2 * Math.PI,
+      duration: 12,
+      repeat: -1,
+      ease: "none",
+    })
+
+    // 箭头旋转 - 中等速度
+    let focusArrowsTween = gsap.to(this.animateElements.focusArrows.rotation, {
       z: 2 * Math.PI,
       duration: 8,
       repeat: -1,
       ease: "none",
     })
-
-    let focusArrowsTween = gsap.to(this.animateElements.focusArrows.rotation, {
-      z: 2 * Math.PI,
-      duration: 5,
-      repeat: -1,
-      ease: "none",
-    })
+    
+    // 扩散效果 - 大幅增大扩散范围，覆盖全图
     let focusMoveBgTween = gsap.to(this.animateElements.focusMoveBg.scale, {
-      x: 1.5,
-      y: 1.5,
-      z: 1.5,
-      duration: 2.5,
+      x: 8.0,
+      y: 8.0,
+      z: 8.0,
+      duration: 4.0,
       repeat: -1,
-      ease: "none",
+      ease: "power2.out",
+      repeatDelay: 2.0,
     })
+    
     let focusMoveBgMaterialTween = gsap.to(this.animateElements.focusMoveBg.material, {
       opacity: 0,
-      duration: 2.5,
+      duration: 4.0,
       repeat: -1,
-      ease: "none",
+      ease: "power2.out",
+      repeatDelay: 2.0,
     })
+    
     this.gsapObjects = [quanTween, focusArrowsTween, focusMoveBgTween, focusMoveBgMaterialTween]
   }
   //   暂停动画

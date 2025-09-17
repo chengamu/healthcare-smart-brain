@@ -38,7 +38,7 @@
             <!-- 中间布局 -->
             <div class="center-wrap">
                 <!--“党建联建”组织架构光辉图-->
-                <red-core-leadership-center></red-core-leadership-center>
+                <red-core-leadership-center-with-intro></red-core-leadership-center-with-intro>
             </div>
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
@@ -115,6 +115,7 @@ import autofit from "autofit.js"
 import { useCurrentTime } from "@/hooks/useCurrentTime.js"
 import { useRouter } from "vue-router"
 import RedCoreLeadershipCenter from "@/views/redCoreLeadership/components/redCoreLeadershipCenter.vue";
+import RedCoreLeadershipCenterWithIntro from "@/views/redCoreLeadership/components/redCoreLeadershipCenterWithIntro.vue";
 import OverviewOfOrganizationalStructure
     from "@/views/redCoreLeadership/components/overviewOfOrganizationalStructure.vue";
 import ServiceEnterpriseDevelopment from "@/views/redCoreLeadership/components/serviceEnterpriseDevelopment.vue";

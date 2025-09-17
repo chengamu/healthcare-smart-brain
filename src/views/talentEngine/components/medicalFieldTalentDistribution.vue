@@ -113,5 +113,7 @@ watch(() => props.talentData, (newVal) => {
 :deep(.echarts) {
     width: 100%;
     height: 100%;
+    position: relative;
+    z-index: 2;
 }
 </style>

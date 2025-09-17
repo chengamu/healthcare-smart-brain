@@ -1157,7 +1157,7 @@ export class World extends Mini3d {
     const texture = this.assets.instance.getResource("mapFlyline")
     texture.wrapS = texture.wrapT = RepeatWrapping
     texture.repeat.set(0.5, 2)
-    const tubeRadius = 0.1
+    const tubeRadius = 0.2 // 增大飞线粗细
     const tubeSegments = 32
     const tubeRadialSegments = 2
     const closed = false
@@ -1176,15 +1176,15 @@ export class World extends Mini3d {
     this.time.on("tick", () => {
       texture.offset.x -= 0.006
     })
-    // provincesData
+    // 所有类型的区域都添加飞线，实现全地图覆盖
     ShaoXingCityData
-        .filter(item => item.type === 'park')
+        .filter(item => item.type === 'park' || item.type === 'enterprise' || item.type === 'ecology')
         .map((city) => {
           let [x, y] = this.geoProjection(city.centroid)
           let point = new Vector3(x, -y, 0)
           const center = new Vector3()
           center.addVectors(centerPoint, point).multiplyScalar(0.5)
-          center.setZ(3)
+          center.setZ(8) // 增大飞线弧度高度，让飞线覆盖更大范围
           const curve = new QuadraticBezierCurve3(centerPoint, center, point)
           const tubeGeometry = new TubeGeometry(curve, tubeSegments, tubeRadius, tubeRadialSegments, closed)
           const mesh = new Mesh(tubeGeometry, material)
@@ -1196,11 +1196,20 @@ export class World extends Mini3d {
   }
   // 创建焦点
   createFocus() {
-    let focusObj = new Focus(this, { color1: 0xbdfdfd, color2: 0xbdfdfd })
-    let [x, y] = this.geoProjection(this.flyLineCenter)
-    focusObj.position.set(x, -y, this.depth + 0.44)
-    focusObj.scale.set(1, 1, 1)
-    this.flyLineFocusGroup.add(focusObj)
+    // 找到实际的三个园区数据
+    const parkData = ShaoXingCityData.filter(item => item.type === 'park')
+    
+    // 为每个园区创建扩散效果
+    parkData.forEach((park, index) => {
+      let focusObj = new Focus(this, { 
+        color1: index === 0 ? 0xbdfdfd : (index === 1 ? 0x30DCFF : 0x00FF88), // 东盛慧谷/生命谷/健康岛
+        color2: index === 0 ? 0xbdfdfd : (index === 1 ? 0x30DCFF : 0x00FF88)
+      })
+      let [x, y] = this.geoProjection(park.centroid)
+      focusObj.position.set(x, -y, this.depth + 0.44)
+      focusObj.scale.set(2.5, 2.5, 2.5) // 所有扩散效果都设置为最大规模
+      this.flyLineFocusGroup.add(focusObj)
+    })
   }
   // 创建粒子
   createParticles() {

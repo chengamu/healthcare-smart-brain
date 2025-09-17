@@ -1,270 +1,124 @@
 <template>
     <div class="right-card">
         <m-card title="人才公寓使用率">
-            <v-chart ref="vChart" :option="option" :autoresize="true" />
+            <div class="apartment-container">
+                <div class="apartment-list">
+                    <div v-for="(apartment, index) in apartmentData" :key="index"
+                         class="apartment-item">
+                        <div class="item-header">
+                            <span class="item-name">{{ apartment.type }}</span>
+                            <span class="item-value">{{ apartment.usage }}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" 
+                                 :style="{ 
+                                   width: apartment.usage + '%',
+                                   backgroundColor: apartment.color
+                                 }"></div>
+                        </div>
+                        <div class="item-details">
+                            <span>已入住: {{ apartment.occupied }}套</span>
+                            <span>总数: {{ apartment.total }}套</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </m-card>
     </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
-import * as echarts from "echarts"
+<script setup>
+import { ref } from "vue"
 import mCard from "@/components/mCard/index.vue"
-import VChart from "vue-echarts"
 
-function seriesHandle({ barWidth, topBarVal, yhAngle, gaugeVal, gaugeMaxVal }) {
-    topyh.barWidth = barWidth
-    topyh.data[0].value = topBarVal
-    bottomyh.barWidth = barWidth
-    borderyh[0].startAngle = yhAngle
-    borderyh[0].endAngle = yhAngle + 76
-    borderyh[1].startAngle = yhAngle + 2
-    borderyh[1].endAngle = yhAngle + 74
-    gauge.data = [gaugeVal]
-    zzIn.data[0].label.formatter = function () {
-        const percentage = Math.round((gaugeVal / gaugeMaxVal) * 100)
-        return `{total|${percentage}%}`
-    }
-    const series = [topyh, bottomyh, ...borderyh, gauge, zzOut, zzIn]
-    return series
-}
-const name = '使用率'
-const value = 14
-const maxValue = 50
-
-// 起始角度
-const startAngle = 225 // 360 - 90 - 45 // 225
-
-// 仪表盘的值 指针的值 满级为100
-const gaugeVal = value
-const gaugeMaxVal = maxValue
-// 圆环的宽度
-const barWidth = 15
-// 上层圆环  值为度数 满级为360, 但如果有偏移值 就以偏移后的总度数为准,我这里的总度数为270度
-const topBarVal = (value / maxValue) * 270
-
-const yhAngle = 232
-
-const title = [
+const apartmentData = ref([
     {
-        text: name,
-        bottom: '10%',
-        x: 'center',
-        // borderColor: '#1598FF',
-        // borderWidth: 1,
-        // borderRadius: 15,
-        // backgroundColor: 'green',
-        padding: [3, 7],
-        textStyle: {
-            fontWeight: 'bold',
-            fontSize: 16,
-            color: '#1598FF'
-        }
-    }
-]
-const angleAxis = {
-    show: false,
-    max: 360, // (getmax * 360) / 270, //-45度到225度，二者偏移值是270度除360度
-    type: 'value',
-    startAngle, //极坐标初始角度 225  逆时针方向
-    splitLine: { show: false }
-}
-//上层圆环
-const topyh = {
-    type: 'bar',
-    barWidth: 0,
-    data: [
-        {
-            value: 0, // 顺时针旋转的度数值
-            itemStyle: {
-                color: '#1598FF'
-            }
-        }
-    ],
-    barGap: '-100%', //柱间距离,上下两层圆环重合
-    coordinateSystem: 'polar',
-    roundCap: true, //顶端圆角
-    z: 10 //圆环层级，同zindex
-}
-//下层圆环，显示最大值
-const bottomyh = {
-    type: 'bar',
-    z: 8,
-    hoverAnimation: false,
-    barWidth: 0,
-    data: [
-        {
-            value: 270, // getmax,
-            itemStyle: {
-                color: '#e5f5ff',
-                // color: 'red',
-                // opacity: 0.2,
-                borderWidth: 4
-            }
-        }
-    ],
-    coordinateSystem: 'polar',
-    roundCap: true,
-    emphasis: { vdisabled: true }
-}
-// 圆环的边框
-const borderyh = [
-    {
-        type: 'pie',
-        z: 6,
-        radius: ['90%', '78%'],
-        center: ['50%', '50%'],
-        // adjust the start and end angle
-        startAngle: 0,
-        endAngle: 0 + 80,
-        data: [
-            {
-                value: 1,
-                itemStyle: {
-                    borderRadius: 10,
-                    color: '#ffffff'
-                    // color: 'pink'
-                }
-            }
-        ],
-        emphasis: { scale: false }
+        type: '高层公寓',
+        usage: 87.5,
+        occupied: 175,
+        total: 200,
+        color: '#30DCFF'
     },
     {
-        type: 'pie',
-        z: 4,
-        radius: ['92%', '76%'],
-        center: ['50%', '50%'],
-        startAngle: 0,
-        endAngle: 0,
-        data: [
-            {
-                value: 1,
-                itemStyle: {
-                    borderRadius: 10,
-                    color: '#e8f7fc'
-                    // color: 'green'
-                }
-            }
-        ],
-        emphasis: { scale: false }
+        type: '多层公寓',
+        usage: 92.3,
+        occupied: 120,
+        total: 130,
+        color: '#00FF88'
+    },
+    {
+        type: '别墅区',
+        usage: 68.0,
+        occupied: 34,
+        total: 50,
+        color: '#8B5CF6'
+    },
+    {
+        type: '青年公寓',
+        usage: 95.2,
+        occupied: 238,
+        total: 250,
+        color: '#FF6B6B'
     }
-]
-// //仪表盘
-const gauge = {
-    type: 'gauge',
-    z: 8,
-    startAngle: 225, //起始角度，同极坐标
-    endAngle: -45, //终止角度，同极坐标   根据起始角度，顺时针走动
-    radius: '35%',
-    axisLine: {
-        show: false
-    },
-    splitLine: {
-        show: false
-    },
-    axisTick: {
-        show: false
-    },
-    axisLabel: {
-        show: false
-    },
-    splitLabel: {
-        show: false
-    },
-    pointer: {
-        // 分隔线
-        shadowColor: 'auto', //默认透明
-        shadowBlur: 2,
-        length: '20%',
-        width: 3
-    },
-    itemStyle: {
-        color: '#1598FF',
-        borderColor: '#1598FF',
-        borderWidth: 30
-    },
-    data: [],
-    detail: {
-        show: false
-    }
-}
-//指针外环
-const zzOut = {
-    type: 'pie',
-    // emphasis: { scale: 0 },
-    hoverAnimation: false,
-    legendHoverLink: false,
-    radius: ['10%', '31%'],
-    z: 6,
-    label: {
-        show: false
-    },
-
-    labelLine: {
-        show: false
-    },
-    data: [
-        {
-            value: 20,
-            itemStyle: {
-                color: '#e4f6fb'
-            }
-        }
-    ]
-}
-// //指针内环
-const zzIn = {
-    type: 'pie',
-    emphasis: { scale: 0 },
-    legendHoverLink: false,
-    radius: ['0%', '25%'],
-    z: 10,
-    label: {
-        show: true
-    },
-    labelLine: {
-        show: false
-    },
-    data: [
-        {
-            value: 100,
-            label: {
-                show: true,
-                position: 'center',
-                fontSize: 8,
-                fontWeight: 'bold',
-                formatter: function () {},
-                rich: {
-                    total: {
-                        fontSize: 16,
-                        fontWeight: 'bold',
-                        color: '#ffffff'
-                    }
-                }
-            },
-            itemStyle: {
-                color: '#0098ff'
-            }
-        }
-    ]
-}
-
-const option = {
-//   backgroundColor: 'yellow',
-    title,
-    angleAxis,
-    barMaxWidth: 15, //圆环宽度
-    radiusAxis: { show: false, type: 'category' },
-    //圆环位置和大小
-    polar: {
-        center: ['50%', '50%'],
-        radius: '167.5%'
-    },
-    series: seriesHandle({ barWidth, topBarVal, yhAngle, gaugeVal, gaugeMaxVal })
-}
-
+])
 </script>
 
 <style scoped lang="scss">
+.apartment-container {
+    padding: 20px;
+    height: 100%;
+}
 
+.apartment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.apartment-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid rgba(48, 220, 255, 0.3);
+    
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        
+        .item-name {
+            font-size: 16px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        .item-value {
+            font-size: 18px;
+            color: #30DCFF;
+            font-weight: bold;
+        }
+    }
+    
+    .progress-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 8px;
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+    }
+    
+    .item-details {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+}
 </style>

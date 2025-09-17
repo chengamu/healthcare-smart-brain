@@ -129,9 +129,8 @@ onBeforeUnmount(() => {
     top: 0;
     right: 0;
     bottom: 0;
-    background: url(@/assets/images/funnel/53bg.png) no-repeat;
-    background-size: 100% 100%;
-    //background-color: rgba(0, 0, 0, 0.7);
+    // 移除背景图片，使用透明背景让3D结构成为视觉焦点
+    background: transparent;
 }
 
 .background-container .rain {
@@ -139,6 +138,6 @@ onBeforeUnmount(() => {
     left: 0;
     top: 0;
     z-index: -1;
-    opacity: 0;
+    opacity: 0.2; // 降低透明度，避免干扰3D结构
 }
 </style>

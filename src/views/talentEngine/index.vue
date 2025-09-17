@@ -30,7 +30,11 @@
             <div class="left-wrap">
                 <div class="left-wrap-3d">
                     <!--人才总量与结构（人才联盟-人才联盟构成）-->
-                    <talent-union-structure 
+                    <!-- <enhanced-talent-overview 
+                        title="人才总量与结构" 
+                        :talent-data="state.talentData">
+                    </enhanced-talent-overview> -->
+                    <talent-union-structure
                         title="人才总量与结构" 
                         :talent-data="state.talentData">
                     </talent-union-structure>
@@ -47,7 +51,7 @@
             <!-- 中间布局 -->
             <div class="center-wrap">
                 <!--三级人才联通-->
-                <talent-engine-center></talent-engine-center>
+                <talent-engine-center3-d :talent-data="state.talentData"></talent-engine-center3-d>
             </div>
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
@@ -137,6 +141,7 @@ import gsap from "gsap"
 import autofit from "autofit.js"
 import { useCurrentTime } from "@/hooks/useCurrentTime.js"
 import { useRouter } from "vue-router"
+import EnhancedTalentOverview from "@/views/talentEngine/components/enhancedTalentOverview.vue";
 import TalentUnionStructure from "@/views/talentUnion/components/TalentUnionStructure.vue";
 import TopExpertIntroductionTarget from "@/views/talentEngine/components/topExpertIntroductionTarget.vue";
 import TheGoalOfAttractingAndNurturingYoungTalents
@@ -146,7 +151,7 @@ import TalentNewTrend from "@/views/talentUnion/components/TalentNewTrend.vue";
 import MedicalFieldTalentTop5 from "@/views/talentEngine/components/medicalFieldTalentTop5.vue";
 import ThirdLevelTalentConnectivity from "@/views/talentEngine/components/thirdLevelTalentConnectivity.vue";
 import TalentEngineBackground from "@/views/talentEngine/components/talentEngineBackground.vue";
-import TalentEngineCenter from "@/views/talentEngine/components/talentEngineCenter.vue";
+import TalentEngineCenter3D from "@/views/talentEngine/components/talentEngineCenter3D.vue";
 import {listEnterpriseAll, listTalentAll} from '@/api/brain.js'
 import {listDictData} from "@/api/system.js";
 import MedicalFieldTalentDistribution from "@/views/talentEngine/components/medicalFieldTalentDistribution.vue";

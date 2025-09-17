@@ -38,52 +38,141 @@ const activitiesData = ref([
     color: white;
     box-sizing: border-box;
     overflow-y: auto;
+    background: linear-gradient(135deg, 
+        rgba(220, 38, 38, 0.05) 0%, 
+        rgba(239, 68, 68, 0.05) 50%,
+        rgba(185, 28, 28, 0.05) 100%);
+    border-radius: 12px;
+    position: relative;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #dc2626, transparent);
+        animation: shimmer 3s infinite;
+    }
 }
 
 .activity-item {
-    padding: 15px;
-    margin-bottom: 15px;
-    background: linear-gradient(135deg, rgba(26, 57, 77, 0.7), rgba(48, 220, 255, 0.1));
-    border-radius: 8px;
-    border: 1px solid rgba(48, 220, 255, 0.3);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 18px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, 
+        rgba(220, 38, 38, 0.8) 0%, 
+        rgba(239, 68, 68, 0.7) 50%,
+        rgba(185, 28, 28, 0.8) 100%);
+    border-radius: 12px;
+    border: 2px solid rgba(220, 38, 38, 0.6);
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '🏩';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 20px;
+        animation: glow 2s infinite alternate;
+    }
+    
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: slide 4s infinite;
+    }
 
     &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(48, 220, 255, 0.4);
-        border-color: rgba(48, 220, 255, 0.6);
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(220, 38, 38, 0.5);
+        border-color: rgba(239, 68, 68, 0.8);
     }
 
     &:last-child {
         margin-bottom: 0;
+    }
+    
+    &:nth-child(odd) {
+        border-left: 4px solid #fbbf24;
+    }
+    
+    &:nth-child(even) {
+        border-left: 4px solid #34d399;
     }
 }
 
 .activity-party {
     font-size: 16px;
     font-weight: bold;
-    color: #30DCFF;
-    margin-bottom: 8px;
-    text-shadow: 0 0 4px rgba(48, 220, 255, 0.6);
+    color: #ffffff;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    padding-left: 35px;
+    position: relative;
+    
+    &::before {
+        content: '★';
+        position: absolute;
+        left: 8px;
+        color: #fbbf24;
+        font-size: 16px;
+        animation: twinkle 2s infinite;
+    }
 }
 
 .activity-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-left: 35px;
 }
 
 .activity-activity {
-    font-size: 14px;
-    color: #fff;
+    font-size: 15px;
+    color: #f3f4f6;
     flex: 1;
-    margin-right: 10px;
+    margin-right: 15px;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .activity-time {
-    font-size: 12px;
-    color: #30DCFF;
+    font-size: 13px;
+    color: #fbbf24;
     white-space: nowrap;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes slide {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes glow {
+    from { filter: drop-shadow(0 0 5px #fbbf24); }
+    to { filter: drop-shadow(0 0 15px #fbbf24); }
+}
+
+@keyframes twinkle {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
 }
 </style>
