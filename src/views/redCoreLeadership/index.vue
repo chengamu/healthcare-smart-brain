@@ -59,14 +59,12 @@ import mLoading from "@/components/mLoading/index.vue"
 
 import gsap from "gsap"
 import autofit from "autofit.js"
-import RedCoreLeadershipCenter from "@/views/redCoreLeadership/components/redCoreLeadershipCenter.vue";
 import RedCoreLeadershipCenterWithIntro from "@/views/redCoreLeadership/components/redCoreLeadershipCenterWithIntro.vue";
 import OverviewOfOrganizationalStructure
     from "@/views/redCoreLeadership/components/overviewOfOrganizationalStructure.vue";
 import ServiceEnterpriseDevelopment from "@/views/redCoreLeadership/components/serviceEnterpriseDevelopment.vue";
 import ServeTalentsAndTheMasses from "@/views/redCoreLeadership/components/serveTalentsAndTheMasses.vue";
 import PartyMemberVanguardPost from "@/views/redCoreLeadership/components/partyMemberVanguardPost.vue";
-import KeyTalent from "@/views/talentUnion/components/keyTalent.vue";
 import ReinforcementTheoryLearning from "@/views/redCoreLeadership/components/reinforcementTheoryLearning.vue";
 import PartyBuildingLeadsTheWay from "@/views/redCoreLeadership/components/partyBuildingLeadsTheWay.vue";
 import RedCoreLeadershipBackground from "@/views/redCoreLeadership/components/redCoreLeadershipBackground.vue";

@@ -1,8 +1,6 @@
 <template>
     <div class="large-screen">
         <livable-ecosystem-background ref="backgroundRef" @animationComplete="animationCompleteBg"></livable-ecosystem-background>
-        <!--“产城人文”融合魔方-->
-<!--        <integration-of-industry-and-city></integration-of-industry-and-city>-->
         <div class="large-screen-wrap" id="large-screen">
             <!-- 顶部菜单 -->
             <top-menu :active-index="state.activeIndex"></top-menu>
@@ -62,13 +60,12 @@ import mLoading from "@/components/mLoading/index.vue"
 
 import gsap from "gsap"
 import autofit from "autofit.js"
-import SatisfactionWithLifeServices from "@/views/innovationEcosystem/components/SatisfactionWithLifeServices.vue";
+import SatisfactionWithLifeServices from "@/views/livableEcosystem/components/SatisfactionWithLifeServices.vue";
 import TalentApartmentUsageRate from "@/views/livableEcosystem/components/talentApartmentUsageRate.vue";
 import SmartCityService from "@/views/livableEcosystem/components/smartCityService.vue";
-import FinancialCapitalHelp from "@/views/innovationEcosystem/components/FinancialCapitalHelp.vue";
-import InnovationResultConversion from "@/views/innovationEcosystem/components/InnovationResultConversion.vue";
-import TechnologicalHurdlesOvercome from "@/views/innovationEcosystem/components/TechnologicalHurdlesOvercome.vue";
-import IntegrationOfIndustryAndCity from "@/views/livableEcosystem/components/integrationOfIndustryAndCity.vue";
+import FinancialCapitalHelp from "@/views/livableEcosystem/components/FinancialCapitalHelp.vue";
+import InnovationResultConversion from "@/views/livableEcosystem/components/InnovationResultConversion.vue";
+import TechnologicalHurdlesOvercome from "@/views/livableEcosystem/components/TechnologicalHurdlesOvercome.vue";
 import LivableEcosystemBackground from "@/views/livableEcosystem/components/livableEcosystemBackground.vue";
 import LivableEcosystemCenter from "@/views/livableEcosystem/components/livableEcosystemCenter.vue";
 

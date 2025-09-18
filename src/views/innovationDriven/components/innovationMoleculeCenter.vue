@@ -56,10 +56,10 @@ const moleculeData = ref({
 let animationPhase = 'intro'
 let introStart = Date.now()
 const camTarget = new THREE.Vector3(0, 0, 0)
-const camRadiusStart = 40
-const camRadiusEnd = 20
-const camHeightStart = 20
-const camHeightEnd = 8
+const camRadiusStart = 25
+const camRadiusEnd = 12
+const camHeightStart = 12
+const camHeightEnd = 5
 
 // 缓动函数
 const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -71,7 +71,7 @@ const initThreeJS = () => {
   const height = containerRef.value.clientHeight
 
   scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000)
+  camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
   camera.position.set(0, camHeightStart, camRadiusStart)
   camera.lookAt(camTarget)
 
@@ -119,7 +119,9 @@ const createMolecule = () => {
 
 const createAtoms = () => {
   moleculeData.value.atoms.forEach(atomData => {
-    const geometry = new THREE.SphereGeometry(atomData.radius, 64, 32)
+    // 放大原子尺寸以增强视觉效果
+    const scaledRadius = atomData.radius * 1.3
+    const geometry = new THREE.SphereGeometry(scaledRadius, 64, 32)
     const material = new THREE.MeshPhysicalMaterial({
       color: atomData.color, emissive: atomData.color, emissiveIntensity: 0.4,
       roughness: 0.2, metalness: 0.1, clearcoat: 1.0, clearcoatRoughness: 0.1,
@@ -129,11 +131,11 @@ const createAtoms = () => {
     mesh.position.set(...atomData.position)
 
     const innerGlow = new THREE.Mesh(
-      new THREE.SphereGeometry(atomData.radius * 1.2, 32, 16),
+      new THREE.SphereGeometry(scaledRadius * 1.2, 32, 16),
       new THREE.MeshBasicMaterial({ color: atomData.color, transparent: true, opacity: 0.0, side: THREE.BackSide })
     )
     const outerGlow = new THREE.Mesh(
-      new THREE.SphereGeometry(atomData.radius * 1.6, 16, 8),
+      new THREE.SphereGeometry(scaledRadius * 1.6, 16, 8),
       new THREE.MeshBasicMaterial({ color: atomData.color, transparent: true, opacity: 0.0, side: THREE.BackSide })
     )
     mesh.add(innerGlow)
@@ -142,7 +144,7 @@ const createAtoms = () => {
     const labelDiv = document.createElement('div')
     labelDiv.className = 'atom-label'
     labelDiv.textContent = atomData.symbol
-    labelDiv.style.cssText = `color:${atomData.color}; font-size:${Math.max(12, atomData.radius * 8)}px; font-weight:bold; text-align:center; text-shadow:0 0 10px ${atomData.color};`
+    labelDiv.style.cssText = `color:${atomData.color}; font-size:${Math.max(14, scaledRadius * 10)}px; font-weight:bold; text-align:center; text-shadow:0 0 10px ${atomData.color};`
     const label = new CSS2DObject(labelDiv)
     label.position.set(0, 0, 0)
     mesh.add(label)
@@ -165,7 +167,7 @@ const createBonds = () => {
     dir.normalize()
     const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir)
     const count = bondData.type === 'double' ? 2 : bondData.type === 'triple' ? 3 : 1
-    const baseRadius = 0.03 * bondData.strength
+    const baseRadius = 0.04 * bondData.strength
     const group = new THREE.Group()
     for (let i = 0; i < count; i++) {
       const cyl = new THREE.Mesh(
@@ -199,15 +201,15 @@ const animate = () => {
 
   // 入场阶段
   if (animationPhase === 'intro') {
-    const tRaw = Math.min(elapsed / 7, 1)  // 从8秒优化到7秒
+    const tRaw = Math.min(elapsed / 4, 1)  // 从7秒优化到4秒
     const t = easeInOutCubic(tRaw)
 
     // 相机轨迹
     const radius = camRadiusStart + (camRadiusEnd - camRadiusStart) * t
     const height = camHeightStart + (camHeightEnd - camHeightStart) * t
     let angle = Math.PI * 0.5 * t
-    if (elapsed > 5.5) {  // 从6.5调整到5.5
-      const adjustT = (elapsed - 5.5) / 1.5
+    if (elapsed > 2.5) {  // 从5.5调整到2.5
+      const adjustT = (elapsed - 2.5) / 1.5
       const targetAngle = Math.PI / 4
       angle = angle + (targetAngle - angle) * easeInOutCubic(adjustT)
     }
@@ -240,8 +242,8 @@ const animate = () => {
       }
     })
 
-    if (elapsed >= 7) {
-      animationPhase = 'normal'  // 从8秒优化到7秒
+    if (elapsed >= 4) {
+      animationPhase = 'normal'  // 从7秒优化到4秒
       // 向父组件发送动画完成事件
       console.log('3D分子结构动画完成，向父组件发送完成事件')
       emit('animationComplete')

@@ -218,7 +218,7 @@ function handleMenuSelect(index) {
     left: 0px;
     right: 0px;
     top: 40px;
-    z-index: 3;
+    z-index: 5;
     display: flex;
     justify-content: center;
     transform: translateY(-250%);

@@ -9,8 +9,8 @@
         <div class="card-content">
           <div class="talent-info">
             <h3 class="talent-name">{{ talent.name }}</h3>
-            <p class="position">{{ formatText(talent.position, 10) }}</p>
-            <p class="field">{{ formatText(talent.development, 12) }}</p>
+            <p class="position">{{ formatText(talent.position, 15) }}</p>
+            <p class="field">{{ formatText(talent.development, 15) }}</p>
           </div>
         </div>
       </div>
@@ -292,7 +292,7 @@ watch(() => props.talentData, (newData) => {
     .field {
       font-size: 13px;
       color: rgba(255,255,255,0.8);
-      margin: 2px 0;
+      margin: 10px 0 0;
     }
   }
 

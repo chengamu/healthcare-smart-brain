@@ -23,7 +23,7 @@ import {listFundDataAll, listFundTypeAll} from "@/api/brain.js";
 const props = defineProps({
     title: {
         type: String,
-        default: '产业链群发展'
+        default: '产业规模增长曲线'
     },
 })
 

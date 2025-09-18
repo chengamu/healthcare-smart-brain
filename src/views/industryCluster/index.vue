@@ -11,11 +11,11 @@
             <!-- 左边布局 图表 -->
             <div class="left-wrap">
                 <div class="left-wrap-3d">
-                    <!--产业规模增长曲线（产业联盟-产业链群发展）-->
-                    <industry-union-development title="产业规模增长曲线"></industry-union-development>
+                    <!--产业规模增长曲线-->
+                    <industry-union-development></industry-union-development>
                     <!--总投资完成情况-->
                     <completion-status-of-total-investment :current-value="175"></completion-status-of-total-investment>
-                    <!--重大项目落地进度（产业联盟-项目引进情况）-->
+                    <!--重大项目落地进度-->
                     <project-introduction></project-introduction>
                 </div>
             </div>
@@ -26,13 +26,11 @@
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
                 <div class="right-wrap-3d">
-                    <!--产业联盟构成（产业全景-产业联盟构成）-->
+                    <!--产业联盟构成-->
                     <industry-union position="right"></industry-union>
                     <!--企业发展方向TOP5-->
                     <development-direction-top5></development-direction-top5>
-                    <!--龙头企业矩阵（产业联盟-联盟重点企业）-->
-<!--                    <key-enterprise title="龙头企业矩阵" :height="272"></key-enterprise>-->
-                    <!--专项政策支持（生态建设-专项政策支持）-->
+                    <!--专项政策支持-->
                     <special-policy-support></special-policy-support>
                 </div>
             </div>
@@ -62,11 +60,10 @@ import gsap from "gsap"
 import autofit from "autofit.js"
 import CompletionStatusOfTotalInvestment
     from "@/views/industryCluster/components/CompletionStatusOfTotalInvestment.vue";
-import ProjectIntroduction from "@/views/industryUnion/components/ProjectIntroduction.vue";
-import IndustryUnion from "@/views/industryPanorama/components/IndustryUnion.vue";
-import KeyEnterprise from "@/views/industryUnion/components/KeyEnterprise.vue";
-import SpecialPolicySupport from "@/views/innovationEcosystem/components/SpecialPolicySupport.vue";
-import IndustryUnionDevelopment from "@/views/industryUnion/components/IndustryUnionDevelopment.vue";
+import ProjectIntroduction from "@/views/industryCluster/components/ProjectIntroduction.vue";
+import IndustryUnion from "@/views/industryCluster/components/IndustryUnion.vue";
+import SpecialPolicySupport from "@/views/industryCluster/components/SpecialPolicySupport.vue";
+import IndustryUnionDevelopment from "@/views/industryCluster/components/IndustryUnionDevelopment.vue";
 import DevelopmentDirectionTop5 from "@/views/industryCluster/components/developmentDirectionTop5.vue";
 import IndustryClusterBackground from "@/views/industryCluster/components/industryClusterBackground.vue";
 import IndustryClusterCenter from "@/views/industryCluster/components/industryClusterCenter.vue";

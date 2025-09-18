@@ -1,16 +1,5 @@
 import {createRouter, createWebHashHistory} from "vue-router"
 
-/*
- * 20250821前版本
- */
-const industryPanorama = () => import("@/views/industryPanorama/index.vue")
-const industryUnion = () => import("@/views/industryUnion/index.vue")
-const talentUnion = () => import("@/views/talentUnion/index.vue")
-const innovationEcosystem = () => import("@/views/innovationEcosystem/index.vue")
-
-/*
- * 20250821后版本
- */
 const grandBlueprint = () => import("@/views/grandBlueprint/index.vue")
 const industryCluster = () => import("@/views/industryCluster/index.vue")
 const innovationDriven = () => import("@/views/innovationDriven/index.vue")
@@ -29,28 +18,6 @@ const router = createRouter({
             redirect: "/index",
             component: index,
         },
-        /*
-         * 20250821前版本
-         */
-        {
-            path: "/industryPanorama",
-            component: industryPanorama,
-        },
-        {
-            path: "/industryUnion",
-            component: industryUnion,
-        },
-        {
-            path: "/talentUnion",
-            component: talentUnion,
-        },
-        {
-            path: "/innovationEcosystem",
-            component: innovationEcosystem,
-        },
-        /*
-         * 20250821后版本
-         */
         {
             path: "/grandBlueprint",
             component: grandBlueprint,

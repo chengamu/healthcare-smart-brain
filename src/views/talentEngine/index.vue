@@ -1,8 +1,6 @@
 <template>
     <div class="large-screen">
         <talent-engine-background ref="backgroundRef" @animationComplete="animationCompleteBg"></talent-engine-background>
-        <!--三级人才联通-->
-<!--        <third-level-talent-connectivity></third-level-talent-connectivity>-->
         <div class="large-screen-wrap" id="large-screen">
             <!-- 顶部菜单 -->
             <top-menu :active-index="state.activeIndex"></top-menu>
@@ -13,11 +11,7 @@
             <!-- 左边布局 图表 -->
             <div class="left-wrap">
                 <div class="left-wrap-3d">
-                    <!--人才总量与结构（人才联盟-人才联盟构成）-->
-                    <!-- <enhanced-talent-overview 
-                        title="人才总量与结构" 
-                        :talent-data="state.talentData">
-                    </enhanced-talent-overview> -->
+                    <!--人才总量与结构-->
                     <talent-union-structure
                         title="人才总量与结构" 
                         :talent-data="state.talentData">
@@ -46,10 +40,6 @@
                         :height="272" 
                         :talent-data="state.talentData">
                     </key-talent>
-                    <!--医疗领域人才TOP5-->
-<!--                    <medical-field-talent-top5 -->
-<!--                        :talent-data="state.talentData">-->
-<!--                    </medical-field-talent-top5>-->
                     <!--医疗领域人才分布-->
                     <medical-field-talent-distribution
                         :talent-data="state.talentData">
@@ -86,15 +76,12 @@ import mLoading from "@/components/mLoading/index.vue"
 
 import gsap from "gsap"
 import autofit from "autofit.js"
-import EnhancedTalentOverview from "@/views/talentEngine/components/enhancedTalentOverview.vue";
-import TalentUnionStructure from "@/views/talentUnion/components/TalentUnionStructure.vue";
+import TalentUnionStructure from "@/views/talentEngine/components/TalentUnionStructure.vue";
 import TopExpertIntroductionTarget from "@/views/talentEngine/components/topExpertIntroductionTarget.vue";
 import TheGoalOfAttractingAndNurturingYoungTalents
     from "@/views/talentEngine/components/theGoalOfAttractingAndNurturingYoungTalents.vue";
-import KeyTalent from "@/views/talentUnion/components/keyTalent.vue";
-import TalentNewTrend from "@/views/talentUnion/components/TalentNewTrend.vue";
-import MedicalFieldTalentTop5 from "@/views/talentEngine/components/medicalFieldTalentTop5.vue";
-import ThirdLevelTalentConnectivity from "@/views/talentEngine/components/thirdLevelTalentConnectivity.vue";
+import KeyTalent from "@/views/talentEngine/components/keyTalent.vue";
+import TalentNewTrend from "@/views/talentEngine/components/TalentNewTrend.vue";
 import TalentEngineBackground from "@/views/talentEngine/components/talentEngineBackground.vue";
 import TalentEngineCenter3D from "@/views/talentEngine/components/talentEngineCenter3D.vue";
 import {listEnterpriseAll, listTalentAll} from '@/api/brain.js'

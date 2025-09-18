@@ -12,7 +12,7 @@
             <!-- 左边布局 图表 -->
             <div class="left-wrap">
                 <div class="left-wrap-3d">
-                    <!--研发投入(R&D)增长（产业联盟-年R&D投入）-->
+                    <!--研发投入(R&D)增长-->
                     <annual-r-d-investment 
                         title="研发投入(R&D)增长" 
                         @update:yftrTypeData="handleYftrTypeData">
@@ -121,7 +121,7 @@
                     <progress-of-new-drug-development @update:drugData="handleDrugData"></progress-of-new-drug-development>
                     <!--医疗器械获批进度-->
                     <progress-of-medical-device-approval @update:instrumentData="handleInstrumentData"></progress-of-medical-device-approval>
-                    <!--共享设备使用率（生态建设-共享设备使用率）-->
+                    <!--共享设备使用率-->
                     <utilization-rate-of-shared-equipment position="right"></utilization-rate-of-shared-equipment>
                 </div>
             </div>
@@ -149,8 +149,8 @@ import mLoading from "@/components/mLoading/index.vue"
 
 import gsap from "gsap"
 import autofit from "autofit.js"
-import AnnualRDInvestment from "@/views/industryUnion/components/AnnualRDInvestment.vue";
-import UtilizationRateOfSharedEquipment from "@/views/industryPanorama/components/UtilizationRateOfSharedEquipment.vue";
+import AnnualRDInvestment from "@/views/innovationDriven/components/AnnualRDInvestment.vue";
+import UtilizationRateOfSharedEquipment from "@/views/innovationDriven/components/UtilizationRateOfSharedEquipment.vue";
 import ProgressOfMedicalDeviceApproval from "@/views/innovationDriven/components/progressOfMedicalDeviceApproval.vue";
 import ProgressOfNewDrugDevelopment from "@/views/innovationDriven/components/progressOfNewDrugDevelopment.vue";
 import InnovationPlatformSupport from "@/views/innovationDriven/components/innovationPlatformSupport.vue";
