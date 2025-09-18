@@ -2,12 +2,27 @@
 import { nextTick, onMounted, onBeforeUnmount } from "vue";
 import gsap from "gsap";
 
+const emit = defineEmits(['animationComplete']);
+
 function rainBg() {
     var c = document.querySelector(".rain");
+    if (!c) {
+        console.error('未找到 .rain 元素');
+        return;
+    }
+    
     var ctx = c.getContext("2d");//获取canvas上下文
-    var w = c.width = document.querySelector('.background-container').clientWidth;
-    var h = c.height = document.querySelector('.background-container').clientHeight;
+    var container = document.querySelector('.background-container');
+    if (!container) {
+        console.error('未找到 .background-container 元素');
+        return;
+    }
+    
+    var w = c.width = container.clientWidth || window.innerWidth;
+    var h = c.height = container.clientHeight || window.innerHeight;
     //设置canvas宽、高
+    
+    console.log('雨滴背景初始化，尺寸:', w, 'x', h);
 
     function random(min, max) {
         return Math.random() * (max - min) + min;
@@ -28,9 +43,9 @@ function rainBg() {
             if (this.y > this.hit) {
                 var linearGradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.size * 30)
                 // 设置起始颜色
-                linearGradient.addColorStop(0, '#14789c')
+                linearGradient.addColorStop(0, '#30DCFF') // 使用项目主色调
                 // 设置终止颜色
-                linearGradient.addColorStop(1, '#090723')
+                linearGradient.addColorStop(1, '#001122') // 深蓝色背景
                 // 设置填充样式
                 ctx.fillStyle = linearGradient
                 ctx.fillRect(this.x, this.y, this.size, this.size * 50);//绘制长方形，通过多次叠加长方形，形成雨滴下落效果
@@ -51,15 +66,14 @@ function rainBg() {
         h = c.height = window.innerHeight;
     }
 
-    //初始化一个雨滴
-
+    //初始化雨滴
     var rs = []
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 15; i++) { // 增加雨滴数量
         setTimeout(function () {
             var r = new RainDrop();
             r.init();
             rs.push(r);
-        }, i * 300)
+        }, i * 200) // 减少延迟
     }
 
     function anim() {
@@ -73,13 +87,14 @@ function rainBg() {
     window.addEventListener("resize", resize);
     //启动动画
     anim()
-
+    console.log('雨滴动画已启动');
 }
 
 let animationTimeline = null;
 
 function handlePageLoadComplete() {
     // 页面加载完成后启动动画
+    console.log('背景组件收到页面加载完成事件');
     nextTick(() => {
         initAnimations();
     });
@@ -94,11 +109,15 @@ function initAnimations() {
         opacity: 0
     });
 
-    // 背景星星动画
+    // 背景雨滴动画
     animationTimeline.to('.rain', {
-        opacity: 1,
-        duration: 1,
-        ease: "power2.out"
+        opacity: 0.6, // 提高透明度使雨滴更可见
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => {
+            // 动画完成后向父组件发送事件
+            emit('animationComplete');
+        }
     });
 }
 
@@ -106,12 +125,17 @@ onMounted(() => {
     nextTick(() => {
         rainBg()
     })
-    window.addEventListener('backgroundLoaded', handlePageLoadComplete)
 })
 
 // 在组件卸载前移除事件监听器
 onBeforeUnmount(() => {
-    window.removeEventListener('backgroundLoaded', handlePageLoadComplete)
+    if (animationTimeline) {
+        animationTimeline.kill();
+    }
+})
+
+defineExpose({
+    handlePageLoadComplete
 })
 </script>
 
@@ -138,6 +162,6 @@ onBeforeUnmount(() => {
     left: 0;
     top: 0;
     z-index: -1;
-    opacity: 0.2; // 降低透明度，避免干扰3D结构
+    opacity: 0.8; // 提高透明度使雨滴效果更明显
 }
 </style>

@@ -86,25 +86,11 @@ const totalLearningHours = computed(() => {
 .learning-container {
   padding: 20px;
   height: 100%;
-  background: linear-gradient(135deg, 
-      rgba(220, 38, 38, 0.05) 0%, 
-      rgba(239, 68, 68, 0.05) 50%,
-      rgba(185, 28, 28, 0.05) 100%);
+  background: transparent;
   border-radius: 12px;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #dc2626, transparent);
-    animation: shimmer 3s infinite;
-  }
 }
 
 .learning-grid {
@@ -116,11 +102,7 @@ const totalLearningHours = computed(() => {
 }
 
 .topic-card {
-  background: linear-gradient(135deg, 
-      rgba(220, 38, 38, 0.7) 0%, 
-      rgba(239, 68, 68, 0.6) 50%,
-      rgba(185, 28, 28, 0.7) 100%);
-  border: 2px solid rgba(220, 38, 38, 0.5);
+  background: transparent;
   border-radius: 8px;
   padding: 8px;
   transition: all 0.3s ease;
@@ -241,8 +223,8 @@ const totalLearningHours = computed(() => {
 }
 
 .total-summary {
-  background: rgba(220, 38, 38, 0.6);
-  border: 2px solid rgba(220, 38, 38, 0.4);
+  background: transparent;
+  border: 3px solid rgba(220, 38, 38, 0.8);
   border-radius: 10px;
   padding: 15px;
   text-align: center;

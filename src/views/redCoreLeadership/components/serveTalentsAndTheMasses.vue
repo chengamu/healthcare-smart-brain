@@ -58,35 +58,17 @@ const serveData = ref([
     justify-content: space-around;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, 
-        rgba(220, 38, 38, 0.05) 0%, 
-        rgba(239, 68, 68, 0.05) 50%,
-        rgba(185, 28, 28, 0.05) 100%);
+    background: transparent;
     border-radius: 12px;
     padding: 20px;
     position: relative;
     box-sizing: border-box;
-    
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #dc2626, transparent);
-        animation: shimmer 3s infinite;
-    }
 }
 
 .serve-data {
     width: 160px;
     height: 180px;
-    background: linear-gradient(135deg, 
-        rgba(220, 38, 38, 0.8) 0%, 
-        rgba(239, 68, 68, 0.7) 50%,
-        rgba(185, 28, 28, 0.8) 100%);
-    border: 2px solid rgba(220, 38, 38, 0.6);
+    background: transparent;
     border-radius: 16px;
     padding: 16px;
     box-sizing: border-box;
@@ -98,7 +80,6 @@ const serveData = ref([
     position: relative;
     transition: all 0.3s ease;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
     
     &::before {
         content: '';

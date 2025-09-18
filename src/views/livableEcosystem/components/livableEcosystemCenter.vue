@@ -2,6 +2,8 @@
 import { onMounted, onBeforeUnmount, nextTick } from "vue";
 import gsap from "gsap";
 
+const emit = defineEmits(['animationComplete'])
+
 const getImageUrl = (name) => {
     return new URL(`../../../assets/images/livableEcosystem/${name}`, import.meta.url).href
 }
@@ -17,7 +19,13 @@ function handlePageLoadComplete() {
 
 function initAnimations() {
     // 创建时间线
-    animationTimeline = gsap.timeline();
+    animationTimeline = gsap.timeline({
+        onComplete: () => {
+            // 所有动画完成后发送事件
+            console.log('宜居生态动画全部完成，向父组件发送完成事件')
+            emit('animationComplete')
+        }
+    });
 
     // 设置初始状态 - 所有元素透明
     animationTimeline.set('.livable-i-mv, .livable-im-building, .livable--circle', {
@@ -45,16 +53,15 @@ function initAnimations() {
     }, "-=0.3");
 }
 
-onMounted(() => {
-    window.addEventListener('pageLoaded', handlePageLoadComplete)
-})
-
 // 在组件卸载前移除事件监听器
 onBeforeUnmount(() => {
-    window.removeEventListener('pageLoaded', handlePageLoadComplete)
     if (animationTimeline) {
         animationTimeline.kill();
     }
+})
+
+defineExpose({
+    handlePageLoadComplete
 })
 </script>
 
@@ -127,7 +134,7 @@ onBeforeUnmount(() => {
         position: relative;
         .livable-i-mv{
             position: absolute;
-            bottom: 15%;
+            bottom: 25%;
             left: 0;
             right: 0;
             height: 500px;
@@ -137,16 +144,16 @@ onBeforeUnmount(() => {
         .livable-im-building{
             position: absolute;
             left: 50%;
-            bottom: 50%;
+            bottom: 60%;
             width: 250px;
             animation: hover-animation1 3s infinite linear;
             opacity: 0;
         }
         .livable--circle{
             position: absolute;
-            bottom: 7%;
-            left: 0;
-            right: 0;
+            bottom: 15%;
+            left: 10%;
+            right: 10%;
             height: 500px;
             border-radius: 50%;
             opacity: 0;

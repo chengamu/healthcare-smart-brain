@@ -1,26 +1,10 @@
 <template>
     <div class="large-screen">
         <!-- 背景组件初始隐藏，3D加载完成后显示 -->
-        <innovation-driven-background class="page-background"></innovation-driven-background>
+        <innovation-driven-background ref="backgroundRef" @animationComplete="animationCompleteBg"></innovation-driven-background>
         <div class="large-screen-wrap" id="large-screen">
-            <m-header title="绍兴医疗健康产业大脑" sub-text="Shaoxing Medical And Health Industry Community">
-                <!--右侧 日期 -->
-                <template v-slot:right>
-                    <div class="m-header-date">{{ currentTime }}</div>
-                </template>
-            </m-header>
             <!-- 顶部菜单 -->
-            <div class="top-menu">
-                <mMenu :default-active="state.activeIndex" @select="handleMenuSelect" large>
-                    <mMenuItem index="left-1">总览 · 擘画蓝图</mMenuItem>
-                    <mMenuItem index="left-2">聚链 · 产业集群</mMenuItem>
-                    <mMenuItem index="left-3">策源 · 创新驱动</mMenuItem>
-                    <div class="top-menu-mid-space"></div>
-                    <mMenuItem index="right-1">引智 · 人才引擎</mMenuItem>
-                    <mMenuItem index="right-2">融合 · 产城生态</mMenuItem>
-                    <mMenuItem index="right-3">领航 · 红核强基</mMenuItem>
-                </mMenu>
-            </div>
+            <top-menu :active-index="state.activeIndex"></top-menu>
             <!-- 顶部统计卡片 -->
             <div class="top-count-card">
 
@@ -47,6 +31,8 @@
                     :instrument-value="instrumentData"
                     :technology-value="technologyData"
                     :drug-value="drugValue"
+                    ref="centerRef"
+                    @animationComplete="animationCompleteC"
                 ></innovation-molecule-center>
                 
                 <!-- 顶部数据大屏展示 -->
@@ -140,29 +126,7 @@
                 </div>
             </div>
             <!-- 底部托盘 -->
-            <div class="bottom-tray">
-                <!-- svg线条动画 -->
-                <mSvglineAnimation
-                    class="bottom-svg-line-left"
-                    :width="721"
-                    :height="57"
-                    color="#30DCFF"
-                    :strokeWidth="2"
-                    :dir="[0, 1]"
-                    :length="50"
-                    path="M1 56.6105C1 31.5123 185.586 10.0503 451.904 1.35519C458.942 1.12543 465.781 4.00883 470.505 9.22964L484.991 25.2383C487.971 28.4775 492.938 30.4201 498.254 30.4201H720.142"
-                ></mSvglineAnimation>
-                <mSvglineAnimation
-                    class="bottom-svg-line-left bottom-svg-line-right"
-                    :width="721"
-                    :height="57"
-                    color="#30DCFF"
-                    :strokeWidth="2"
-                    :dir="[0, 1]"
-                    :length="50"
-                    path="M1 56.6105C1 31.5123 185.586 10.0503 451.904 1.35519C458.942 1.12543 465.781 4.00883 470.505 9.22964L484.991 25.2383C487.971 28.4775 492.938 30.4201 498.254 30.4201H720.142"
-                ></mSvglineAnimation>
-            </div>
+            <bottom-tray></bottom-tray>
             <!-- 雷达 -->
             <div class="bottom-radar">
                 <mRadar></mRadar>
@@ -173,35 +137,18 @@
         </div>
 
         <!-- loading动画 -->
-        <div class="loading">
-            <div class="loading-text">
-                <span style="--index: 1">L</span>
-                <span style="--index: 2">O</span>
-                <span style="--index: 3">A</span>
-                <span style="--index: 4">D</span>
-                <span style="--index: 5">I</span>
-                <span style="--index: 6">N</span>
-                <span style="--index: 7">G</span>
-            </div>
-            <div class="loading-progress">
-                <span class="value">{{ state.progress }}</span>
-                <span class="unit">%</span>
-            </div>
-        </div>
+        <!-- <mLoading ref="loadingRef" :progress="state.progress"></mLoading> -->
     </div>
 </template>
 <script setup>
-import {shallowRef, ref, reactive, onMounted, onBeforeUnmount} from "vue"
-import mHeader from "@/components/mHeader/index.vue"
-import mMenu from "@/components/mMenu/index.vue"
+import {ref, reactive, onMounted, onBeforeUnmount} from "vue"
 import mRadar from "@/components/mRadar/index.vue"
-import mMenuItem from "@/components/mMenuItem/index.vue"
-import mSvglineAnimation from "@/components/mSvglineAnimation/index.vue"
+import topMenu from "@/components/topMenu/index.vue"
+import bottomTray from "@/components/bottomTray/index.vue"
+import mLoading from "@/components/mLoading/index.vue"
 
 import gsap from "gsap"
 import autofit from "autofit.js"
-import { useCurrentTime } from "@/hooks/useCurrentTime.js"
-import { useRouter } from "vue-router"
 import AnnualRDInvestment from "@/views/industryUnion/components/AnnualRDInvestment.vue";
 import UtilizationRateOfSharedEquipment from "@/views/industryPanorama/components/UtilizationRateOfSharedEquipment.vue";
 import ProgressOfMedicalDeviceApproval from "@/views/innovationDriven/components/progressOfMedicalDeviceApproval.vue";
@@ -212,13 +159,16 @@ import InnovationDrivenBackground from "@/views/innovationDriven/components/inno
 import InnovationMoleculeCenter from "@/views/innovationDriven/components/innovationMoleculeCenter.vue";
 import TechnologyCooperation from "@/views/innovationDriven/components/technologyCooperation.vue";
 
-const { currentTime } = useCurrentTime('YYYY-MM-DD HH:mm:ss')
-const router = useRouter()
+const loadingRef = ref(null)
+const centerRef = ref(null)
+const backgroundRef = ref(null)
 const state = reactive({
     // 进度
     progress: 0,
     // 当前顶部导航索引
     activeIndex: "left-3",
+    // 是否初始化
+    init: false
 })
 
 // 存储从子组件传递来的yftrTypeData数据
@@ -239,27 +189,25 @@ onMounted(() => {
         resize: true,
     })
     
-    // 监听3D分子结构动画完成事件
-    window.addEventListener('moleculeAnimationComplete', handleMoleculeAnimationComplete);
-    
     // 模拟加载过程
-    simulateLoading()
-})
+    // simulateLoading()
 
-onBeforeUnmount(() => {
-    // 清理事件监听器
-    window.removeEventListener('moleculeAnimationComplete', handleMoleculeAnimationComplete);
+    // 背景动画开启
+    state.init = true
+    animationStartBg()
 })
 
 // 模拟加载过程
 function simulateLoading() {
     let progress = 0
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
         progress += Math.floor(Math.random() * 10) + 1
         if (progress >= 100) {
             progress = 100
             clearInterval(interval)
-            hideLoading()
+            await hideLoading()
+            // 加载完成后触发动画
+            animationStartBg()
         }
         state.progress = progress
     }, 100)
@@ -267,56 +215,80 @@ function simulateLoading() {
 
 // 隐藏loading
 async function hideLoading() {
-    return new Promise((resolve, reject) => {
-        let tl = gsap.timeline()
-        tl.to(".loading-text span", {
-            y: "200%",
-            opacity: 0,
-            ease: "power4.inOut",
-            duration: 2,
-            stagger: 0.2,
-        })
-        tl.to(".loading-progress", { opacity: 0, ease: "power4.inOut", duration: 2 }, "<")
-        tl.to(
-            ".loading",
-            {
-                opacity: 0,
-                ease: "power4.inOut",
-                onComplete: () => {
-                    resolve()
-                },
-            },
-            "-=1"
-        )
-        // 加载完成后触发动画
-        tl.eventCallback("onComplete", handlePageLoadComplete)
-    })
+    if (loadingRef.value) {
+        return await loadingRef.value.hide()
+    }
+}
+// 背景动画
+function animationStartBg() { 
+    let backgroundRefInterval = setInterval(() => {
+        if(backgroundRef.value) {
+            backgroundRef.value.handlePageLoadComplete()
+            clearInterval(backgroundRefInterval)
+        }
+    }, 100)
 }
 
-function handleMenuSelect(index) {
-    if(state.activeIndex !== index) {
-        // 根据菜单索引跳转到对应页面
-        switch(index) {
-            case 'left-1':
-                router.push('/grandBlueprint')
-                break;
-            case 'left-2':
-                router.push('/industryCluster')
-                break;
-            case 'left-3':
-                router.push('/innovationDriven')
-                break;
-            case 'right-1':
-                router.push('/talentEngine')
-                break;
-            case 'right-2':
-                router.push('/livableEcosystem')
-                break;
-            case 'right-3':
-                router.push('/redCoreLeadership')
-                break;
-        }
+// 背景动画完成
+function animationCompleteBg() {
+    if(state.init) {
+        // 中心动画
+        let centerRefInterval = setInterval(() => {
+            if(centerRef.value) {
+                centerRef.value.handlePageLoadComplete()
+                clearInterval(centerRefInterval)
+            }
+        }, 100)
     }
+}
+
+// 中心动画完成
+function animationCompleteC() {
+    if(state.init) {
+        loadOtherComponents()
+    }
+}
+
+// 显示背景和UI元素的动画
+function loadOtherComponents() {
+    let tl = gsap.timeline({ paused: false })
+    let leftCards = gsap.utils.toArray(".left-card")
+    let rightCards = gsap.utils.toArray(".right-card")
+    let countCards = gsap.utils.toArray(".count-card")
+    
+    tl.addLabel("start", 0)
+    tl.addLabel("menu", 0.5)
+    tl.addLabel("card", 1)
+    tl.addLabel("countCard", 2)
+    tl.addLabel("bottom", 2)
+    
+    tl.to(".m-header", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "start")
+    tl.to(".bottom-tray", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "start")
+    tl.to(".top-menu", {
+        y: 0,
+        opacity: 1,
+        duration: 1.5,
+        ease: "power4.out",
+    }, "menu")
+    tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "menu")
+    tl.to(leftCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
+    tl.to(rightCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
+    if(countCards.length > 0) {
+        tl.to(countCards, {
+            y: 0,
+            opacity: 1,
+            stagger: 0.2,
+            duration: 1.5,
+            ease: "power4.out",
+        }, "countCard")
+    }
+    tl.to(".bottom-molecule-legend", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power4.out"
+    }, "bottom")
+    state.init = false
 }
 
 // 处理从AnnualRDInvestment组件传递来的yftrTypeData数据
@@ -342,82 +314,6 @@ function handleInstrumentData(data) {
     instrumentData.value = data
     console.log('接收到的instrumentData数据:', data)
 }
-
-// 页面加载完成
-function handlePageLoadComplete() {
-    console.log('页面加载完成，开始3D分子结构动画')
-    // 首先触发中心分子结构的震撼开场动画
-    const event2 = new CustomEvent('pageLoaded');
-    window.dispatchEvent(event2);
-    
-    // 移除固定延时，改为事件驱动
-    // 等待3D分子结构动画自己完成后触发 moleculeAnimationComplete 事件
-}
-
-// 3D分子结构动画完成回调
-function handleMoleculeAnimationComplete() {
-    console.log('3D分子结构动画完成，开始加载背景和UI元素')
-    showBackgroundAndUI()
-}
-
-// 显示背景和UI元素的动画
-function showBackgroundAndUI() {
-    let tl = gsap.timeline({ paused: false })
-    let leftCards = gsap.utils.toArray(".left-card")
-    let rightCards = gsap.utils.toArray(".right-card")
-    let countCards = gsap.utils.toArray(".count-card")
-    
-    tl.addLabel("background", 0)
-    tl.addLabel("ui-start", 0.5)
-    tl.addLabel("menu", 0.7)
-    tl.addLabel("cards", 1.2)
-    tl.addLabel("dashboard", 1.5)
-    tl.addLabel("bottom", 2.0)
-    
-    // 首先显示背景
-    tl.to(".page-background", { opacity: 1, duration: 2, ease: "power2.out" }, "background")
-    
-    // 顶部元素登场
-    tl.to(".m-header", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "ui-start")
-    tl.to(".top-menu", {
-        y: 0,
-        opacity: 1,
-        duration: 1.5,
-        ease: "power4.out",
-    }, "menu")
-    
-    // 左右卡片登场
-    tl.to(leftCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "cards")
-    tl.to(rightCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "cards")
-    
-    // 数据面板登场
-    tl.to(".top-data-dashboard", {
-        opacity: 1,
-        y: 0,
-        duration: 1.5,
-        ease: "power4.out"
-    }, "dashboard")
-    
-    if(countCards.length > 0) {
-        tl.to(countCards, {
-            y: 0,
-            opacity: 1,
-            stagger: 0.2,
-            duration: 1.5,
-            ease: "power4.out",
-        }, "cards")
-    }
-    
-    // 底部元素登场
-    tl.to(".bottom-tray", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "bottom")
-    tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "bottom")
-    tl.to(".bottom-molecule-legend", {
-        opacity: 1,
-        y: 0,
-        duration: 1.5,
-        ease: "power4.out"
-    }, "bottom")
-}
 </script>
 
 <style lang="scss">
@@ -430,26 +326,6 @@ function showBackgroundAndUI() {
     width: 100%;
     height: 100vh;
     overflow: hidden;
-}
-.m-header-weather,
-.m-header-date {
-    span {
-        padding-right: 10px;
-        color: #c4f3fe;
-        font-size: 14px;
-    }
-}
-.top-menu {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 40px;
-    z-index: 3;
-    display: flex;
-    justify-content: center;
-    .top-menu-mid-space {
-        width: 800px;
-    }
 }
 .bottom-radar {
     position: absolute;
@@ -469,22 +345,6 @@ function showBackgroundAndUI() {
     .btn {
         margin-right: 10px;
     }
-}
-.bottom-svg-line-left,
-.bottom-svg-line-right {
-    position: absolute;
-    right: 50%;
-    width: 721px;
-    height: 57px;
-    margin-right: -5px;
-    bottom: -21px;
-}
-.bottom-svg-line-right {
-    transform: scaleX(-1);
-    left: 50%;
-    right: inherit;
-    margin-right: inherit;
-    margin-left: -5px;
 }
 /* 数据面板样式 */
 .top-data-dashboard {
@@ -708,20 +568,7 @@ function showBackgroundAndUI() {
     }
 }
 
-/* 背景组件初始隐藏 */
-.page-background {
-    opacity: 0;
-}
-
 /* 初始化动画开始位置 */
-.m-header {
-    transform: translateY(-100%);
-    opacity: 0;
-}
-.top-menu {
-    transform: translateY(-250%);
-    opacity: 0;
-}
 .count-card {
     transform: translateY(150%);
     opacity: 0;
@@ -737,10 +584,6 @@ function showBackgroundAndUI() {
 }
 .right-card {
     transform: translateX(150%);
-    opacity: 0;
-}
-.bottom-tray {
-    transform: translateY(100%);
     opacity: 0;
 }
 .bottom-radar {

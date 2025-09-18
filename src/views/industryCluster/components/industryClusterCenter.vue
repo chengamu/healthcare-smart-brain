@@ -1,18 +1,16 @@
 <script setup>
-import { nextTick, onMounted, onBeforeUnmount, ref, watch } from "vue";
+import { onMounted, ref, onBeforeUnmount } from "vue";
 import mCard from "@/components/mCard/index.vue"
 import gsap from "gsap";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { listDictData } from "@/api/system";
 import { listEnterpriseAll } from "@/api/brain";
 import keyEnterpriseData from "@/views/gdMap/map/keyEnterpriseData.js";
-import { useRoute } from "vue-router";
 
 // 注册DrawSVGPlugin插件
 gsap.registerPlugin(DrawSVGPlugin);
 
-const emit = defineEmits(['starClick'])
-const route = useRoute() // 获取路由信息
+const emit = defineEmits(['starClick', 'animationComplete'])
 
 const stars = ref([
     { id: '', type: '', name: '', x: 15, y: 35, delay: 0, size: 'large' },      // 天枢-勺口最外侧
@@ -43,81 +41,42 @@ const initStars = async () => {
 
 onMounted(async () => {
     await initStars();
-    window.addEventListener('pageLoaded', handlePageLoadComplete);
 });
 
-// 监听路由变化，重置动画状态
-watch(() => route.path, async (newPath, oldPath) => {
-    // 当路由切换到当前页面时，重置动画状态
-    if (newPath === '/industryCluster' && oldPath && oldPath !== '/industryCluster') {
-        console.log('检测到路由切换到industryCluster，重置动画状态');
-        await resetAnimationState();
-    }
-});
-
-// 在组件卸载前移除事件监听器
-onBeforeUnmount(() => {
-    window.removeEventListener('pageLoaded', handlePageLoadComplete);
-});
-
-// 重置动画状态的函数
-async function resetAnimationState() {
-    console.log('重置北斗七星动画状态');
-    isAnimationPlayed.value = false;
-    
-    // 重新初始化星星数据
-    await initStars();
-    console.log('重新初始化后的stars数据:', stars.value);
-    
-    // 重置所有动画元素的状态
-    gsap.set(".lines path", { drawSVG: "0%", visibility: "hidden" });
-    gsap.set(".star", { 
-        opacity: 0, 
-        scale: 0, 
-        rotation: -360,
-        pointerEvents: "auto" // 确保点击事件可用
-    });
-    gsap.set(".big-dipper", { opacity: 0, scale: 0.5 });
-    
-    // 等待一小段时间确保DOM更新完成
-    await new Promise(resolve => setTimeout(resolve, 100));
-    console.log('动画状态重置完成');
-}
+let animationTimeline = null;
 
 function handlePageLoadComplete() {
     // 检查动画是否已经执行过，避免重复执行
     if (isAnimationPlayed.value) {
-        console.log('动画已执行过，跳过重复执行');
         return
     }
     
-    console.log('开始执行北斗七星动画');
     isAnimationPlayed.value = true
-    let tl = gsap.timeline();
+    animationTimeline = gsap.timeline();
 
     // 初始化状态
     gsap.set(".lines path", { drawSVG: "0%", visibility: "visible" });
     gsap.set(".star", { opacity: 0, scale: 0, rotation: -360 });
     gsap.set(".big-dipper", { opacity: 0, scale: 0.5 });
     
-    // 1. 整体容器出现
-    tl.to(".big-dipper", {
+    // 1. 整体容器出现 - 缩短持续时间
+    animationTimeline.to(".big-dipper", {
         opacity: 1,
         scale: 1,
-        duration: 1.5,
+        duration: 0.8,
         ease: "power3.out"
     }, 0);
     
-    // 2. 连线绘制动画 - 更慢更优雅
-    tl.to(".lines path", {
+    // 2. 连线绘制动画 - 大幅缩短持续时间
+    animationTimeline.to(".lines path", {
         drawSVG: "100%",
-        duration: 4,
+        duration: 1.5,
         ease: "power2.inOut"
-    }, 0.8);
+    }, 0.3);
     
-    // 3. 北斗七星依次出现 - 增强的3D效果
+    // 3. 北斗七星依次出现 - 缩短延迟和持续时间
     stars.value.forEach((star, index) => {
-        tl.fromTo(`.star-${index}`,
+        animationTimeline.fromTo(`.star-${index}`,
             { 
                 opacity: 0, 
                 scale: 0,
@@ -129,54 +88,53 @@ function handlePageLoadComplete() {
                 scale: 1, 
                 rotation: 0,
                 z: 0,
-                duration: 1.5, 
+                duration: 0.8, 
                 ease: "elastic.out(1, 0.3)"
             },
-            2 + star.delay * 0.3
+            0.8 + star.delay * 0.15
         );
         
-        // 每个星星出现后的确认闪烁
-        tl.to(`.star-${index} .star-circle`, {
+        // 每个星星出现后的确认闪烁 - 缩短延迟
+        animationTimeline.to(`.star-${index} .star-circle`, {
             scale: 1.3,
-            duration: 0.2,
+            duration: 0.15,
             ease: "power2.out",
             yoyo: true,
-            repeat: 3
-        }, 2.5 + star.delay * 0.3);
+            repeat: 1
+        }, 1.0 + star.delay * 0.15);
         
-        // 文字清晰度增强
-        tl.to(`.star-${index} .star-name`, {
+        // 文字清晰度增强 - 缩短延迟
+        animationTimeline.to(`.star-${index} .star-name`, {
             textShadow: "0 0 5px rgba(0,0,0,1), 0 0 10px rgba(48,220,255,1), 1px 1px 2px rgba(0,0,0,1)",
-            duration: 0.5,
+            duration: 0.3,
             ease: "power2.out"
-        }, 2.8 + star.delay * 0.3);
+        }, 1.1 + star.delay * 0.15);
     });
     
-    // 4. 最终整体发光效果
-    tl.to(".big-dipper", {
+    // 4. 最终整体发光效果 - 缩短持续时间和提前开始
+    animationTimeline.to(".big-dipper", {
         filter: "drop-shadow(0 0 30px rgba(48, 220, 255, 0.6)) drop-shadow(0 0 60px rgba(0, 255, 136, 0.4))",
-        duration: 2,
+        duration: 1,
         ease: "power2.out"
-    }, 5);
+    }, 1.5);
     
-    // 5. 环形扩散效果启动和动画完成事件
-    tl.call(() => {
+    // 5. 环形扩散效果启动
+    animationTimeline.call(() => {
         // 启动环形动画
         gsap.to(".ring", {
             opacity: 1,
-            duration: 0.5,
-            stagger: 0.2
+            duration: 0.3,
+            stagger: 0.1
         });
         
         // 确保点击事件可用
         gsap.set(".star", { pointerEvents: "auto" });
-        
-        console.log('北斗七星主体动画完成，准备触发完成事件')
-        
-        // 发送北斗七星动画完成事件
-        const starCompleteEvent = new CustomEvent('starAnimationComplete');
-        window.dispatchEvent(starCompleteEvent);
-    }, null, 6);  // 保持在6秒时触发，这是合理的时机
+    }, null, 1.75);
+    
+    // 6. 动画完成后向父组件发送事件
+    animationTimeline.call(() => {
+        emit('animationComplete');
+    }, null, 2.0);  // 在所有动画完成后触发
 }
 
 // 控制企业列表弹窗显示的状态
@@ -185,35 +143,21 @@ const enterpriseTypeName = ref('')
 const enterpriseList = ref(null)
 
 async function handleStarClick(star) {
-    console.log('点击星星:', star);
-    console.log('当前时间:', new Date().toLocaleTimeString());
-    console.log('动画状态:', isAnimationPlayed.value);
-    
     // 检查星星数据是否完整
     if (!star.type || !star.name) {
         console.error('星星数据不完整:', star);
-        alert('星星数据不完整，请稍后再试');
         return;
     }
     
     try {
-        console.log('开始调用API, type:', star.type);
         const response = await listEnterpriseAll({ type: star.type })
-        console.log('API调用成功:', response);
         enterpriseList.value = response
         enterpriseTypeName.value = star.name
         showEnterpriseListDialog.value = true
     } catch (error) {
         console.error('获取企业列表数据失败:', error)
-        alert('获取企业数据失败：' + error.message);
         // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
     }
-}
-
-// 添加一个测试函数
-function testClick() {
-    console.log('测试点击事件生效！');
-    alert('点击事件正常！');
 }
 
 // 关闭弹窗
@@ -241,6 +185,16 @@ const closeEnterpriseDialog = () => {
     showEnterpriseDialog.value = false
     enterprise.value = null
 }
+// 在组件卸载前移除事件监听器
+onBeforeUnmount(() => {
+    if (animationTimeline) {
+        animationTimeline.kill();
+    }
+})
+
+defineExpose({
+    handlePageLoadComplete
+})
 </script>
 
 <template>

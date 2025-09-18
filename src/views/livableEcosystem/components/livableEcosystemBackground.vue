@@ -2,6 +2,8 @@
 import { nextTick, onMounted, onBeforeUnmount } from "vue";
 import gsap from "gsap";
 
+const emit = defineEmits(['animationComplete']);
+
 let animationTimeline = null;
 
 function handlePageLoadComplete() {
@@ -15,33 +17,37 @@ function initAnimations() {
     // 创建时间线
     animationTimeline = gsap.timeline();
 
-    // // 设置初始状态 - 所有元素透明
-    // animationTimeline.set('.rain', {
-    //     opacity: 0
-    // });
-    //
-    // // 背景星星动画
-    // animationTimeline.to('.rain', {
-    //     opacity: 1,
-    //     duration: 1,
-    //     ease: "power2.out"
-    // });
-}
+    // 设置初始状态 - 所有元素透明
+    animationTimeline.set('.background-container', {
+        opacity: 0
+    });
 
-onMounted(() => {
-    window.addEventListener('backgroundLoaded', handlePageLoadComplete)
-})
+    // 背景星星动画
+    animationTimeline.to('.background-container', {
+        opacity: 1,
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => {
+            // 动画完成后向父组件发送事件
+            emit('animationComplete');
+        }
+    });
+}
 
 // 在组件卸载前移除事件监听器
 onBeforeUnmount(() => {
-    window.removeEventListener('backgroundLoaded', handlePageLoadComplete)
+    if (animationTimeline) {
+        animationTimeline.kill();
+    }
+})
+
+defineExpose({
+    handlePageLoadComplete
 })
 </script>
 
 <template>
-    <div class="background-container">
-        <canvas class="rain"></canvas>
-    </div>
+    <div class="background-container"></div>
 </template>
 
 <style scoped lang="scss">

@@ -2,14 +2,11 @@
 import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 import gsap from "gsap";
 
-// 状态管理
-const currentPhase = ref('intro');     // 'intro' | 'main'
-const showDecorations = ref(false);    // 是否显示红色装饰元素
-const minPlayTime = 3000;              // 最小播放时间（毫秒）
-let introStartTime = 0;                // 开场动画开始时间
+const emit = defineEmits(['animationComplete']);
 
-const introVideoRef = ref(null);
-const backgroundVideoRef = ref(null);
+// 状态管理
+const showDecorations = ref(false);    // 是否显示红色装饰元素
+
 const containerRef = ref(null);
 
 let animationTimeline = null;
@@ -18,72 +15,6 @@ let decorationAnimations = [];
 function handlePageLoadComplete() {
     // 页面加载完成后启动动画
     nextTick(() => {
-        startIntroAnimation();
-        startBackgroundVideo();
-    });
-}
-
-function startBackgroundVideo() {
-    // 立即开始播放背景视频循环
-    if (backgroundVideoRef.value) {
-        backgroundVideoRef.value.play();
-    }
-}
-
-function startIntroAnimation() {
-    console.log('开始播放开场动画 ini.mp4');
-    introStartTime = Date.now(); // 记录开始时间
-    
-    // 播放开场动画
-    if (introVideoRef.value) {
-        // 添加更多事件监听来调试
-        introVideoRef.value.addEventListener('loadstart', () => {
-            console.log('开场视频开始加载');
-        });
-        
-        introVideoRef.value.addEventListener('canplay', () => {
-            console.log('开场视频可以播放了');
-        });
-        
-        introVideoRef.value.addEventListener('playing', () => {
-            console.log('开场视频正在播放');
-        });
-        
-        introVideoRef.value.addEventListener('timeupdate', (e) => {
-            const current = e.target.currentTime;
-            const duration = e.target.duration;
-            if (duration) {
-                console.log(`开场视频播放进度: ${current.toFixed(1)}s / ${duration.toFixed(1)}s`);
-            }
-        });
-        
-        // 监听开场动画结束事件
-        introVideoRef.value.addEventListener('ended', handleIntroEnd);
-        
-        // 确保视频能够播放
-        introVideoRef.value.play().catch(error => {
-            console.error('开场视频播放失败:', error);
-            // 如果自动播放失败，延迟3秒后自动切换
-            setTimeout(() => {
-                console.log('开场视频播放失败，自动切换到主界面');
-                handleIntroEnd();
-            }, 3000);
-        });
-    } else {
-        console.error('开场视频元素未找到');
-        // 如果视频元素不存在，直接切换
-        setTimeout(handleIntroEnd, 2000);
-    }
-}
-
-function onIntroEnded() {
-    console.log('开场动画播放完毕，切换到主界面');
-    
-    // 开场动画结束，切换到主背景并显示装饰元素
-    currentPhase.value = 'main';
-    
-    // 延迟一点时间再显示装饰元素，让背景视频先稳定
-    setTimeout(() => {
         showDecorations.value = true;
         
         // 启动装饰元素动画
@@ -94,29 +25,7 @@ function onIntroEnded() {
             const event = new CustomEvent('pageLoaded');
             window.dispatchEvent(event);
         });
-    }, 500);
-    
-    // 清理事件监听器
-    if (introVideoRef.value) {
-        introVideoRef.value.removeEventListener('ended', handleIntroEnd);
-    }
-}
-
-function handleIntroEnd() {
-    const playedTime = Date.now() - introStartTime;
-    console.log(`开场动画播放时长: ${playedTime}ms`);
-    
-    // 确保至少播放了最小时间
-    const remainingTime = Math.max(0, minPlayTime - playedTime);
-    
-    if (remainingTime > 0) {
-        console.log(`等待剩余时间: ${remainingTime}ms 以确保开场动画充分展示`);
-        setTimeout(() => {
-            onIntroEnded();
-        }, remainingTime);
-    } else {
-        onIntroEnded();
-    }
+    });
 }
 
 function initDecorationAnimations() {
@@ -182,63 +91,33 @@ function startContinuousAnimations() {
         duration: 3,
         yoyo: true,
         repeat: -1,
-        ease: "power2.inOut"
+        ease: "power2.inOut",
+        onComplete: () => {
+            // 动画完成后向父组件发送事件
+            emit('animationComplete');
+        }
     });
 }
 
 onMounted(() => {
-    window.addEventListener('pageLoaded', handlePageLoadComplete);
+    // 直接启动装饰动画
+    handlePageLoadComplete();
 });
 
 // 在组件卸载前清理
 onBeforeUnmount(() => {
-    window.removeEventListener('pageLoaded', handlePageLoadComplete);
-    
-    // 清理视频事件监听器
-    if (introVideoRef.value) {
-        introVideoRef.value.removeEventListener('ended', handleIntroEnd);
-    }
-    
     if (animationTimeline) {
         animationTimeline.kill();
     }
 });
+
+defineExpose({
+    handlePageLoadComplete
+})
 </script>
 
 <template>
     <div ref="containerRef" class="center-container">
-        <!-- 背景视频层 - 全屏循环播放 -->
-        <div class="background-layer">
-            <video 
-                ref="backgroundVideoRef"
-                class="fullscreen-video" 
-                loop 
-                muted
-                autoplay
-                playsinline
-                preload="auto"
-            >
-                <source src="@/assets/images/redCore/bg.mp4" type="video/mp4">
-            </video>
-        </div>
-        
-        <!-- 开场动画视频层 -->
-        <div 
-            class="intro-layer" 
-            :class="{ 'active': currentPhase === 'intro' }"
-        >
-            <video 
-                ref="introVideoRef"
-                class="fullscreen-video" 
-                muted 
-                playsinline
-                preload="auto"
-                :controls="false"
-            >
-                <source src="@/assets/images/redCore/ini.mp4" type="video/mp4">
-            </video>
-        </div>
-        
         <!-- 红色装饰元素层 -->
         <div 
             class="decorations-layer"
@@ -250,10 +129,6 @@ onBeforeUnmount(() => {
             <div class="decoration-star star-3">★</div>
             <div class="decoration-star star-4">✧</div>
             <div class="decoration-star star-5">⋆</div>
-            
-            <!-- 党徽装饰 -->
-            <div class="party-symbol symbol-1">🚩</div>
-            <div class="party-symbol symbol-2">🎯</div>
             
             <!-- 漂浮粒子 -->
             <div class="floating-particle particle-1"></div>
@@ -276,39 +151,7 @@ onBeforeUnmount(() => {
     height: 100%;
     position: relative;
     overflow: hidden;
-    background: #000;
-}
-
-// 背景视频层 - 始终播放
-.background-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-}
-
-// 开场动画层
-.intro-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
-    opacity: 1;
-    transition: opacity 0.8s ease-out; /* 稍微放慢切换速度 */
-    background: rgba(0, 0, 0, 0.9); /* 添加黑色背景确保对比 */
-    
-    &:not(.active) {
-        opacity: 0;
-        pointer-events: none;
-    }
-    
-    &.active {
-        opacity: 1;
-    }
+    background: transparent; // 改为透明背景
 }
 
 // 装饰元素层
@@ -326,16 +169,6 @@ onBeforeUnmount(() => {
     &.active {
         opacity: 1;
     }
-}
-
-.fullscreen-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none;
 }
 
 // 星星装饰样式
@@ -381,27 +214,6 @@ onBeforeUnmount(() => {
         left: 50%;
         transform: translateX(-50%) scale(0.5);
         font-size: 30px;
-        animation-delay: 2s;
-    }
-}
-
-// 党徽装饰
-.party-symbol {
-    position: absolute;
-    font-size: 28px;
-    opacity: 0;
-    filter: drop-shadow(0 0 10px #dc2626);
-    animation: float 4s ease-in-out infinite;
-    
-    &.symbol-1 {
-        top: 10%;
-        left: 10%;
-        animation-delay: 0s;
-    }
-    
-    &.symbol-2 {
-        bottom: 15%;
-        right: 10%;
         animation-delay: 2s;
     }
 }
@@ -497,8 +309,7 @@ onBeforeUnmount(() => {
 }
 
 // 硬件加速优化
-.decorations-layer,
-.fullscreen-video {
+.decorations-layer {
     backface-visibility: hidden;
     transform: translateZ(0);
     will-change: opacity, transform;

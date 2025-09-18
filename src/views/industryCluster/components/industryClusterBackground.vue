@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, nextTick } from "vue";
+import { onBeforeUnmount, nextTick } from "vue";
 import gsap from "gsap";
+
+const emit = defineEmits(['animationComplete']);
 
 let animationTimeline = null;
 
@@ -23,21 +25,25 @@ function initAnimations() {
     // 背景星星动画
     animationTimeline.to('.background-video', {
         opacity: 1,
-        duration: 1,
-        ease: "power2.out"
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => {
+            // 动画完成后向父组件发送事件
+            emit('animationComplete');
+        }
     });
+    
 }
-
-onMounted(() => {
-    window.addEventListener('backgroundLoaded', handlePageLoadComplete)
-})
 
 // 在组件卸载前移除事件监听器
 onBeforeUnmount(() => {
-    window.removeEventListener('backgroundLoaded', handlePageLoadComplete)
     if (animationTimeline) {
         animationTimeline.kill();
     }
+})
+
+defineExpose({
+    handlePageLoadComplete
 })
 </script>
 
@@ -64,10 +70,10 @@ onBeforeUnmount(() => {
 // 背景视频样式
 .background-video {
     position: absolute;
-    top: 20%;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 80%;
+    height: 100%;
     object-fit: cover;
     z-index: -1;
     pointer-events: none; // 屏蔽视频点击事件

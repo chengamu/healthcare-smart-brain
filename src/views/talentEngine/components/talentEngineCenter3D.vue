@@ -90,8 +90,8 @@ const init3DScene = () => {
   const height = container.clientHeight
 
   scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(40, width / height, 1, 10000)
-  camera.position.z = 2000
+  camera = new THREE.PerspectiveCamera(50, width / height, 1, 10000) // 增加视角范围
+  camera.position.set(0, 0, 1200) // 拉近相机距离
 
   renderer = new CSS3DRenderer()
   renderer.setSize(width, height)
@@ -101,13 +101,13 @@ const init3DScene = () => {
   controls.rotateSpeed = 0.5
   controls.zoomSpeed = 1.2
   controls.panSpeed = 0.8
-  controls.minDistance = 500
-  controls.maxDistance = 4000
+  controls.minDistance = 600  // 减小最小距离
+  controls.maxDistance = 2500 // 减小最大距离
   controls.staticMoving = true
   controls.addEventListener('change', render)
 
   initTalentObjects()
-  arrangeHelix()
+  arrangeSphere()
   render()
   animate()
 
@@ -124,19 +124,21 @@ const initTalentObjects = () => {
 
   const cards = cardListRef.value.querySelectorAll('.talent-card')
   const numObjects = cards.length
-  const helixRadius = 500
-  const helixAngleStep = (2 * Math.PI) / 10
-  const helixSeparation = 20
+  const sphereRadius = 420 // 减小球体半径
   const origin = new THREE.Vector3(0, 0, 0)
 
   cards.forEach((card, i) => {
     card.style.transform = 'rotateY(180deg)'
     const object3D = new CSS3DObject(card)
 
-    const theta = i * helixAngleStep
-    const y = - (numObjects / 2) * helixSeparation + i * helixSeparation
-    const x = helixRadius * Math.sin(theta)
-    const z = helixRadius * Math.cos(theta)
+    // 球状分布：使用斐波那契螺旋实现均匀分布
+    const phi = Math.acos(1 - 2 * (i + 0.5) / numObjects)
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i
+    
+    const x = sphereRadius * Math.sin(phi) * Math.cos(theta)
+    const y = sphereRadius * Math.cos(phi)
+    const z = sphereRadius * Math.sin(phi) * Math.sin(theta)
+    
     object3D.position.set(x, y, z)
     object3D.lookAt(origin)
 
@@ -152,19 +154,20 @@ const initTalentObjects = () => {
   })
 }
 
-// 布局 Helix + 缓动
-const arrangeHelix = () => {
+// 布局球状 + 缓动
+const arrangeSphere = () => {
   const origin = new THREE.Vector3(0, 0, 0)
-  const helixRadius = 600
-  const helixSeparation = 25
-  const helixAngleStep = (2 * Math.PI) / 10
+  const sphereRadius = 420 // 保持与初始化一致的球体半径
   const numObjects = objects.length
 
   objects.forEach((obj, i) => {
-    const theta = i * helixAngleStep
-    const y = - (numObjects / 2) * helixSeparation + i * helixSeparation
-    const x = helixRadius * Math.sin(theta)
-    const z = helixRadius * Math.cos(theta)
+    // 使用斐波那契螺旋算法实现球面均匀分布
+    const phi = Math.acos(1 - 2 * (i + 0.5) / numObjects)
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i
+    
+    const x = sphereRadius * Math.sin(phi) * Math.cos(theta)
+    const y = sphereRadius * Math.cos(phi)
+    const z = sphereRadius * Math.sin(phi) * Math.sin(theta)
 
     new TWEEN.Tween(obj.position)
       .to({ x, y, z }, 1500)
@@ -198,7 +201,7 @@ const animate = () => {
   requestAnimationFrame(animate)
   TWEEN.update()
   controls.update()
-  if (scene) scene.rotation.y += 0.001
+  if (scene) scene.rotation.y += 0.002 // 稍微加快旋转速度以展示球状效果
   objects.forEach(obj => obj.lookAt(camera.position))
   render()
 }
@@ -234,7 +237,7 @@ watch(() => props.talentData, (newData) => {
     nextTick(() => {
       setTimeout(() => {
         initTalentObjects()
-        arrangeHelix()
+        arrangeSphere()
       }, 100)
     })
   }
@@ -249,7 +252,7 @@ watch(() => props.talentData, (newData) => {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: radial-gradient(circle at center, rgba(48, 220, 255, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(48, 220, 255, 0.15) 0%, rgba(48, 220, 255, 0.05) 40%, transparent 70%);
 }
 
 /* 卡片列表 */

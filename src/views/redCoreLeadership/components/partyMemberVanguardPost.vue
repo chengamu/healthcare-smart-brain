@@ -47,25 +47,11 @@ const props = defineProps({
     color: white;
     box-sizing: border-box;
     overflow-y: auto;
-    background: linear-gradient(135deg, 
-        rgba(220, 38, 38, 0.05) 0%, 
-        rgba(239, 68, 68, 0.05) 50%,
-        rgba(185, 28, 28, 0.05) 100%);
+    background: transparent;
     border-radius: 12px;
     position: relative;
     box-sizing: border-box;
     
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #dc2626, transparent);
-        animation: shimmer 3s infinite;
-    }
-
     .image-list {
         display: grid;
         grid-template-columns: repeat(1, 1fr);
@@ -79,12 +65,6 @@ const props = defineProps({
             overflow: hidden;
             width: 100%;
             cursor: pointer;
-            background: linear-gradient(135deg, 
-                rgba(220, 38, 38, 0.8) 0%, 
-                rgba(239, 68, 68, 0.7) 50%,
-                rgba(185, 28, 28, 0.8) 100%);
-            border: 2px solid rgba(220, 38, 38, 0.6);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
             transition: all 0.3s ease;
             padding: 15px;
             box-sizing: border-box;
@@ -151,10 +131,6 @@ const props = defineProps({
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background: linear-gradient(135deg, 
-                        rgba(220, 38, 38, 0.3) 0%, 
-                        rgba(239, 68, 68, 0.2) 50%,
-                        rgba(185, 28, 28, 0.3) 100%);
                     border-radius: 6px;
                     transition: opacity 0.3s ease;
                 }

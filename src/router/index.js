@@ -20,13 +20,14 @@ const redCoreLeadership = () => import("@/views/redCoreLeadership/index.vue")
 
 const gdMap = () => import("@/views/gdMap/index.vue")
 const login = () => import("@/views/login.vue")
+const index = () => import("@/views/index.vue")
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         {
             path: "/",
-            redirect: "/grandBlueprint",
-            component: grandBlueprint,
+            redirect: "/index",
+            component: index,
         },
         /*
          * 20250821前版本
@@ -82,6 +83,10 @@ const router = createRouter({
         {
             path: "/login",
             component: login,
+        },
+        {
+            path: "/index",
+            component: index,
         },
         {
             path: "/:pathMatch(.*)",

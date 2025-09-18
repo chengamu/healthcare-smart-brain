@@ -2,6 +2,8 @@
 import { nextTick, onMounted, onBeforeUnmount } from "vue";
 import gsap from "gsap";
 
+const emit = defineEmits(['animationComplete']);
+
 function rainBg() {
     var c = document.querySelector(".rain");
     var ctx = c.getContext("2d");//获取canvas上下文
@@ -98,7 +100,11 @@ function initAnimations() {
     animationTimeline.to('.rain', {
         opacity: 1,
         duration: 1,
-        ease: "power2.out"
+        ease: "power2.out",
+        onComplete: () => {
+            // 动画完成后向父组件发送事件
+            emit('animationComplete');
+        }
     });
 }
 
@@ -106,12 +112,17 @@ onMounted(() => {
     nextTick(() => {
         rainBg()
     })
-    window.addEventListener('backgroundLoaded', handlePageLoadComplete)
 })
 
 // 在组件卸载前移除事件监听器
 onBeforeUnmount(() => {
-    window.removeEventListener('backgroundLoaded', handlePageLoadComplete)
+    if (animationTimeline) {
+        animationTimeline.kill();
+    }
+})
+
+defineExpose({
+    handlePageLoadComplete
 })
 </script>
 
