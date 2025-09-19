@@ -468,7 +468,7 @@ function handleMenuSelect(index) {
 
 /* 卡片标题 */
 .menu-card-title {
-    font-size: 24px;
+    font-size: 36px;
     font-weight: 700;
     color: #e2e8f0;
     margin-bottom: 8px;
@@ -478,7 +478,7 @@ function handleMenuSelect(index) {
 
 /* 卡片副标题 */
 .menu-card-subtitle {
-    font-size: 14px;
+    font-size: 22px;
     color: #cbd5e1;
     font-weight: 400;
     opacity: 0.9;
@@ -487,7 +487,7 @@ function handleMenuSelect(index) {
 
 /* 卡片描述信息 */
 .menu-card-description {
-    font-size: 13px;
+    font-size: 18px;
     color: #94a3b8;
     font-weight: 400;
     line-height: 1.5;

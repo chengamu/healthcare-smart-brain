@@ -30,7 +30,7 @@
                     :rd-investment-value="yftrTypeData"
                     :instrument-value="instrumentData"
                     :technology-value="technologyData"
-                    :drug-value="drugValue"
+                    :drug-value="drugData"
                     ref="centerRef"
                     @animationComplete="animationCompleteC"
                 ></innovation-molecule-center>

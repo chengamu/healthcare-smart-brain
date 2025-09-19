@@ -27,114 +27,45 @@
             </div>
             <!-- 顶部统计卡片 -->
             <div class="top-count-card">
-                <corridor-gauge :current-value="175"></corridor-gauge>
-                <!--        <mCountCard v-for="(item, index) in state.totalView" :info="item" :key="index"></mCountCard>-->
+                <mCountCard v-for="(item, index) in state.totalView" :info="item" :key="index"></mCountCard>
             </div>
             <!-- 左边布局 图表 -->
             <div class="left-wrap">
-                <div v-if="state.activeIndex === '1'" class="left-wrap-3d">
-                    <!--产业联盟构成-->
-                    <industry-union></industry-union>
-                    <!--人才联盟概况-->
-                    <talent-union></talent-union>
-                    <!--共享设备使用率-->
-                    <utilization-rate-of-shared-equipment></utilization-rate-of-shared-equipment>
+                <div class="left-wrap-3d">
+                    <!-- 大宗商品销售额 -->
+                    <BulkCommoditySalesChart></BulkCommoditySalesChart>
+                    <!-- 年度经济增长点 -->
+                    <YearlyEconomyTrend></YearlyEconomyTrend>
+                    <!-- 近年经济情况 -->
+                    <EconomicTrendChart></EconomicTrendChart>
+                    <!-- 各区经济收益 -->
+                    <DistrictEconomicIncome></DistrictEconomicIncome>
                 </div>
-                <div v-if="state.activeIndex === '2'" class="left-wrap-3d">
-                    <!--产业链群发展-->
-                    <industry-union-development></industry-union-development>
-                    <!--项目引进情况-->
-                    <project-introduction></project-introduction>
-                    <!--年R&D投入-->
-                    <annual-r-d-investment></annual-r-d-investment>
-                </div>
-                <div v-if="state.activeIndex === '4'" class="left-wrap-3d">
-                    <!--人才联盟构成-->
-                    <talent-union-structure></talent-union-structure>
-                    <!--人才引进进度-->
-                    <talent-introduction-progress></talent-introduction-progress>
-                    <!--人才新增趋势-->
-                    <talent-new-trend></talent-new-trend>
-                </div>
-                <div v-if="state.activeIndex === '5'" class="left-wrap-3d">
-                    <!--金融资本助力-->
-                    <financial-capital-help></financial-capital-help>
-                    <!--关键技术攻坚-->
-                    <technological-hurdles-overcome></technological-hurdles-overcome>
-                    <!--医企合作项目-->
-                    <medical-enterprise-cooperation-project></medical-enterprise-cooperation-project>
-                </div>
-                <!--        <div class="left-wrap-3d">-->
-                <!--          &lt;!&ndash; 大宗商品销售额 &ndash;&gt;-->
-                <!--          <BulkCommoditySalesChart></BulkCommoditySalesChart>-->
-                <!--          &lt;!&ndash; 年度经济增长点 &ndash;&gt;-->
-                <!--          <YearlyEconomyTrend></YearlyEconomyTrend>-->
-                <!--          &lt;!&ndash; 近年经济情况 &ndash;&gt;-->
-                <!--          <EconomicTrendChart></EconomicTrendChart>-->
-                <!--          &lt;!&ndash; 各区经济收益 &ndash;&gt;-->
-                <!--          <DistrictEconomicIncome></DistrictEconomicIncome>-->
-                <!--        </div>-->
             </div>
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
-                <div v-if="state.activeIndex === '1'" class="right-wrap-3d">
-                    <!--强链补链进度-->
-                    <strong-chain-supply-chain-progress></strong-chain-supply-chain-progress>
-                    <!--新药/器械获批进度-->
-                    <new-drugs-approval-progress></new-drugs-approval-progress>
-                    <!--高新企业增长-->
-                    <high-tech-enterprise-growth></high-tech-enterprise-growth>
+                <div class="right-wrap-3d">
+                    <!--; 专项资金用途 -->
+                    <PurposeSpecialFunds> </PurposeSpecialFunds>
+                    <!-- 人群消费占比 -->
+                    <ProportionPopulationConsumption></ProportionPopulationConsumption>
+                    <!-- 用电情况 -->
+                    <ElectricityUsage></ElectricityUsage>
+                    <!-- 各季度增长情况 -->
+                    <QuarterlyGrowthSituation></QuarterlyGrowthSituation>
                 </div>
-                <div v-if="state.activeIndex === '2'" class="right-wrap-3d">
-                    <!--联盟重点企业-->
-                    <key-enterprise></key-enterprise>
-                </div>
-                <div v-if="state.activeIndex === '4'" class="right-wrap-3d">
-                    <!--联盟重点人才-->
-                    <key-talent></key-talent>
-                </div>
-                <div v-if="state.activeIndex === '5'" class="right-wrap-3d">
-                    <!--创新成果转化-->
-                    <innovation-result-conversion></innovation-result-conversion>
-                    <!--专项政策支持-->
-                    <special-policy-support></special-policy-support>
-                    <!--生活服务满意度-->
-                    <satisfaction-with-life-services></satisfaction-with-life-services>
-                </div>
-                <!--        <div class="right-wrap-3d">-->
-                <!--          &lt;!&ndash; 专项资金用途 &ndash;&gt;-->
-                <!--          <PurposeSpecialFunds> </PurposeSpecialFunds>-->
-                <!--          &lt;!&ndash; 人群消费占比 &ndash;&gt;-->
-                <!--          <ProportionPopulationConsumption></ProportionPopulationConsumption>-->
-                <!--          &lt;!&ndash; 用电情况 &ndash;&gt;-->
-                <!--          <ElectricityUsage></ElectricityUsage>-->
-                <!--          &lt;!&ndash; 各季度增长情况 &ndash;&gt;-->
-                <!--          <QuarterlyGrowthSituation></QuarterlyGrowthSituation>-->
-                <!--        </div>-->
             </div>
             <!-- 底部托盘 -->
             <div class="bottom-tray">
                 <!-- svg线条动画 -->
-                <mSvglineAnimation
-                    class="bottom-svg-line-left"
-                    :width="721"
-                    :height="57"
-                    color="#30DCFF"
-                    :strokeWidth="2"
-                    :dir="[0, 1]"
-                    :length="50"
-                    path="M1 56.6105C1 31.5123 185.586 10.0503 451.904 1.35519C458.942 1.12543 465.781 4.00883 470.505 9.22964L484.991 25.2383C487.971 28.4775 492.938 30.4201 498.254 30.4201H720.142"
-                ></mSvglineAnimation>
-                <mSvglineAnimation
-                    class="bottom-svg-line-left bottom-svg-line-right"
-                    :width="721"
-                    :height="57"
-                    color="#30DCFF"
-                    :strokeWidth="2"
-                    :dir="[0, 1]"
-                    :length="50"
-                    path="M1 56.6105C1 31.5123 185.586 10.0503 451.904 1.35519C458.942 1.12543 465.781 4.00883 470.505 9.22964L484.991 25.2383C487.971 28.4775 492.938 30.4201 498.254 30.4201H720.142"
-                ></mSvglineAnimation>
+                <mSvglineAnimation class="bottom-svg-line-left" :width="721" :height="57" color="#30DCFF"
+                    :strokeWidth="2" :dir="[0, 1]" :length="50"
+                    path="M1 56.6105C1 31.5123 185.586 10.0503 451.904 1.35519C458.942 1.12543 465.781 4.00883 470.505 9.22964L484.991 25.2383C487.971 28.4775 492.938 30.4201 498.254 30.4201H720.142">
+                </mSvglineAnimation>
+                <mSvglineAnimation class="bottom-svg-line-left bottom-svg-line-right" :width="721" :height="57"
+                    color="#30DCFF" :strokeWidth="2" :dir="[0, 1]" :length="50"
+                    path="M1 56.6105C1 31.5123 185.586 10.0503 451.904 1.35519C458.942 1.12543 465.781 4.00883 470.505 9.22964L484.991 25.2383C487.971 28.4775 492.938 30.4201 498.254 30.4201H720.142">
+                </mSvglineAnimation>
                 <!--        &lt;!&ndash; 做箭头 &ndash;&gt;-->
                 <!--        <div class="bottom-tray-arrow">-->
                 <!--          <img src="@/assets/images/bottom-menu-arrow-big.svg" alt="" />-->
@@ -181,7 +112,7 @@
     </div>
 </template>
 <script setup>
-import {shallowRef, ref, reactive, onMounted, onBeforeUnmount, nextTick} from "vue"
+import { shallowRef, ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue"
 import mapScene from "./map.vue"
 import mHeader from "@/components/mHeader/index.vue"
 import mCountCard from "@/components/mCountCard/index.vue"
@@ -203,31 +134,6 @@ import emitter from "@/utils/emitter"
 import gsap from "gsap"
 import autofit from "autofit.js"
 import { useCurrentTime } from "@/hooks/useCurrentTime.js"
-import IndustryUnion from "@/views/industryPanorama/components/IndustryUnion.vue";
-import TalentUnion from "@/views/industryPanorama/components/TalentUnion.vue";
-import FinancialCapitalHelp from "@/views/innovationEcosystem/components/FinancialCapitalHelp.vue";
-import UtilizationRateOfSharedEquipment
-    from "@/views/industryPanorama/components/UtilizationRateOfSharedEquipment.vue";
-import StrongChainSupplyChainProgress
-    from "@/views/industryPanorama/components/StrongChainSupplyChainProgress.vue";
-import NewDrugsApprovalProgress from "@/views/industryPanorama/components/NewDrugsApprovalProgress.vue";
-import HighTechEnterpriseGrowth from "@/views/industryPanorama/components/HighTechEnterpriseGrowth.vue";
-import SatisfactionWithLifeServices from "@/views/innovationEcosystem/components/SatisfactionWithLifeServices.vue";
-import KeyEnterprise from "@/views/industryUnion/components/KeyEnterprise.vue";
-import IndustryUnionDevelopment from "@/views/industryUnion/components/IndustryUnionDevelopment.vue";
-import ProjectIntroduction from "@/views/industryUnion/components/ProjectIntroduction.vue";
-import AnnualRDInvestment from "@/views/industryUnion/components/AnnualRDInvestment.vue";
-import KeyTalent from "@/views/talentUnion/components/keyTalent.vue";
-import TalentUnionStructure from "@/views/talentUnion/components/TalentUnionStructure.vue";
-import TalentIntroductionProgress from "@/views/talentUnion/components/TalentIntroductionProgress.vue";
-import TalentNewTrend from "@/views/talentUnion/components/TalentNewTrend.vue";
-import TechnologicalHurdlesOvercome
-    from "@/views/innovationEcosystem/components/TechnologicalHurdlesOvercome.vue";
-import MedicalEnterpriseCooperationProject
-    from "@/views/innovationEcosystem/components/MedicalEnterpriseCooperationProject.vue";
-import InnovationResultConversion from "@/views/innovationEcosystem/components/InnovationResultConversion.vue";
-import SpecialPolicySupport from "@/views/innovationEcosystem/components/SpecialPolicySupport.vue";
-import CorridorGauge from "@/views/industryPanorama/components/CorridorGauge.vue";
 
 const assets = shallowRef(null)
 const mapSceneRef = ref(null)
@@ -365,7 +271,7 @@ function handleMapPlayComplete(noCountCard = false) {
     tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "-=2")
     tl.to(leftCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
     tl.to(rightCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
-    if(!noCountCard) {
+    if (!noCountCard) {
         tl.to(
             countCards,
             {
@@ -383,6 +289,7 @@ function handleMapPlayComplete(noCountCard = false) {
 
 <style lang="scss">
 @import "~@/assets/style/home.scss";
+
 .m-header-weather,
 .m-header-date {
     span {
@@ -391,6 +298,7 @@ function handleMapPlayComplete(noCountCard = false) {
         font-size: 14px;
     }
 }
+
 .top-menu {
     position: absolute;
     left: 0px;
@@ -399,29 +307,35 @@ function handleMapPlayComplete(noCountCard = false) {
     z-index: 3;
     display: flex;
     justify-content: center;
+
     .top-menu-mid-space {
         width: 800px;
     }
 }
+
 .bottom-radar {
     position: absolute;
     right: 500px;
     bottom: 100px;
     z-index: 3;
 }
+
 .main-btn-group {
     display: flex;
     left: 50%;
     transform: translateX(-50%);
     bottom: 10px;
     z-index: 999;
+
     &.disabled {
         pointer-events: none;
     }
+
     .btn {
         margin-right: 10px;
     }
 }
+
 .bottom-svg-line-left,
 .bottom-svg-line-right {
     position: absolute;
@@ -431,6 +345,7 @@ function handleMapPlayComplete(noCountCard = false) {
     margin-right: -5px;
     bottom: -21px;
 }
+
 .bottom-svg-line-right {
     transform: scaleX(-1);
     left: 50%;
@@ -438,31 +353,38 @@ function handleMapPlayComplete(noCountCard = false) {
     margin-right: inherit;
     margin-left: -5px;
 }
+
 /* 初始化动画开始位置 */
 .m-header {
     transform: translateY(-100%);
     opacity: 0;
 }
+
 .top-menu {
     transform: translateY(-250%);
     opacity: 0;
 }
+
 .count-card {
     transform: translateY(150%);
     opacity: 0;
 }
+
 .left-card {
     transform: translateX(-150%);
     opacity: 0;
 }
+
 .right-card {
     transform: translateX(150%);
     opacity: 0;
 }
+
 .bottom-tray {
     transform: translateY(100%);
     opacity: 0;
 }
+
 .bottom-radar {
     transform: translateY(100%);
     opacity: 0;

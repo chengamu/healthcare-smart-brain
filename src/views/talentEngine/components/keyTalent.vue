@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue";
 import mCard from "@/components/mCard/index.vue"
-import keyTalent from "@/views/gdMap/map/keyTalent.js";
 import avatar from "@/assets/images/talentEngine/avatar.png"
 
 const props = defineProps({
