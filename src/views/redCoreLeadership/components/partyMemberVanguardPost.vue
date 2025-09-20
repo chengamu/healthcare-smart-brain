@@ -1,6 +1,7 @@
 <script setup>
 import mCard from "@/components/mCard/index.vue"
 import keyPartyMember from "@/views/gdMap/map/keyPartyMember.js";
+import avatar from "@/assets/images/talentEngine/avatar.png"
 
 const props = defineProps({
     title: {
@@ -25,7 +26,7 @@ const props = defineProps({
                         class="image-item"
                     >
                         <div class="image-wrapper">
-                            <img :src="image.src" :alt="image.name" />
+                            <img :src="image.src || avatar" :alt="image.name" />
                             <div class="image-overlay"></div>
                         </div>
                         <div class="image-info">

@@ -1,11 +1,3 @@
-/*
- * @Descripttion:
- * @version: 1.0.0
- * @Author: htang
- * @Date: 2024-07-15 16:33:33
- * @LastEditors: htang
- * @LastEditTime: 2024-08-24 14:38:23
- */
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { OUTPUT_DIR } from './build/constant';

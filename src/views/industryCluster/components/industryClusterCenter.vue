@@ -5,7 +5,6 @@ import gsap from "gsap";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { listDictData } from "@/api/system";
 import { listEnterpriseAll } from "@/api/brain";
-import keyEnterpriseData from "@/views/gdMap/map/keyEnterpriseData.js";
 
 // 注册DrawSVGPlugin插件
 gsap.registerPlugin(DrawSVGPlugin);

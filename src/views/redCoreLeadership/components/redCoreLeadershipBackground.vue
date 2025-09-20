@@ -8,8 +8,8 @@ let animationTimeline = null;
 const video1Ref = ref(null);
 const video2Ref = ref(null);
 // 使用相对路径来引用视频资源
-const iniVideoUrl = '/src/assets/images/redCore/ini.mp4';
-const bgVideoUrl = '/src/assets/images/redCore/bg.mp4';
+const iniVideoUrl = '/assets/mp4/ini.mp4';
+const bgVideoUrl = '/assets/mp4/bg.mp4';
 
 // 当前显示的视频索引（1 或 2）
 const activeVideoIndex = ref(1);
