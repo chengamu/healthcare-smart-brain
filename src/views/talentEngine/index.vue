@@ -38,12 +38,12 @@
                     <key-talent 
                         title="领军人才名录" 
                         :height="272" 
-                        :talent-data="state.talentData">
+                        :talent-data="state.talentDataYS">
                     </key-talent>
-                    <!--医疗领域人才分布-->
-                    <medical-field-talent-distribution
+                    <!--人才政策展示-->
+                    <talent-policy-display
                         :talent-data="state.talentData">
-                    </medical-field-talent-distribution>
+                    </talent-policy-display>
                     <!--人才新增趋势-->
                     <talent-new-trend 
                         position="right" 
@@ -87,6 +87,7 @@ import TalentEngineCenter3D from "@/views/talentEngine/components/talentEngineCe
 import {listEnterpriseAll, listTalentAll} from '@/api/brain.js'
 import {listDictData} from "@/api/system.js";
 import MedicalFieldTalentDistribution from "@/views/talentEngine/components/medicalFieldTalentDistribution.vue";
+import TalentPolicyDisplay from "@/views/talentEngine/components/talentPolicyDisplay.vue";
 
 const loadingRef = ref(null)
 const centerRef = ref(null)
@@ -122,6 +123,8 @@ const state = reactive({
     ],
     // 人才数据
     talentData: [],
+    // 院士人才数据
+    talentDataYS: [],
     // 是否初始化
     init: false
 })
@@ -200,6 +203,9 @@ async function getListTalentAll() {
                 enterpriseName: enterpriseList.value.find(enterprise => enterprise.id === item.enterpriseId)?.name,
             }
         })
+        
+        // 过滤出position参数中包含"院士"两个字的数据
+        state.talentDataYS = state.talentData.filter(item => item.position && item.position.includes('院士'))
     } catch (error) {
         console.error('获取人才数据失败:', error)
         // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值

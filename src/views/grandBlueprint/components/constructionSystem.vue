@@ -11,11 +11,11 @@ const coreData = {
     { name: "人才联通", color: "#45B7D1" }
   ],
   fiveEcosystems: [
-    { name: "产业生态", color: "#00FFC8" },
-    { name: "创新生态", color: "#FF00AA" },
-    { name: "人才生态", color: "#FFD700" },
-    { name: "生活生态", color: "#9D4EDD" },
-    { name: "服务生态", color: "#00B4D8" }
+    { name: "产业", color: "#00FFC8" },
+    { name: "创新", color: "#FF00AA" },
+    { name: "人才", color: "#FFD700" },
+    { name: "生活", color: "#9D4EDD" },
+    { name: "服务", color: "#00B4D8" }
   ]
 }
 
@@ -55,18 +55,26 @@ const startAnimations = () => {
                 </feMerge>
               </filter>
             </defs>
+                        
+            <!-- 1个产业填充椭圆 -->
+            <ellipse cx="200" cy="80" rx="80" ry="20" fill="rgba(48, 220, 255, 0.2)" stroke="#30DCFF" 
+                     stroke-width="1" opacity="0.8" class="three-promote-center-ellipse" />
             
-            <!-- 三联共促之间的三角形连接线 -->
-            <line class="triangle-line" x1="200" y1="120" x2="60" y2="250" stroke="url(#lineGradient)" stroke-width="2" stroke-dasharray="8,4" opacity="0.8" />
-            <line class="triangle-line" x1="110" y1="271" x2="290" y2="270" stroke="url(#lineGradient)" stroke-width="2" stroke-dasharray="8,4" opacity="0.8" />
-            <line class="triangle-line" x1="340" y1="250" x2="200" y2="120" stroke="url(#lineGradient)" stroke-width="2" stroke-dasharray="8,4" opacity="0.8" />
+            <!-- 3联共促的椭圆边线：贯穿所有3联共促文字 -->
+            <ellipse cx="200" cy="150" rx="240" ry="60" fill="none" stroke="url(#lineGradient)" 
+                     stroke-width="2" stroke-dasharray="6,3" opacity="0.6" class="dotted-oval three-promote-border" />
             
-            <!-- 5大生态之间的五边形连接线 -->
-            <line class="pentagon-line" x1="200" y1="50" x2="-70" y2="150" stroke="url(#lineGradient)" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7" />
-            <line class="pentagon-line" x1="-70" y1="180" x2="-30" y2="320" stroke="url(#lineGradient)" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7" />
-            <line class="pentagon-line" x1="30" y1="351" x2="370" y2="350" stroke="url(#lineGradient)" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7" />
-            <line class="pentagon-line" x1="430" y1="320" x2="470" y2="180" stroke="url(#lineGradient)" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7" />
-            <line class="pentagon-line" x1="470" y1="150" x2="200" y2="50" stroke="url(#lineGradient)" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7" />
+            <!-- 3联共促中心填充椭圆 -->
+            <ellipse cx="200" cy="150" rx="120" ry="30" fill="rgba(48, 220, 255, 0.2)" stroke="#30DCFF" 
+                     stroke-width="1" opacity="0.8" class="three-promote-center-ellipse" />
+            
+            <!-- 5大生态的椭圆边线：贯穿所有生态文字 -->
+            <ellipse cx="200" cy="270" rx="320" ry="80" fill="none" stroke="url(#lineGradient)" 
+                     stroke-width="2" stroke-dasharray="8,4" opacity="0.7" class="dotted-oval eco-border" />
+            
+            <!-- 5大生态中心填充椭圆 -->
+            <ellipse cx="200" cy="270" rx="160" ry="40" fill="rgba(0, 200, 150, 0.2)" stroke="#00C896" 
+                     stroke-width="1" opacity="0.8" class="eco-center-ellipse" />
           </svg>
 
           <!-- 核心文字 -->
@@ -75,7 +83,7 @@ const startAnimations = () => {
             <div class="center-glow"></div>
           </div>
 
-          <!-- 3联共促文字 (三角形布局) -->
+          <!-- 3联共促文字 -->
           <div 
             v-for="(ring, index) in coreData.threeRings" 
             :key="'ring-' + index"
@@ -87,7 +95,7 @@ const startAnimations = () => {
             <div class="ring-underline"></div>
           </div>
 
-          <!-- 5大生态文字 (五边形布局) -->
+          <!-- 5大生态文字 -->
           <div 
             v-for="(eco, index) in coreData.fiveEcosystems" 
             :key="'eco-' + index"
@@ -97,6 +105,21 @@ const startAnimations = () => {
           >
             <div class="eco-name">{{ eco.name }}</div>
             <div class="eco-underline"></div>
+          </div>
+          
+          <!-- 5大生态中心标签 -->
+          <div class="eco-center-label">
+            <div class="eco-center-text">“5”大生态</div>
+          </div>
+          
+          <!-- 3联共促中心标签 -->
+          <div class="three-promote-center-label">
+            <div class="three-promote-center-text">“3”联共促</div>
+          </div>
+          
+          <!-- 1个产业中心标签 -->
+          <div class="one-industry-center-label">
+            <div class="one-industry-center-text">“1”个产业</div>
           </div>
           
           <!-- 背景粒子效果 -->
@@ -128,7 +151,7 @@ const startAnimations = () => {
 // 核心文字样式
 .center-text {
   position: absolute;
-  top: 50%;
+  top: 8%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -150,8 +173,8 @@ const startAnimations = () => {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 120px;
-  height: 120px;
+  width: 80px;
+  height: 80px;
   background: radial-gradient(circle, rgba(48, 220, 255, 0.2), transparent);
   border-radius: 50%;
   transform: translate(-50%, -50%);
@@ -159,7 +182,7 @@ const startAnimations = () => {
   z-index: 1;
 }
 
-// 三环文字样式 (三角形布局)
+// 三环文字样式
 .three-ring-text {
   position: absolute;
   text-align: center;
@@ -180,22 +203,22 @@ const startAnimations = () => {
     }
   }
   
-  // 三角形布局
+  // 三角形布局 - 增大间距，保持水平显示
   &.ring-0 {
-    top: 25%;
+    top: 50%;
     left: 50%;
     transform: translateX(-50%);
   }
   
   &.ring-1 {
-    top: 65%;
-    left: 30%;
+    top: 40%;
+    left: 25%;
     transform: translateX(-50%);
   }
   
   &.ring-2 {
-    top: 65%;
-    left: 70%;
+    top: 40%;
+    left: 75%;
     transform: translateX(-50%);
   }
 }
@@ -228,7 +251,7 @@ const startAnimations = () => {
   transition: all 0.3s ease;
   
   &:hover {
-    transform: scale(1.15);
+    transform: scale(1.15) rotate(0deg) !important;
     
     .eco-name {
       text-shadow: 0 0 25px var(--eco-color);
@@ -240,33 +263,33 @@ const startAnimations = () => {
     }
   }
   
-  // 五边形布局 - 进一步向外扩展
+  // 五边形布局 - 底部椭圆弧形排布（移除倾斜，增大间距）
   &.eco-0 {
-    top: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  &.eco-1 {
-    top: 40%;
+    bottom: 15%;
     left: 15%;
     transform: translateX(-50%);
   }
   
+  &.eco-1 {
+    bottom: 8%;
+    left: 30%;
+    transform: translateX(-50%);
+  }
+  
   &.eco-2 {
-    top: 85%;
-    left: 20%;
+    bottom: 5%;
+    left: 50%;
     transform: translateX(-50%);
   }
   
   &.eco-3 {
-    top: 85%;
-    left: 80%;
+    bottom: 8%;
+    left: 70%;
     transform: translateX(-50%);
   }
   
   &.eco-4 {
-    top: 40%;
+    bottom: 15%;
     left: 85%;
     transform: translateX(-50%);
   }
@@ -324,11 +347,66 @@ const startAnimations = () => {
   }
 }
 
-// 三角形连接线样式
-.triangle-line {
-  stroke-dasharray: 8, 4;
-  stroke-dashoffset: 0;
-  animation: triangle-flow 4s linear infinite;
+// 三角形连接线样式 - 弧形路径
+.three-promote-border {
+  animation: three-promote-flow 6s linear infinite;
+  filter: url(#glow);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    stroke-width: 3 !important;
+    opacity: 1 !important;
+    stroke-dasharray: 4, 2;
+  }
+}
+
+// 3联共促中心标签
+.three-promote-center-label {
+  position: absolute;
+  top: 37%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.three-promote-center-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #30DCFF;
+  text-shadow: 
+    0 0 10px rgba(48, 220, 255, 0.8),
+    0 0 20px rgba(48, 220, 255, 0.4);
+  letter-spacing: 1px;
+  animation: three-promote-text-glow 3s ease-in-out infinite;
+}
+
+// 1个产业中心标签
+.one-industry-center-label {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.one-industry-center-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #30DCFF;
+  text-shadow: 
+    0 0 10px rgba(48, 220, 255, 0.8),
+    0 0 20px rgba(48, 220, 255, 0.4);
+  letter-spacing: 1px;
+  animation: three-promote-text-glow 3s ease-in-out infinite;
+}
+
+// 椭圆边线样式
+.eco-border {
+  animation: eco-border-flow 8s linear infinite;
   filter: url(#glow);
   transition: all 0.3s ease;
   
@@ -339,19 +417,26 @@ const startAnimations = () => {
   }
 }
 
-// 五边形连接线样式
-.pentagon-line {
-  stroke-dasharray: 6, 3;
-  stroke-dashoffset: 0;
-  animation: pentagon-flow 5s linear infinite;
-  filter: url(#glow);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    stroke-width: 2.5 !important;
-    opacity: 1 !important;
-    stroke-dasharray: 4, 2;
-  }
+// 5大生态中心标签
+.eco-center-label {
+  position: absolute;
+  top: 68%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.eco-center-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #00C896;
+  text-shadow: 
+    0 0 10px rgba(0, 200, 150, 0.8),
+    0 0 20px rgba(0, 200, 150, 0.4);
+  letter-spacing: 1px;
+  animation: eco-text-glow 3s ease-in-out infinite;
 }
 
 .background-particles {
@@ -470,6 +555,102 @@ const startAnimations = () => {
   100% {
     stroke-dashoffset: -27;
     opacity: 0.7;
+  }
+}
+
+// 3联共促椭圆边线动画
+@keyframes three-promote-flow {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0.5;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    stroke-dashoffset: -18;
+    opacity: 0.6;
+  }
+  75% {
+    opacity: 0.7;
+  }
+  100% {
+    stroke-dashoffset: -36;
+    opacity: 0.5;
+  }
+}
+
+// 3联共促中心填充椭圆脉冲动画
+@keyframes three-promote-center-pulse {
+  0%, 100% {
+    fill: rgba(48, 220, 255, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    fill: rgba(48, 220, 255, 0.3);
+    transform: scale(1.05);
+  }
+}
+
+// 3联共促文字发光动画
+@keyframes three-promote-text-glow {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(48, 220, 255, 0.6),
+      0 0 20px rgba(48, 220, 255, 0.3);
+  }
+  50% {
+    text-shadow: 
+      0 0 15px rgba(48, 220, 255, 1),
+      0 0 30px rgba(48, 220, 255, 0.6);
+  }
+}
+
+// 椭圆边线动画
+@keyframes eco-border-flow {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0.6;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    stroke-dashoffset: -24;
+    opacity: 0.7;
+  }
+  75% {
+    opacity: 0.9;
+  }
+  100% {
+    stroke-dashoffset: -48;
+    opacity: 0.6;
+  }
+}
+
+// 5大生态中心填充椭圆脉冲动画
+@keyframes eco-center-pulse {
+  0%, 100% {
+    fill: rgba(0, 200, 150, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    fill: rgba(0, 200, 150, 0.3);
+    transform: scale(1.05);
+  }
+}
+
+// 5大生态文字发光动画
+@keyframes eco-text-glow {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(0, 200, 150, 0.6),
+      0 0 20px rgba(0, 200, 150, 0.3);
+  }
+  50% {
+    text-shadow: 
+      0 0 15px rgba(0, 200, 150, 1),
+      0 0 30px rgba(0, 200, 150, 0.6);
   }
 }
 

@@ -11,27 +11,145 @@ gsap.registerPlugin(DrawSVGPlugin);
 
 const emit = defineEmits(['starClick', 'animationComplete'])
 
-const stars = ref([
-    { id: '', type: '', name: '', x: 15, y: 35, delay: 0, size: 'large' },      // 天枢-勺口最外侧
-    { id: '', type: '', name: '', x: 25, y: 15, delay: 0.2, size: 'medium' },    // 天璇-勺口内侧
-    { id: '', type: '', name: '', x: 45, y: 18, delay: 0.4, size: 'medium' },    // 天玑-勺口内侧
-    { id: '', type: '', name: '', x: 50, y: 40, delay: 0.6, size: 'large' },     // 天权-勺口最内侧
-    { id: '', type: '', name: '', x: 65, y: 45, delay: 0.8, size: 'small' },     // 玉衡-斗柄第一节
-    { id: '', type: '', name: '', x: 78, y: 47, delay: 1.0, size: 'small' },     // 开阳-斗柄第二节
-    { id: '', type: '', name: '', x: 88, y: 42, delay: 1.2, size: 'medium' }     // 摇光-斗柄末端
-]);
+const enterpriseTypes = ref([])
 const isAnimationPlayed = ref(false) // 添加动画执行状态标志
 
-// 初始化北斗七星数据，按照更准确的勺子形状排列
-const initStars = async () => {
+// 定义每个类型的颜色配置
+const typeColors = [
+    {
+        primary: 'rgba(34, 197, 94, 0.9)',   // 绿色
+        secondary: 'rgba(22, 163, 74, 0.7)',
+        tertiary: 'rgba(21, 128, 61, 0.5)',
+        light: '#D1FAE5',
+        enterprise: 'rgba(74, 222, 128, 0.9)'
+    },
+    {
+        primary: 'rgba(59, 130, 246, 0.9)',   // 蓝色
+        secondary: 'rgba(37, 99, 235, 0.7)',
+        tertiary: 'rgba(29, 78, 216, 0.5)',
+        light: '#DBEAFE',
+        enterprise: 'rgba(96, 165, 250, 0.9)'
+    },
+    {
+        primary: 'rgba(168, 85, 247, 0.9)',   // 紫色
+        secondary: 'rgba(147, 51, 234, 0.7)',
+        tertiary: 'rgba(126, 34, 206, 0.5)',
+        light: '#EDE9FE',
+        enterprise: 'rgba(196, 181, 253, 0.9)'
+    },
+    {
+        primary: 'rgba(245, 158, 11, 0.9)',   // 橙色
+        secondary: 'rgba(217, 119, 6, 0.7)',
+        tertiary: 'rgba(180, 83, 9, 0.5)',
+        light: '#FEF3C7',
+        enterprise: 'rgba(251, 191, 36, 0.9)'
+    },
+    {
+        primary: 'rgba(239, 68, 68, 0.9)',    // 红色
+        secondary: 'rgba(220, 38, 38, 0.7)',
+        tertiary: 'rgba(185, 28, 28, 0.5)',
+        light: '#FEE2E2',
+        enterprise: 'rgba(248, 113, 113, 0.9)'
+    },
+    {
+        primary: 'rgba(16, 185, 129, 0.9)',   // 青色
+        secondary: 'rgba(5, 150, 105, 0.7)',
+        tertiary: 'rgba(4, 120, 87, 0.5)',
+        light: '#D1FAE5',
+        enterprise: 'rgba(52, 211, 153, 0.9)'
+    },
+    {
+        primary: 'rgba(236, 72, 153, 0.9)',   // 粉色
+        secondary: 'rgba(219, 39, 119, 0.7)',
+        tertiary: 'rgba(190, 24, 93, 0.5)',
+        light: '#FCE7F3',
+        enterprise: 'rgba(244, 114, 182, 0.9)'
+    }
+];
+
+// 初始化企业类型和企业数据
+const initEnterpriseData = async () => {
     try {
         const response = await listDictData('brain_enterprise_type')
         console.log(response)
-        response.data.forEach((item, index) => {
-            stars.value[index].id = item.id
-            stars.value[index].type = item.dictValue
-            stars.value[index].name = item.dictLabel
-        });
+        
+        const typePositions = [
+            { x: 18, y: 22 },
+            { x: 82, y: 22 },
+            { x: 50, y: 50 },
+            { x: 15, y: 60 },
+            { x: 85, y: 60 },
+            { x: 35, y: 80 },
+            { x: 65, y: 80 }
+        ];
+        
+        const types = [];
+        
+        // 循环调用listEnterpriseAll获取所有企业数据
+        for (let i = 0; i < response.data.length; i++) {
+            const item = response.data[i];
+            try {
+                const enterpriseResponse = await listEnterpriseAll({ type: item.dictValue })
+                enterpriseGroupByType.value[item.dictValue] = enterpriseResponse
+                
+                // 计算企业围绕类型圆的位置
+                const enterprises = enterpriseResponse.map((enterprise, index) => {
+                    const angle = (index / enterpriseResponse.length) * 2 * Math.PI;
+                    // 根据企业数量动态调整围绕半径
+                    const baseRadius = 100; // 基础半径
+                    const maxRadius = 120; // 最大半径
+                    const minRadius = 90; // 最小半径
+                    const enterpriseCount = enterpriseResponse.length;
+                    
+                    let radius;
+                    if (enterpriseCount <= 3) {
+                        radius = minRadius; // 企业数量少时距离近
+                    } else if (enterpriseCount <= 6) {
+                        radius = baseRadius + (enterpriseCount - 3) * 10; // 渐进增加
+                    } else {
+                        radius = maxRadius; // 企业数量多时距离远
+                    }
+                    
+                    const centerX = 0; // 相对于类型圆中心的偏移
+                    const centerY = 0;
+                    return {
+                        ...enterprise,
+                        x: centerX + Math.cos(angle) * radius,
+                        y: centerY + Math.sin(angle) * radius,
+                        delay: index * 0.1
+                    };
+                });
+                
+                types.push({
+                    id: item.id,
+                    type: item.dictValue,
+                    name: item.dictLabel,
+                    x: typePositions[i]?.x || 50,
+                    y: typePositions[i]?.y || 50,
+                    enterprises: enterprises,
+                    delay: i * 0.2
+                });
+                
+                console.log(`获取${item.dictLabel}企业数据:`, enterpriseResponse)
+            } catch (enterpriseError) {
+                console.error(`获取${item.dictLabel}企业数据失败:`, enterpriseError)
+                enterpriseGroupByType.value[item.dictValue] = []
+                
+                types.push({
+                    id: item.id,
+                    type: item.dictValue,
+                    name: item.dictLabel,
+                    x: typePositions[i]?.x || 50,
+                    y: typePositions[i]?.y || 50,
+                    enterprises: [],
+                    delay: i * 0.2
+                });
+            }
+        }
+        
+        enterpriseTypes.value = types;
+        console.log('所有企业数据按类型分组:', enterpriseGroupByType.value)
+        console.log('企业类型布局数据:', enterpriseTypes.value)
     } catch (error) {
         console.error('获取企业类别数据失败:', error)
         // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
@@ -39,7 +157,7 @@ const initStars = async () => {
 };
 
 onMounted(async () => {
-    await initStars();
+    await initEnterpriseData();
 });
 
 let animationTimeline = null;
@@ -52,110 +170,120 @@ function handlePageLoadComplete() {
     
     isAnimationPlayed.value = true
     animationTimeline = gsap.timeline();
-
-    // 初始化状态
-    gsap.set(".lines path", { drawSVG: "0%", visibility: "visible" });
-    gsap.set(".star", { opacity: 0, scale: 0, rotation: -360 });
-    gsap.set(".big-dipper", { opacity: 0, scale: 0.5 });
     
-    // 1. 整体容器出现 - 缩短持续时间
-    animationTimeline.to(".big-dipper", {
+    // 1. 整体容器出现
+    animationTimeline.to(".enterprise-cluster", {
         opacity: 1,
         scale: 1,
         duration: 0.8,
         ease: "power3.out"
     }, 0);
     
-    // 2. 连线绘制动画 - 大幅缩短持续时间
-    animationTimeline.to(".lines path", {
-        drawSVG: "100%",
-        duration: 1.5,
-        ease: "power2.inOut"
-    }, 0.3);
-    
-    // 3. 北斗七星依次出现 - 缩短延迟和持续时间
-    stars.value.forEach((star, index) => {
-        animationTimeline.fromTo(`.star-${index}`,
+    // 2. 企业类型圆依次出现
+    enterpriseTypes.value.forEach((type, typeIndex) => {
+        animationTimeline.fromTo(`.type-circle-${typeIndex}`,
             { 
                 opacity: 0, 
                 scale: 0,
-                rotation: -360,
-                z: -100
+                rotation: -180
             },
             { 
                 opacity: 1, 
                 scale: 1, 
                 rotation: 0,
-                z: 0,
-                duration: 0.8, 
-                ease: "elastic.out(1, 0.3)"
+                duration: 0.6, 
+                ease: "back.out(1.7)"
             },
-            0.8 + star.delay * 0.15
+            0.5 + type.delay
         );
         
-        // 每个星星出现后的确认闪烁 - 缩短延迟
-        animationTimeline.to(`.star-${index} .star-circle`, {
-            scale: 1.3,
-            duration: 0.15,
-            ease: "power2.out",
-            yoyo: true,
-            repeat: 1
-        }, 1.0 + star.delay * 0.15);
-        
-        // 文字清晰度增强 - 缩短延迟
-        animationTimeline.to(`.star-${index} .star-name`, {
-            textShadow: "0 0 5px rgba(0,0,0,1), 0 0 10px rgba(48,220,255,1), 1px 1px 2px rgba(0,0,0,1)",
-            duration: 0.3,
-            ease: "power2.out"
-        }, 1.1 + star.delay * 0.15);
+        // 3. 企业小圆围绕类型圆出现
+        type.enterprises.forEach((enterprise, enterpriseIndex) => {
+            animationTimeline.fromTo(`.enterprise-circle-${typeIndex}-${enterpriseIndex}`,
+                { 
+                    opacity: 0, 
+                    scale: 0,
+                    rotation: -360
+                },
+                { 
+                    opacity: 1, 
+                    scale: 1, 
+                    rotation: 0,
+                    duration: 0.4, 
+                    ease: "elastic.out(1, 0.3)"
+                },
+                1.0 + type.delay + enterprise.delay
+            );
+        });
     });
     
-    // 4. 最终整体发光效果 - 缩短持续时间和提前开始
-    animationTimeline.to(".big-dipper", {
-        filter: "drop-shadow(0 0 30px rgba(48, 220, 255, 0.6)) drop-shadow(0 0 60px rgba(0, 255, 136, 0.4))",
-        duration: 1,
+    // 4. 最终整体发光效果
+    animationTimeline.to(".enterprise-cluster", {
+        filter: "drop-shadow(0 0 20px rgba(48, 220, 255, 0.3))",
+        duration: 0.8,
         ease: "power2.out"
-    }, 1.5);
+    }, 2.0);
     
-    // 5. 环形扩散效果启动
+    // 5. 确保点击事件可用
     animationTimeline.call(() => {
-        // 启动环形动画
-        gsap.to(".ring", {
-            opacity: 1,
-            duration: 0.3,
-            stagger: 0.1
-        });
-        
-        // 确保点击事件可用
-        gsap.set(".star", { pointerEvents: "auto" });
-    }, null, 1.75);
+        gsap.set(".type-circle, .enterprise-circle", { pointerEvents: "auto" });
+    }, null, 2.2);
     
     // 6. 动画完成后向父组件发送事件
     animationTimeline.call(() => {
         emit('animationComplete');
-    }, null, 2.0);  // 在所有动画完成后触发
+    }, null, 2.5);
 }
 
 // 控制企业列表弹窗显示的状态
 const showEnterpriseListDialog = ref(false)
 const enterpriseTypeName = ref('')
 const enterpriseList = ref(null)
+const enterpriseGroupByType = ref({})
 
-async function handleStarClick(star) {
-    // 检查星星数据是否完整
-    if (!star.type || !star.name) {
-        console.error('星星数据不完整:', star);
+async function handleTypeClick(type) {
+    // 检查类型数据是否完整
+    if (!type.type || !type.name) {
+        console.error('企业类型数据不完整:', type);
         return;
     }
     
     try {
-        const response = await listEnterpriseAll({ type: star.type })
+        const response = enterpriseGroupByType.value[type.type] || []
         enterpriseList.value = response
-        enterpriseTypeName.value = star.name
+        enterpriseTypeName.value = type.name
         showEnterpriseListDialog.value = true
     } catch (error) {
         console.error('获取企业列表数据失败:', error)
-        // 可以根据需要添加更多错误处理逻辑，比如显示错误提示或使用默认值
+    }
+}
+
+// 处理企业圆点击事件
+function handleEnterpriseClick(enterprise) {
+    console.log('点击企业:', enterprise)
+    handleGroupClick(enterprise)
+}
+
+// 处理图片加载失败
+function handleImageError(event) {
+    // 图片加载失败时隐藏图片元素
+    event.target.style.display = 'none'
+    console.log('企业logo加载失败:', event.target.alt)
+}
+
+// 暂停轨道动画
+function pauseOrbitAnimation(typeIndex) {
+    const orbitElement = document.querySelector(`.type-container:nth-child(${typeIndex + 1}) .enterprise-orbit`)
+    if (orbitElement) {
+        orbitElement.style.animationPlayState = 'paused'
+    }
+}
+
+// 恢复轨道动画
+function resumeOrbitAnimation(typeIndex) {
+    const orbitElement = document.querySelector(`.type-container:nth-child(${typeIndex + 1}) .enterprise-orbit`)
+    if (orbitElement) {
+        orbitElement.style.animationPlayState = 'running'
     }
 }
 
@@ -198,63 +326,66 @@ defineExpose({
 
 <template>
     <div class="innovation-container">
-        <!-- 北斗七星 -->
-        <div class="big-dipper">
-            <!-- 连线 -->
-            <svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <defs>
-                    <linearGradient id="constellationGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#30DCFF" />
-                        <stop offset="33%" stop-color="#00FF88" />
-                        <stop offset="66%" stop-color="#8B5CF6" />
-                        <stop offset="100%" stop-color="#30DCFF" />
-                    </linearGradient>
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                        <feMerge> 
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/> 
-                        </feMerge>
-                    </filter>
-                </defs>
-                <path
-                    d="M15,35
-                       L25,15
-                       L45,18
-                       L50,40
-                       L65,45
-                       L78,47
-                       L88,42"
-                    stroke="url(#constellationGradient)"
-                    stroke-width="0.3"
-                    fill="none"
-                    class="constellation-line"
-                    filter="url(#glow)"
-                />
-            </svg>
-            
-            <!-- 星星 -->
+        <!-- 企业集群 -->
+        <div class="enterprise-cluster">
+            <!-- 企业类型大圆 -->
             <div 
-                v-for="(star, index) in stars"
-                :key="`star-${index}`"
-                :class="['star', `star-${index}`, `star-${star.size}`]"
+                v-for="(type, typeIndex) in enterpriseTypes"
+                :key="`type-${typeIndex}`"
+                class="type-container"
                 :style="{
-                    left: star.x + '%',
-                    top: star.y + '%'
+                    left: type.x + '%',
+                    top: type.y + '%'
                 }"
-                @click="handleStarClick(star)"
-                @mousedown="() => console.log('鼠标按下:', star.name || 'star-' + index)"
-                @mouseup="() => console.log('鼠标释放:', star.name || 'star-' + index)"
             >
-                <div class="star-circle">
-                    <div class="star-glow"></div>
-                    <div class="star-core"></div>
-                    <div class="star-name">{{ star.name }}</div>
+                <!-- 类型大圆 -->
+                <div 
+                    :class="['type-circle', `type-circle-${typeIndex}`]"
+                    :style="{
+                        '--primary-color': typeColors[typeIndex % typeColors.length].primary,
+                        '--secondary-color': typeColors[typeIndex % typeColors.length].secondary,
+                        '--tertiary-color': typeColors[typeIndex % typeColors.length].tertiary,
+                        '--light-color': typeColors[typeIndex % typeColors.length].light
+                    }"
+                    @click="handleTypeClick(type)"
+                >
+                    <div class="type-glow"></div>
+                    <div class="type-core"></div>
+                    <div class="type-name">{{ type.name }}</div>
+                    <div class="type-count">{{ type.enterprises.length }}</div>
                 </div>
-                <div class="star-rings">
-                    <div class="ring ring-1"></div>
-                    <div class="ring ring-2"></div>
-                    <div class="ring ring-3"></div>
+                
+                <!-- 围绕的企业小圆 -->
+                <div 
+                    class="enterprise-orbit"
+                    :style="{
+                        animationDelay: (typeIndex * 0.5) + 's'
+                    }"
+                >
+                    <div 
+                        v-for="(enterprise, enterpriseIndex) in type.enterprises"
+                        :key="`enterprise-${typeIndex}-${enterpriseIndex}`"
+                        :class="['enterprise-circle', `enterprise-circle-${typeIndex}-${enterpriseIndex}`]"
+                        :style="{
+                            left: enterprise.x + 'px',
+                            top: enterprise.y + 'px',
+                            '--enterprise-color': typeColors[typeIndex % typeColors.length].enterprise
+                        }"
+                        @click="handleEnterpriseClick(enterprise)"
+                        @mouseenter="pauseOrbitAnimation(typeIndex)"
+                        @mouseleave="resumeOrbitAnimation(typeIndex)"
+                        :title="enterprise.name"
+                    >
+                        <div class="enterprise-glow"></div>
+                        <div class="enterprise-core"></div>
+                        <img 
+                            v-if="enterprise.logo" 
+                            :src="enterprise.logo" 
+                            :alt="enterprise.name"
+                            class="enterprise-logo"
+                            @error="handleImageError($event)"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -367,230 +498,194 @@ defineExpose({
     }
 }
 
-/* 添加初始隐藏状态 */
-.innovation-container .star {
-    opacity: 0;
-}
-
-/* 北斗七星样式 */
-.big-dipper {
+/* 企业集群样式 */
+.enterprise-cluster {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    opacity: 0; /* 初始透明状态 */
+    transform: scale(0.5); /* 初始缩放状态 */
 }
 
-.star {
+.type-container {
     position: absolute;
     transform: translate(-50%, -50%);
-    opacity: 0;
-    z-index: 10;
-    cursor: pointer;
-    transition: all 0.3s ease;
 }
 
-/* 不同尺寸的星星 */
-.star-large .star-circle {
-    width: 110px;
-    height: 110px;
+/* 企业轨道容器 */
+.enterprise-orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: orbitRotation 20s linear infinite;
+    transform-origin: center;
 }
 
-.star-medium .star-circle {
-    width: 85px;
-    height: 85px;
+.enterprise-orbit:hover {
+    animation-play-state: paused;
 }
 
-.star-small .star-circle {
-    width: 65px;
-    height: 65px;
-}
-
-.star:hover {
-    transform: translate(-50%, -50%) scale(1.15);
-    z-index: 20;
-}
-
-.star-circle {
+/* 企业类型大圆 */
+.type-circle {
     position: relative;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     background: 
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8) 0%, transparent 50%),
-        radial-gradient(circle at center, rgba(48, 220, 255, 0.9) 0%, rgba(48, 220, 255, 0.6) 40%, rgba(0, 255, 136, 0.4) 70%, transparent 100%);
-    border: 2px solid rgba(48, 220, 255, 0.8);
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at center, var(--primary-color, rgba(34, 197, 94, 0.9)) 0%, var(--secondary-color, rgba(22, 163, 74, 0.7)) 40%, var(--tertiary-color, rgba(21, 128, 61, 0.5)) 70%, transparent 100%);
+    border: 3px solid var(--primary-color, rgba(34, 197, 94, 0.9));
     box-shadow: 
-        0 0 15px rgba(48, 220, 255, 0.8), 
-        0 0 30px rgba(48, 220, 255, 0.5),
-        0 0 45px rgba(48, 220, 255, 0.3),
-        inset 0 0 10px rgba(255, 255, 255, 0.2);
+        0 0 25px var(--primary-color, rgba(34, 197, 94, 0.8)), 
+        0 0 50px var(--secondary-color, rgba(22, 163, 74, 0.6)),
+        inset 0 0 20px rgba(255, 255, 255, 0.3);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    animation: starPulse 3s ease-in-out infinite;
-    overflow: visible;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    opacity: 0; /* 初始透明状态 */
+    transform: scale(0); /* 初始缩放状态 */
+    pointer-events: none; /* 初始禁用交互 */
 }
 
-.star-glow {
+.type-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 
+        0 0 35px var(--primary-color, rgba(34, 197, 94, 1)), 
+        0 0 70px var(--secondary-color, rgba(22, 163, 74, 0.8)),
+        inset 0 0 25px rgba(255, 255, 255, 0.4);
+}
+
+.type-glow {
     position: absolute;
-    top: -20%;
-    left: -20%;
-    right: -20%;
-    bottom: -20%;
-    background: radial-gradient(circle, rgba(48, 220, 255, 0.3) 0%, transparent 70%);
+    top: -30%;
+    left: -30%;
+    right: -30%;
+    bottom: -30%;
+    background: radial-gradient(circle, var(--primary-color, rgba(34, 197, 94, 0.5)) 0%, transparent 70%);
     border-radius: 50%;
-    animation: glowPulse 4s ease-in-out infinite;
+    animation: typeGlowPulse 4s ease-in-out infinite;
     z-index: -1;
 }
 
-.star-core {
+.type-core {
     position: absolute;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 1) 0%, rgba(48, 220, 255, 0.8) 40%, rgba(0, 255, 136, 0.6) 100%);
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9) 0%, var(--primary-color, rgba(34, 197, 94, 0.7)) 50%, var(--secondary-color, rgba(22, 163, 74, 0.5)) 100%);
     border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    animation: coreRotate 8s linear infinite;
+    animation: typeCoreRotate 10s linear infinite;
 }
 
-.star-name {
-    color: #30DCFF;
-    font-size: 13px;
+.type-name {
+    color: #ffffff;
+    font-size: 14px;
     font-weight: bold;
     text-align: center;
-    text-shadow: 
-        0 0 3px rgba(0, 0, 0, 1),
-        0 0 6px rgba(0, 0, 0, 0.8),
-        0 0 10px rgba(48, 220, 255, 0.8),
-        1px 1px 3px rgba(0, 0, 0, 1),
-        -1px -1px 3px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 10px var(--primary-color, rgba(34, 197, 94, 0.8)), 0 0 20px rgba(0, 0, 0, 0.8);
     z-index: 10;
-    position: relative;
-    line-height: 1.1;
-    white-space: nowrap;
-    padding: 3px 6px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(48, 220, 255, 0.5);
-    backdrop-filter: blur(3px);
-    font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    margin-bottom: 4px;
 }
 
-.star-rings {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
+.type-count {
+    color: var(--light-color, #D1FAE5);
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 0 0 8px var(--primary-color, rgba(34, 197, 94, 0.6));
+    z-index: 10;
 }
 
-.ring {
+/* 企业小圆 */
+.enterprise-circle {
     position: absolute;
-    border: 1px solid rgba(48, 220, 255, 0.3);
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    background: radial-gradient(circle, var(--enterprise-color, rgba(74, 222, 128, 0.9)) 0%, var(--enterprise-color, rgba(74, 222, 128, 0.6)) 60%, transparent 100%);
+    border: 3px solid var(--enterprise-color, rgba(74, 222, 128, 0.8));
+    box-shadow: 0 0 15px var(--enterprise-color, rgba(74, 222, 128, 0.6));
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    opacity: 0; /* 初始透明状态 */
+    transform: translate(-50%, -50%) scale(0); /* 初始缩放状态 */
+    pointer-events: none; /* 初始禁用交互 */
+}
+
+.enterprise-circle:hover {
+    transform: translate(-50%, -50%) scale(1.3);
+    box-shadow: 0 0 25px var(--enterprise-color, rgba(74, 222, 128, 0.9));
+    z-index: 15;
+}
+
+.enterprise-logo {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    object-fit: contain;
+    z-index: 10;
+    background: #ffffff;
+    border: 2px solid var(--enterprise-color, rgba(74, 222, 128, 0.5));
+}
+
+.enterprise-glow {
+    position: absolute;
+    top: -40%;
+    left: -40%;
+    right: -40%;
+    bottom: -40%;
+    background: radial-gradient(circle, var(--enterprise-color, rgba(74, 222, 128, 0.4)) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: enterpriseGlowPulse 3s ease-in-out infinite;
+}
+
+.enterprise-core {
+    position: absolute;
+    width: 70%;
+    height: 70%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, var(--enterprise-color, rgba(74, 222, 128, 0.4)) 100%);
+    border-radius: 50%;
+    animation: enterpriseCoreRotate 6s linear infinite;
+    z-index: 1;
 }
 
-.ring-1 {
-    width: 120px;
-    height: 120px;
-    animation: ringPulse 3s ease-in-out infinite;
+@keyframes orbitRotation {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-.ring-2 {
-    width: 150px;
-    height: 150px;
-    animation: ringPulse 3s ease-in-out infinite 1s;
-    border-color: rgba(0, 255, 136, 0.2);
+@keyframes typeGlowPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.2); }
 }
 
-.ring-3 {
-    width: 180px;
-    height: 180px;
-    animation: ringPulse 3s ease-in-out infinite 2s;
-    border-color: rgba(139, 92, 246, 0.2);
+@keyframes typeCoreRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
-.lines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1; /* 确保连线在星星之下 */
+@keyframes enterpriseGlowPulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.3); }
 }
 
-.constellation-line {
-    visibility: hidden;
-    animation: constellationGlow 6s ease-in-out infinite;
-    stroke-dasharray: 2, 1;
-    stroke-linecap: round;
-}
-
-@keyframes starPulse {
-    0%, 100% {
-        transform: scale(1);
-        box-shadow: 
-            0 0 15px rgba(48, 220, 255, 0.8), 
-            0 0 30px rgba(48, 220, 255, 0.5),
-            0 0 45px rgba(48, 220, 255, 0.3),
-            inset 0 0 10px rgba(255, 255, 255, 0.2);
-    }
-    50% {
-        transform: scale(1.05);
-        box-shadow: 
-            0 0 20px rgba(0, 255, 136, 0.9), 
-            0 0 40px rgba(0, 255, 136, 0.6),
-            0 0 60px rgba(0, 255, 136, 0.4),
-            inset 0 0 15px rgba(255, 255, 255, 0.3);
-    }
-}
-
-@keyframes glowPulse {
-    0%, 100% {
-        opacity: 0.3;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.6;
-        transform: scale(1.2);
-    }
-}
-
-@keyframes coreRotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes ringPulse {
-    0% {
-        transform: translate(-50%, -50%) scale(0.8);
-        opacity: 1;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1.8);
-        opacity: 0;
-    }
-}
-
-@keyframes constellationGlow {
-    0%, 100% {
-        stroke: #30DCFF;
-        filter: drop-shadow(0 0 3px #30DCFF);
-    }
-    33% {
-        stroke: #00FF88;
-        filter: drop-shadow(0 0 5px #00FF88);
-    }
-    66% {
-        stroke: #8B5CF6;
-        filter: drop-shadow(0 0 4px #8B5CF6);
-    }
+@keyframes enterpriseCoreRotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 .key-enterprise-container {

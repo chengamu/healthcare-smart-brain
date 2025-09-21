@@ -106,6 +106,21 @@ export function countPolicyByType(query) {
     })
 }
 
+// 查询政策列表（所有）
+export function listPolicyAll(query) {
+    return request({
+        url: '/healthbrain/policy/alllist',
+        method: 'get',
+        params: query,
+        paramsSerializer: params => {
+            return qs.stringify(params, { arrayFormat: 'repeat' })
+        },
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+}
+
 // 查询平台列表（所有）
 export function listPlatformAll(query) {
     return request({
@@ -140,6 +155,21 @@ export function listInstrumentAll(query) {
 export function listTechnologyAll(query) {
     return request({
         url: '/healthbrain/technology/alllist',
+        method: 'get',
+        params: query,
+        paramsSerializer: params => {
+            return qs.stringify(params, { arrayFormat: 'repeat' })
+        },
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+}
+
+// 查询创新药列表（所有）
+export function listDrugAll(query) {
+    return request({
+        url: '/healthbrain/drug/alllist',
         method: 'get',
         params: query,
         paramsSerializer: params => {

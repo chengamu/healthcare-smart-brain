@@ -193,6 +193,7 @@ const handleCardHover = (index, isHover) => {
 
 .kpi-flip-card {
   width: 30%;
+  height: 100%;
   background: linear-gradient(135deg, rgba(26, 57, 77, 0.8), rgba(48, 220, 255, 0.15));
   border: 1px solid rgba(48, 220, 255, 0.5);
   border-radius: 16px;
@@ -207,6 +208,7 @@ const handleCardHover = (index, isHover) => {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 
   &.show {
     opacity: 1;
@@ -227,7 +229,7 @@ const handleCardHover = (index, isHover) => {
 }
 
 .kpi-value-wrapper {
-  margin-bottom: 15px;
+  margin-bottom: 8px;
 }
 
 .kpi-value {
@@ -261,7 +263,7 @@ const handleCardHover = (index, isHover) => {
   color: #30DCFF;
   text-align: center;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   text-shadow: 0 0 8px rgba(48, 220, 255, 0.6);
   white-space: nowrap;
   width: 100%;
@@ -352,7 +354,6 @@ const handleCardHover = (index, isHover) => {
 
 .kpi-icon {
   font-size: 32px;
-  margin-bottom: 15px;
   animation: iconFloat 3s ease-in-out infinite;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
 }

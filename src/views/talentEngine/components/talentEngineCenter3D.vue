@@ -25,7 +25,7 @@
       <!-- 头像 + 姓名 -->
       <div class="header">
         <img 
-          :src="selectedTalent.avatar || 'https://via.placeholder.com/80x80?text=No+Img'" 
+          :src="selectedTalent.avatar || avatar" 
           alt="头像" 
           class="avatar"
         />
@@ -67,6 +67,7 @@ import * as THREE from 'three'
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js'
 import TWEEN from '@tweenjs/tween.js'
+import avatar from "@/assets/images/talentEngine/avatar.png"
 
 const props = defineProps({
   talentData: { type: Array, default: () => [] }

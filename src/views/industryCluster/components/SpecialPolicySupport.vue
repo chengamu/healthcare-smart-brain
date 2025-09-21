@@ -78,7 +78,7 @@ async function init() {
 
 function getCountPolicyByType() {
     return countPolicyByType().then(response => {
-        state.pieData = response.data.map((it, index) => {
+        state.pieData = response.data.filter(it =>it.dictLabel !== '人才落地').map((it, index) => {
             return {
                 name: it.dictLabel,
                 value: it.count
