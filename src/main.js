@@ -7,6 +7,7 @@ import "normalize.css"
 import "./style.css"
 import '@fortawesome/fontawesome-free/css/all.css';
 import directive from './directive' // directive
+import { getAppTitle } from '@/utils/config'
 
 import ElementPlus from 'element-plus'
 import locale from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
@@ -35,3 +36,6 @@ app.use(ElementPlus, {
 })
 
 app.mount('#app')
+
+// 动态设置页面标题
+document.title = getAppTitle()

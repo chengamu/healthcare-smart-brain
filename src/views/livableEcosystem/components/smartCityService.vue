@@ -48,8 +48,19 @@
     </div>
 </template>
 <script setup>
-import { ref, reactive, computed } from "vue"
+import { ref, reactive, computed, onMounted } from "vue"
 import mCard from "@/components/mCard/index.vue"
+import {
+    useGetConfigKey
+} from '@/hooks/useGetConfigKey'
+
+/**
+ * 参数获取
+ */
+const {
+    configValue: zhcsfw,
+    getConfigKeyFunc: fetchZhcsfw
+} = useGetConfigKey('brain.livableEcosystem.zhcsfw') // 智慧大脑-产城生态-智慧城市服务
 
 const props = defineProps({
     title: {
@@ -61,20 +72,32 @@ const props = defineProps({
 const state = reactive({
     pieDataColor: ["#30DCFF", "#00FF88", "#8B5CF6"],
     pieData: [
-        {
-            name: "一键报修",
-            value: 134,
-        },
-        {
-            name: "园区导航",
-            value: 152,
-        },
-        {
-            name: "智能安防",
-            value: 177,
-        },
+        // {
+        //     name: "一键报修",
+        //     value: 134,
+        // },
+        // {
+        //     name: "园区导航",
+        //     value: 152,
+        // },
+        // {
+        //     name: "智能安防",
+        //     value: 177,
+        // },
     ],
 })
+
+onMounted(() => {
+    init()
+});
+
+async function init(str) {
+    // 获取需要的参数
+    await Promise.all([
+        fetchZhcsfw(),
+    ])
+    state.pieData = JSON.parse(zhcsfw.value)
+}
 
 const totalUsage = computed(() => {
     return state.pieData.reduce((sum, item) => sum + item.value, 0)

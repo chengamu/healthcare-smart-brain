@@ -1,5 +1,6 @@
 import { Resource } from "@/mini3d"
 import { FileLoader } from "three"
+import { getAppConfig } from '@/utils/config'
 
 import pathLine from "@/assets/texture/pathLine4.png"
 import pathLine3 from "@/assets/texture/pathLine2.png"
@@ -33,7 +34,7 @@ export class Assets {
     this.instance.addLoader(FileLoader, "FileLoader")
 
     // 资源加载
-    let base_url = import.meta.env.BASE_URL
+    let base_url = getAppConfig('BASE_URL', import.meta.env.BASE_URL)
     let assets = [
       { type: "Texture", name: "flyline", path: pathLine },
       { type: "Texture", name: "pathLine", path: pathLine },

@@ -22,33 +22,59 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import mCard from "@/components/mCard/index.vue";
+import { useGetConfigKey } from '@/hooks/useGetConfigKey'
 
-const serveData = ref([
-    {
-        icon: 'fas fa-capsules',
-        name: '组织联谊活动',
-        count: '2',
-        unit: '次',
-        bgColor: '#409EFF',
-        color: '#FFFFFF'
-    },
-    {
-        icon: 'fas fa-heartbeat',
-        name: '提供法律咨询',
-        count: '53',
-        unit: '次',
-        bgColor: '#67C23A',
-        color: '#FFFFFF'
-    },
-    {
-        icon: 'fas fa-heartbeat',
-        name: '关怀困难员工',
-        count: '10',
-        unit: '次',
-        bgColor: '#E6A23C',
-        color: '#FFFFFF'
+const { 
+    configValue: fwrcqz,
+    getConfigKeyFunc: fetchFwrcqz 
+} = useGetConfigKey('brain.redCoreLeadership.fwrcqz')
+
+const serveData = ref([])
+
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    // 获取需要的参数
+    await Promise.all([
+        fetchFwrcqz(),
+    ])
+    
+    try {
+        const parsedData = JSON.parse(fwrcqz.value)
+        serveData.value = parsedData || []
+    } catch (e) {
+        console.error('数据解析失败:', e)
+        // 保留原始默认数据作为后备
+        serveData.value = [
+            {
+                icon: 'fas fa-capsules',
+                name: '组织联谊活动',
+                count: '2',
+                unit: '次',
+                bgColor: '#409EFF',
+                color: '#FFFFFF'
+            },
+            {
+                icon: 'fas fa-heartbeat',
+                name: '提供法律咨询',
+                count: '53',
+                unit: '次',
+                bgColor: '#67C23A',
+                color: '#FFFFFF'
+            },
+            {
+                icon: 'fas fa-heartbeat',
+                name: '关怀困难员工',
+                count: '10',
+                unit: '次',
+                bgColor: '#E6A23C',
+                color: '#FFFFFF'
+            }
+        ]
     }
-]);
+}
 </script>
 
 <style scoped lang="scss">

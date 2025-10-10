@@ -19,16 +19,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
+import { ref, onMounted } from "vue"
 import mCard from "@/components/mCard/index.vue"
+import { useGetConfigKey } from '@/hooks/useGetConfigKey'
 
-const activitiesData = ref([
-    { party: '绍兴医疗健康产业社区功能性联合党委', activity: '牵头建立健康产业党建联盟共建', time: '2025.01.04' },
-    { party: '科技型企业党总支', activity: '推广智慧健康平台', time: '2025.02.04' },
-    { party: '服务性机构党支部', activity: '组织健康讲座与科普宣传', time: '2025.03.04' },
-    { party: '社区管理党支部', activity: '组织医患沟通座谈会', time: '2025.04.04' },
-    { party: '新兴领域流动党员党支部', activity: '组建党员健康志愿服务队', time: '2025.05.04' },
-])
+const { 
+    configValue: dddt,
+    getConfigKeyFunc: fetchDddt 
+} = useGetConfigKey('brain.redCoreLeadership.dddt')
+
+const activitiesData = ref([])
+
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    // 获取需要的参数
+    await Promise.all([
+        fetchDddt(),
+    ])
+    
+    try {
+        const parsedData = JSON.parse(dddt.value)
+        activitiesData.value = parsedData || []
+    } catch (e) {
+        console.error('数据解析失败:', e)
+        // 保留原始默认数据作为后备
+        activitiesData.value = [
+            { party: '绍兴医疗健康产业社区功能性联合党委', activity: '牵头建立健康产业党建联盟共建', time: '2025.01.04' },
+            { party: '科技型企业党总支', activity: '推广智慧健康平台', time: '2025.02.04' },
+            { party: '服务性机构党支部', activity: '组织健康讲座与科普宣传', time: '2025.03.04' },
+            { party: '社区管理党支部', activity: '组织医患沟通座谈会', time: '2025.04.04' },
+            { party: '新兴领域流动党员党支部', activity: '组建党员健康志愿服务队', time: '2025.05.04' },
+        ]
+    }
+}
 </script>
 
 <style scoped lang="scss">

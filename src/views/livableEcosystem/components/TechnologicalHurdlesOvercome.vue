@@ -7,22 +7,53 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, computed, onMounted } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+import {
+    useGetConfigKey
+} from '@/hooks/useGetConfigKey'
 
-const colorMap = ref({
-  '技术瓶颈': '#4292c8',
-  '技术突破': '#35c084',
-});
+/**
+ * 参数获取
+ */
+const {
+    configValue: gjjsgj,
+    getConfigKeyFunc: fetchGjjsgj
+} = useGetConfigKey('brain.livableEcosystem.gjjsgj') // 智慧大脑-产城生态-关键技术攻坚
 
-const data = ref({
-  '技术瓶颈': [5, 4, 3, 8],
-  '技术突破': [3, 2, 3, 5],
+// 统一数据结构
+const chartData = ref({
+  years: [/*"2022", "2023", "2024", "2025"*/],
+  items: [
+    // {
+    //   name: '技术瓶颈',
+    //   color: '#4292c8',
+    //   data: [5, 4, 3, 8]
+    // },
+    // {
+    //   name: '技术突破',
+    //   color: '#35c084',
+    //   data: [3, 2, 3, 5]
+    // }
+  ]
 })
 
-const option = ref({
+onMounted(() => {
+    init()
+});
+
+async function init(str) {
+    // 获取需要的参数
+    await Promise.all([
+        fetchGjjsgj(),
+    ])
+    chartData.value.years = JSON.parse(gjjsgj.value).years
+    chartData.value.items = JSON.parse(gjjsgj.value).items
+}
+
+const option = computed(() => ({
   title: {
     text: "个",
     left: "5%",
@@ -85,7 +116,7 @@ const option = ref({
         interval: 0,
         padding: [0, 0, 0, 0],
       },
-      data: ["2022", "2023", "2024", "2025"],
+      data: chartData.value.years,
     },
   ],
   yAxis: {
@@ -111,8 +142,8 @@ const option = ref({
       fontSize: 9,
     },
   },
-  series: Object.keys(data.value).map(name => ({
-    name: name,
+  series: chartData.value.items.map(item => ({
+    name: item.name,
     type: 'bar',
     barWidth: 10,
     stack: 'total',
@@ -120,11 +151,11 @@ const option = ref({
     animationDuration: 1500,
     animationEasing: 'elasticOut',
     itemStyle: {
-      color: colorMap.value[name],
+      color: item.color,
     },
-    data: data.value[name]
+    data: item.data
   }))
-})
+}))
 </script>
 
 <style scoped lang="scss">

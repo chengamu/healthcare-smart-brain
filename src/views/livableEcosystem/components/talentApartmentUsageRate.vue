@@ -1,7 +1,7 @@
 <template>
     <div class="right-card">
         <m-card title="人才公寓使用率">
-            <div class="apartment-container">
+            <div class="apartment-container" v-auto-scroll>
                 <div class="apartment-list">
                     <div v-for="(apartment, index) in apartmentData" :key="index"
                          class="apartment-item">
@@ -28,45 +28,71 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import mCard from "@/components/mCard/index.vue"
+import {
+    useGetConfigKey
+} from '@/hooks/useGetConfigKey'
+
+/**
+ * 参数获取
+ */
+const {
+    configValue: rcgysyl,
+    getConfigKeyFunc: fetchRcgysyl
+} = useGetConfigKey('brain.livableEcosystem.rcgysyl') // 智慧大脑-产城生态-人才公寓使用率
 
 const apartmentData = ref([
-    {
-        type: '高层公寓',
-        usage: 87.5,
-        occupied: 175,
-        total: 200,
-        color: '#30DCFF'
-    },
-    {
-        type: '多层公寓',
-        usage: 92.3,
-        occupied: 120,
-        total: 130,
-        color: '#00FF88'
-    },
-    {
-        type: '别墅区',
-        usage: 68.0,
-        occupied: 34,
-        total: 50,
-        color: '#8B5CF6'
-    },
-    {
-        type: '青年公寓',
-        usage: 95.2,
-        occupied: 238,
-        total: 250,
-        color: '#FF6B6B'
-    }
+    // {
+    //     type: '高层公寓',
+    //     usage: 87.5,
+    //     occupied: 175,
+    //     total: 200,
+    //     color: '#30DCFF'
+    // },
+    // {
+    //     type: '多层公寓',
+    //     usage: 92.3,
+    //     occupied: 120,
+    //     total: 130,
+    //     color: '#00FF88'
+    // },
+    // {
+    //     type: '别墅区',
+    //     usage: 68.0,
+    //     occupied: 34,
+    //     total: 50,
+    //     color: '#8B5CF6'
+    // },
+    // {
+    //     type: '青年公寓',
+    //     usage: 95.2,
+    //     occupied: 238,
+    //     total: 250,
+    //     color: '#FF6B6B'
+    // }
 ])
+
+onMounted(() => {
+    init()
+});
+
+async function init(str) {
+    // 获取需要的参数
+    await Promise.all([
+        fetchRcgysyl(),
+    ])
+    apartmentData.value = JSON.parse(rcgysyl.value)
+}
 </script>
 
 <style scoped lang="scss">
 .apartment-container {
     padding: 20px;
     height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .apartment-list {

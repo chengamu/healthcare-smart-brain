@@ -29,32 +29,59 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import mCard from "@/components/mCard/index.vue";
-const serviceData = ref([
-    {
-        name: '开展银企对接',
-        num: 37,
-        unit: '次',
-        icon: 'fa-building',
-        bgColor: 'rgba(0, 180, 42, 0.2)',
-        color: 'rgb(0, 180, 42)'
-    },
-    {
-        name: '解决企业难题',
-        num: 56,
-        unit: '次',
-        icon: 'fa-user',
-        bgColor: 'rgba(255, 125, 0, 0.2)',
-        color: 'rgb(255, 125, 0)'
-    },
-    {
-        name: '政策宣讲次数',
-        num: 6,
-        unit: '次',
-        icon: 'fa-chart-line',
-        bgColor: 'rgba(245, 63, 63, 0.2)',
-        color: 'rgb(245, 63, 63)'
-    },
-])
+import { useGetConfigKey } from '@/hooks/useGetConfigKey'
+
+const { 
+    configValue: fwqyfz, 
+    getConfigKeyFunc: fetchFwqyfz 
+} = useGetConfigKey('brain.redCoreLeadership.fwqyfz')
+
+const serviceData = ref([])
+
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    // 获取需要的参数
+    await Promise.all([
+        fetchFwqyfz(),
+    ])
+    
+    try {
+        const parsedData = JSON.parse(fwqyfz.value)
+        serviceData.value = parsedData || []
+    } catch (e) {
+        console.error('数据解析失败:', e)
+        // 保留原始默认数据作为后备
+        serviceData.value = [
+            {
+                name: '开展银企对接',
+                num: 37,
+                unit: '次',
+                icon: 'fa-building',
+                bgColor: 'rgba(0, 180, 42, 0.2)',
+                color: 'rgb(0, 180, 42)'
+            },
+            {
+                name: '解决企业难题',
+                num: 56,
+                unit: '次',
+                icon: 'fa-user',
+                bgColor: 'rgba(255, 125, 0, 0.2)',
+                color: 'rgb(255, 125, 0)'
+            },
+            {
+                name: '政策宣讲次数',
+                num: 6,
+                unit: '次',
+                icon: 'fa-chart-line',
+                bgColor: 'rgba(245, 63, 63, 0.2)',
+                color: 'rgb(245, 63, 63)'
+            },
+        ]
+    }
+}
 </script>
 
 <style scoped lang="scss">

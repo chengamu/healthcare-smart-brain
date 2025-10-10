@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { OUTPUT_DIR } from './build/constant';
+import { generateAppConfig } from './build/generateConfig.js';
 import path from "path";
 import createVitePlugins from './vite/plugins'
 
@@ -60,7 +61,18 @@ export default ({ mode, command }) => {
         }
       }
     },
-    plugins: createVitePlugins(env, command === 'build'),
+    plugins: [
+      ...createVitePlugins(env, command === 'build'),
+      // 运行时配置生成插件
+      {
+        name: 'generate-app-config',
+        closeBundle() {
+          if (command === 'build') {
+            generateAppConfig(mode, OUTPUT_DIR);
+          }
+        }
+      }
+    ],
     server: {
       host: true,
       port: 8084,
@@ -69,9 +81,20 @@ export default ({ mode, command }) => {
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
           // target: 'http://192.168.120.165:8080',
-          target: 'http://192.168.120.66:9114',
+          // target: 'http://192.168.120.66:9114',
+          target: 'http://192.168.110.110:9090',
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, '')
+        },
+        '/prod-api': {
+          target: 'http://127.0.0.1:9114',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/prod-api/, '')
+        },
+        '/prod-api-zt': {
+          target: 'http://127.0.0.1:9090',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/prod-api-zt/, '')
         }
       }
     }

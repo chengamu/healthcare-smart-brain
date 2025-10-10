@@ -6,6 +6,7 @@ import { tansParams, blobValidate } from '@/utils/ruoyi'
 import cache from '@/plugins/cache'
 import { saveAs } from 'file-saver'
 import useUserStore from '@/store/modules/user'
+import { getApiBaseUrl, getContextPath } from '@/utils/config'
 
 let downloadLoadingInstance;
 // 是否显示重新登录
@@ -17,7 +18,7 @@ axios.defaults.headers['Content-Language'] = 'zh_CN'
 // 创建axios实例
 const service = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
-  baseURL: import.meta.env.VITE_APP_BASE_API,
+  baseURL: getApiBaseUrl(),
   // 超时
   timeout: 10000
 })
@@ -49,13 +50,14 @@ service.interceptors.request.use(config => {
       cache.session.setJSON('sessionObj', requestObj)
     } else {
       const s_url = sessionObj.url;                // 请求地址
-      const s_data = sessionObj.data;              // 请求数据
+      const   s_data = sessionObj.data;              // 请求数据
       const s_time = sessionObj.time;              // 请求时间
       const interval = 1000;                       // 间隔时间(ms)，小于此时间视为重复提交
       if (s_data === requestObj.data && requestObj.time - s_time < interval && s_url === requestObj.url) {
         const message = '数据正在处理，请勿重复提交';
         console.warn(`[${s_url}]: ` + message)
-        return Promise.reject(new Error(message))
+        return Promise.reject()
+        // return Promise.reject(new Error(message))
       } else {
         cache.session.setJSON('sessionObj', requestObj)
       }
@@ -76,17 +78,18 @@ service.interceptors.response.use(res => {
     if (res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer') {
       return res.data
     }
-    if (code === 401 || (code === 500 && (msg === '未能读取到有效 token' || msg.indexOf('token 无效') === 0 ))) {
+    if (code === 401 || (code === 500 && (msg.indexOf('未能读取到有效 token') === 0 || msg.indexOf('token 无效') === 0 ))) {
       // 登录过期直接跳转到登录页面
       useUserStore().logOut().then(() => {
         // 获取当前路由路径
         const currentPath = window.location.hash.substring(1);
         // 如果当前不在登录页面，则跳转到登录页面并记录来源路径
         if (currentPath !== '/login') {
-          window.location.href = import.meta.env.VITE_APP_CONTEXT_PATH + '#/login?redirect=' + encodeURIComponent(currentPath);
+          window.location.href = getContextPath() + '#/login?redirect=' + encodeURIComponent(currentPath);
         }
       })
-      return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+      ElMessage({ message: '无效的登陆，或者登陆已过期，请重新登录。', type: 'warning' })
+      return Promise.reject('无效的登陆，或者登陆已过期，请重新登录。')
     } else if (code === 409){
       ElMessageBox.alert(
         res.data.detailMessage,

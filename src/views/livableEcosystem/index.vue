@@ -31,8 +31,8 @@
                     <innovation-result-conversion></innovation-result-conversion>
                     <!--人才公寓使用率-->
                     <talent-apartment-usage-rate></talent-apartment-usage-rate>
-                    <!--生活配套完善度（生态建设-生活服务满意度）-->
-                    <satisfaction-with-life-services title="生活配套完善度"></satisfaction-with-life-services>
+                    <!--生活配套完善度-->
+                    <satisfaction-with-life-services></satisfaction-with-life-services>
                 </div>
             </div>
             <!-- 底部托盘 -->

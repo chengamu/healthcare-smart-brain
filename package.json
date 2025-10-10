@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:prod": "vite build --mode production",
+    "generate:config": "node build/generateConfig.js",
     "preview": "vite preview"
   },
   "dependencies": {

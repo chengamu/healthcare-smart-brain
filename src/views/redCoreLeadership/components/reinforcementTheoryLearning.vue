@@ -43,43 +43,69 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, onMounted } from "vue"
 import mCard from "@/components/mCard/index.vue"
+import { useGetConfigKey } from '@/hooks/useGetConfigKey'
 
-const learningTopics = ref([
-  {
-    name: '不忘初心牢记使命',
-    icon: '❤️',
-    color: '#dc2626',
-    progress: 95,
-    completed: 38
-  },
-  {
-    name: '习近平新时代中国特色社会主义思想',
-    icon: '🇨🇳',
-    color: '#ef4444',
-    progress: 88,
-    completed: 44
-  },
-  {
-    name: '党章党规学习',
-    icon: '📜',
-    color: '#f97316',
-    progress: 92,
-    completed: 36
-  },
-  {
-    name: '高质量发展理论',
-    icon: '🚀',
-    color: '#eab308',
-    progress: 75,
-    completed: 30
-  }
-])
+const { 
+    configValue: qhllxx,
+    getConfigKeyFunc: fetchQhllxx 
+} = useGetConfigKey('brain.redCoreLeadership.qhllxx')
+
+const learningTopics = ref([])
 
 const totalLearningHours = computed(() => {
   return learningTopics.value.reduce((sum, topic) => sum + topic.completed, 0)
 })
+
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    // 获取需要的参数
+    await Promise.all([
+        fetchQhllxx(),
+    ])
+    
+    try {
+        const parsedData = JSON.parse(qhllxx.value)
+        learningTopics.value = parsedData || []
+    } catch (e) {
+        console.error('数据解析失败:', e)
+        // 保留原始默认数据作为后备
+        learningTopics.value = [
+          {
+            name: '不忘初心牢记使命',
+            icon: '❤️',
+            color: '#dc2626',
+            progress: 95,
+            completed: 38
+          },
+          {
+            name: '习近平新时代中国特色社会主义思想',
+            icon: '🇨🇳',
+            color: '#ef4444',
+            progress: 88,
+            completed: 44
+          },
+          {
+            name: '党章党规学习',
+            icon: '📜',
+            color: '#f97316',
+            progress: 92,
+            completed: 36
+          },
+          {
+            name: '高质量发展理论',
+            icon: '🚀',
+            color: '#eab308',
+            progress: 75,
+            completed: 30
+          }
+        ]
+    }
+}
 </script>
 
 <style scoped lang="scss">

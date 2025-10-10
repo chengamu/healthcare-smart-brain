@@ -6,7 +6,7 @@
                     <v-chart ref="vChart" :option="option" :autoresize="true"/>
                 </div>
                 <div class="pie-legend satisfaction-label-container">
-                    <div class="pie-legend-item" v-for="(item, index) in data" :key="index">
+                    <div class="pie-legend-item" v-for="(item, index) in chartData" :key="index">
                         <div class="icon" :style="{ borderColor: item.color }"></div>
                         <div class="name">{{ item.name }}</div>
                         <div class="value">{{ item.value }}<span class="unit">%</span></div>
@@ -18,15 +18,26 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onBeforeUnmount, nextTick} from "vue"
+import {ref, onMounted, onBeforeUnmount, nextTick, computed} from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
+import {
+    useGetConfigKey
+} from '@/hooks/useGetConfigKey'
+
+/**
+ * 参数获取
+ */
+const {
+    configValue: shptwsd,
+    getConfigKeyFunc: fetchShptwsd
+} = useGetConfigKey('brain.livableEcosystem.shptwsd') // 智慧大脑-产城生态-生活配套完善度
 
 const props = defineProps({
     title: {
         type: String,
-        default: "生活服务满意度"
+        default: "生活配套完善度"
     },
     position: {
         type: String,
@@ -34,25 +45,39 @@ const props = defineProps({
     }
 });
 
-const colors = ref([
-    ['#00BFFF', '#48D1CC'], // 蓝-青
-    ['#48D1CC', '#98FB98'], // 青-绿
-    ['#8A2BE2', '#00BFFF'], // 紫-蓝
-    ['#F9D423', '#FFA500'], // 黄-橙
+// 整合数据到统一结构
+const chartData = ref([
+    // {
+    //     name: '人才公寓',
+    //     value: 94.95,
+    //     max: 100,
+    //     color: ['#00BFFF', '#48D1CC']
+    // },
+    // {
+    //     name: '商业配套',
+    //     value: 69.40,
+    //     max: 100,
+    //     color: ['#48D1CC', '#98FB98']
+    // },
+    // {
+    //     name: '医疗服务',
+    //     value: 71.55,
+    //     max: 100,
+    //     color: ['#8A2BE2', '#00BFFF']
+    // },
+    // {
+    //     name: '交通便利度',
+    //     value: 99.68,
+    //     max: 100,
+    //     color: ['#F9D423', '#FFA500']
+    // }
 ]);
 
-const data = ref([
-    {name: '人才公寓', value: 94.95, color: colors.value[0]},
-    {name: '商业配套', value: 69.40, color: colors.value[1]},
-    {name: '医疗服务', value: 71.55, color: colors.value[2]},
-    {name: '交通便利度', value: 99.68, color: colors.value[3]},
-]);
-
-const option = ref({
+const option = computed(() => ({
     backgroundColor: 'transparent',
     angleAxis: {
         type: 'category',
-        data: data.value.map(item => item.name),
+        data: chartData.value.map(item => item.name),
         axisLine: {show: false}, axisTick: {show: false},
         axisLabel: {show: false}, splitLine: {show: false}
     },
@@ -77,7 +102,7 @@ const option = ref({
     series: [
         {
             type: 'bar',
-            data: data.value.map((item, index) => ({
+            data: chartData.value.map((item, index) => ({
                 value: item.value,
                 itemStyle: {
                     color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
@@ -98,7 +123,7 @@ const option = ref({
         },
         {
             type: 'bar',
-            data: [100, 100, 100, 100, 100],
+            data: chartData.value.map(item => item.max),
             coordinateSystem: 'polar',
             name: '内圈',
             stack: 'a',
@@ -111,7 +136,15 @@ const option = ref({
             barWidth: 35,
         }
     ]
-})
+}))
+
+async function init(str) {
+    // 获取需要的参数
+    await Promise.all([
+        fetchShptwsd(),
+    ])
+    chartData.value = JSON.parse(shptwsd.value)
+}
 
 let rotationTimer = null;
 let startAngle = 0;
@@ -132,6 +165,7 @@ const stopRotation = () => {
 };
 
 onMounted(() => {
+    init()
     startRotation();
 });
 
