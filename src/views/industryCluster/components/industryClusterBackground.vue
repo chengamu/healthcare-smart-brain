@@ -53,6 +53,7 @@ defineExpose({
         <video class="background-video" autoplay loop muted>
             <source src="@/assets/images/industryCluster/bg.mp4" type="video/mp4">
         </video>
+        <div class="background-mask"></div>
     </div>
 </template>
 
@@ -78,5 +79,17 @@ defineExpose({
     z-index: -1;
     pointer-events: none; // 屏蔽视频点击事件
     opacity: 0
+}
+
+// 背景视频样式
+.background-mask {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 </style>

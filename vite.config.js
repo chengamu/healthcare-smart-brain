@@ -81,8 +81,8 @@ export default ({ mode, command }) => {
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
           // target: 'http://192.168.120.165:8080',
-          // target: 'http://192.168.120.66:9114',
-          target: 'http://192.168.110.110:9090',
+          target: 'http://192.168.120.66:9114',
+          // target: 'http://192.168.110.110:9090',
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, '')
         },
