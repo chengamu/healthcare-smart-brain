@@ -50,7 +50,7 @@
     </div>
 </template>
 <script setup>
-import {ref, reactive, onMounted} from "vue"
+import {ref, reactive, onMounted, nextTick} from "vue"
 import mRadar from "@/components/mRadar/index.vue"
 import topMenu from "@/components/topMenu/index.vue"
 import bottomTray from "@/components/bottomTray/index.vue"
@@ -135,7 +135,10 @@ function animationCompleteBg() {
         // 中心动画
         let centerRefInterval = setInterval(() => {
             if(centerRef.value) {
-                centerRef.value.handlePageLoadComplete()
+                // 使用 nextTick 确保组件完全渲染后再调用
+                nextTick(() => {
+                    centerRef.value.handlePageLoadComplete()
+                })
                 clearInterval(centerRefInterval)
             }
         }, 100)

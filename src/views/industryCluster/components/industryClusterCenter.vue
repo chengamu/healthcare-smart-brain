@@ -191,9 +191,19 @@ onMounted(async () => {
     await initEnterpriseData();
     await nextTick();
     // 确保DOM已更新后再初始化Three.js
-    setTimeout(() => {
-        initThreeJS();
-    }, 0);
+    // 使用更可靠的检查确保容器元素存在
+    const checkAndInit = () => {
+        if (flowerContainer.value) {
+            // 使用 nextTick 确保 DOM 完全更新
+            nextTick(() => {
+                initThreeJS();
+            });
+        } else {
+            // 如果容器还未准备好，稍后重试
+            setTimeout(checkAndInit, 100);
+        }
+    };
+    checkAndInit();
 });
 
 let animationTimeline = null;
@@ -203,6 +213,12 @@ function initThreeJS() {
     // 确保容器元素存在
     if (!flowerContainer.value) {
         console.error('flowerContainer is not available');
+        // 延迟重试
+        setTimeout(() => {
+            if (flowerContainer.value) {
+                initThreeJS();
+            }
+        }, 100);
         return;
     }
     
@@ -222,16 +238,32 @@ function initThreeJS() {
     // 确保容器元素存在后再添加渲染器
     if (flowerContainer.value) {
         flowerContainer.value.appendChild(renderer.domElement);
+        
+        // 重要：确保渲染器的DOM元素可交互
+        renderer.domElement.style.pointerEvents = 'auto';
+        renderer.domElement.style.position = 'relative';
+        renderer.domElement.style.zIndex = '10';
+        
+        // 确保容器有正确的样式
+        flowerContainer.value.style.pointerEvents = 'auto';
+        flowerContainer.value.style.position = 'relative';
+        flowerContainer.value.style.zIndex = '10';
     } else {
         console.error('flowerContainer is not available when appending renderer');
         return;
     }
     
+    // 添加光照
+    addLights();
+    
     // 创建花朵
     createFlowers();
     
     // 添加鼠标交互
-    addMouseInteraction();
+    // 延迟一帧确保渲染器DOM元素已正确添加
+    requestAnimationFrame(() => {
+        addMouseInteraction();
+    });
     
     // 渲染循环
     animate();
@@ -247,11 +279,18 @@ function createFlowers() {
         return;
     }
     
+    console.log('Creating flowers for enterprise types:', enterpriseTypes.value);
+    
     enterpriseTypes.value.forEach((type, typeIndex) => {
         // 确保type对象存在
-        if (!type) return;
+        if (!type) {
+            console.warn('Skipping null type at index:', typeIndex);
+            return;
+        }
         
+        console.log('Creating flower for type:', type);
         const flower = createFlower(type, typeIndex);
+        console.log('Created flower:', flower);
         flowers.push(flower);
         
         // 确保scene和flower.group都存在
@@ -261,6 +300,8 @@ function createFlowers() {
             console.warn('scene or flower.group is not available when adding to scene');
         }
     });
+    
+    console.log('All flowers created:', flowers);
 }
 
 // 创建单个企业集群（改为现代化的分子结构设计）
@@ -300,7 +341,14 @@ function createFlower(type, typeIndex) {
     });
     
     const center = new THREE.Mesh(centerGeometry, centerMaterial);
-    center.userData = { type: 'center', data: type, typeIndex };
+    // 更明确地设置userData
+    center.userData = {
+        type: 'center',
+        data: type,
+        typeIndex: typeIndex
+    };
+
+    console.log('Setting center userData:', center.userData);
     
     // 添加多层发光环 - 内层
     // 按新半径调整发光环尺寸
@@ -604,7 +652,16 @@ function addLights() {
 // 鼠标交互 - 优化为更好的交互体验
 function addMouseInteraction() {
     // 确保必要的对象已初始化
-    if (!renderer || !camera) return;
+    if (!renderer || !camera || !renderer.domElement) {
+        console.warn('Renderer, camera or domElement not ready for interaction');
+        // 延迟重试
+        setTimeout(() => {
+            if (renderer && camera && renderer.domElement) {
+                addMouseInteraction();
+            }
+        }, 100);
+        return;
+    }
     
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -643,19 +700,63 @@ function addMouseInteraction() {
         const intersects = raycaster.intersectObjects(intersectableObjects);
         
         if (intersects.length > 0) {
-            const clickedObject = intersects[0].object;
-            const userData = clickedObject.userData;
+            console.log('Intersects array:', intersects);
             
-            if (userData.type === 'center') {
-                console.log(1111111)
-                handleTypeClick(userData.data);
-            } else if (userData.type === 'petal') {
-                handleEnterpriseClick(userData.data);
-            } else if (userData.type === 'logo') {
-                // 点击Logo显示企业弹窗
-                handleEnterpriseClick(userData.data);
+            // 查找第一个具有有效userData的对象
+            let clickedObject = null;
+            let userData = null;
+            
+            for (let i = 0; i < intersects.length; i++) {
+                const object = intersects[i].object;
+                // 检查当前对象是否有userData且type属性存在
+                if (object.userData && object.userData.type) {
+                    clickedObject = object;
+                    userData = object.userData;
+                    break;
+                }
+                // 如果当前对象没有有效的userData，检查其父对象
+                else if (object.parent && object.parent.userData && object.parent.userData.type) {
+                    clickedObject = object.parent;
+                    userData = object.parent.userData;
+                    break;
+                }
             }
-                console.log(1111111)
+            
+            // 如果仍然没有找到有效的userData，使用第一个交集对象
+            if (!clickedObject) {
+                clickedObject = intersects[0].object;
+                userData = clickedObject.userData || {};
+            }
+            
+            console.log('Clicked object:', clickedObject);
+            console.log('User data:', userData);
+            
+            // 添加更健壮的检查
+            if (userData && userData.type) {
+                if (userData.type === 'center') {
+                    // 确保数据存在
+                    if (userData.data) {
+                        handleTypeClick(userData.data);
+                    } else {
+                        console.error('Center object data is missing');
+                    }
+                } else if (userData.type === 'petal') {
+                    if (userData.data) {
+                        handleEnterpriseClick(userData.data);
+                    } else {
+                        console.error('Petal object data is missing');
+                    }
+                } else if (userData.type === 'logo') {
+                    // 点击Logo显示企业弹窗
+                    if (userData.data) {
+                        handleEnterpriseClick(userData.data);
+                    } else {
+                        console.error('Logo object data is missing');
+                    }
+                }
+            } else {
+                console.error('User data is invalid or missing type property');
+            }
         }
     }
     
@@ -707,31 +808,60 @@ function addMouseInteraction() {
         
         // 高亮悬停对象
         if (intersects.length > 0) {
-            const hoveredObject = intersects[0].object;
-            if (hoveredObject.userData.type === 'center') {
-                hoveredObject.scale.set(1.3, 1.3, 1.3);
-            } else if (hoveredObject.userData.type === 'petal') {
-                // 找到对应的satellite group
-                flowers.forEach(flower => {
-                    flower.petals.forEach(petal => {
-                        if (petal.node === hoveredObject) {
-                            petal.group.scale.set(1.5, 1.5, 1.5);
-                        }
-                    });
-                });
-            } else if (hoveredObject.userData.type === 'logo') {
-                // Logo悬停效果，放大整个企业组
-                flowers.forEach(flower => {
-                    flower.petals.forEach(petal => {
-                        petal.node.children.forEach(child => {
-                            if (child === hoveredObject) {
+            // 查找第一个具有有效userData的对象
+            let hoveredObject = null;
+            let userData = null;
+            
+            for (let i = 0; i < intersects.length; i++) {
+                const object = intersects[i].object;
+                // 检查当前对象是否有userData且type属性存在
+                if (object.userData && object.userData.type) {
+                    hoveredObject = object;
+                    userData = object.userData;
+                    break;
+                }
+                // 如果当前对象没有有效的userData，检查其父对象
+                else if (object.parent && object.parent.userData && object.parent.userData.type) {
+                    hoveredObject = object.parent;
+                    userData = object.parent.userData;
+                    break;
+                }
+            }
+            
+            // 如果仍然没有找到有效的userData，使用第一个交集对象
+            if (!hoveredObject) {
+                hoveredObject = intersects[0].object;
+                userData = hoveredObject.userData || {};
+            }
+            
+            if (userData && userData.type) {
+                if (userData.type === 'center') {
+                    hoveredObject.scale.set(1.3, 1.3, 1.3);
+                } else if (userData.type === 'petal') {
+                    // 找到对应的satellite group
+                    flowers.forEach(flower => {
+                        flower.petals.forEach(petal => {
+                            if (petal.node === hoveredObject) {
                                 petal.group.scale.set(1.5, 1.5, 1.5);
                             }
                         });
                     });
-                });
+                } else if (userData.type === 'logo') {
+                    // Logo悬停效果，放大整个企业组
+                    flowers.forEach(flower => {
+                        flower.petals.forEach(petal => {
+                            petal.node.children.forEach(child => {
+                                if (child === hoveredObject) {
+                                    petal.group.scale.set(1.5, 1.5, 1.5);
+                                }
+                            });
+                        });
+                    });
+                }
+                renderer.domElement.style.cursor = 'pointer';
+            } else {
+                renderer.domElement.style.cursor = 'default';
             }
-            renderer.domElement.style.cursor = 'pointer';
         } else {
             renderer.domElement.style.cursor = 'default';
         }
@@ -741,6 +871,9 @@ function addMouseInteraction() {
     if (renderer.domElement) {
         renderer.domElement.addEventListener('click', onMouseClick);
         renderer.domElement.addEventListener('mousemove', onMouseMove);
+        
+        // 添加CSS样式确保容器可交互
+        renderer.domElement.style.pointerEvents = 'auto';
     }
 }
 
@@ -971,17 +1104,27 @@ const enterpriseList = ref(null)
 const enterpriseGroupByType = ref({})
 
 async function handleTypeClick(type) {
+    console.log('Handling type click:', type);
+    
     // 检查类型数据是否完整
+    if (!type) {
+        console.error('企业类型数据为空');
+        return;
+    }
+    
     if (!type.type || !type.name) {
         console.error('企业类型数据不完整:', type);
         return;
     }
     
     try {
+        console.log('Fetching enterprise data for type:', type.type);
         const response = enterpriseGroupByType.value[type.type] || []
+        console.log('Enterprise data response:', response);
         enterpriseList.value = response
         enterpriseTypeName.value = type.name
         showEnterpriseListDialog.value = true
+        console.log('Successfully opened enterprise list dialog for:', type.name);
     } catch (error) {
         console.error('获取企业列表数据失败:', error)
     }
@@ -1153,6 +1296,9 @@ defineExpose({
     position: absolute;
     top: 0;
     left: 0;
+    /* 确保容器可以接收鼠标事件 */
+    pointer-events: auto;
+    z-index: 10;
 }
 
 .innovation-container::before {
@@ -1315,7 +1461,7 @@ defineExpose({
     display: flex;
     padding: 20px 20px 0 20px;
     color: white;
-    background: rgba(20, 20, 30, 0.95);
+    //background: rgba(20, 20, 30, 0.95);
     border-radius: 8px;
 
     .enterprise-info {
@@ -1325,11 +1471,11 @@ defineExpose({
         flex-direction: column;
 
         .info-item {
-            margin: 12px 0;
-            padding: 12px;
-            border-radius: 6px;
-            background: rgba(30, 30, 40, 0.7);
-            border: 1px solid rgba(64, 158, 255, 0.3);
+            //margin: 12px 0;
+            //padding: 12px;
+            //border-radius: 6px;
+            //background: rgba(30, 30, 40, 0.7);
+            //border: 1px solid rgba(64, 158, 255, 0.3);
 
             label {
                 flex-shrink: 0;
