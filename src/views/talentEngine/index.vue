@@ -247,17 +247,14 @@ function animationStartBg() {
 
 // 背景动画完成
 function animationCompleteBg() {
-    // if(state.init) {
-    //     // 中心动画
-    //     let centerRefInterval = setInterval(() => {
-    //         if(centerRef.value) {
-    //             centerRef.value.handlePageLoadComplete()
-    //             clearInterval(centerRefInterval)
-    //         }
-    //     }, 100)
-    // }
     if(state.init) {
-        loadOtherComponents()
+        // 中心动画
+        let centerRefInterval = setInterval(() => {
+            if(centerRef.value) {
+                centerRef.value.handlePageLoadComplete()
+                clearInterval(centerRefInterval)
+            }
+        }, 100)
     }
 }
 

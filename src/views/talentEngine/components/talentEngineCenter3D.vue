@@ -67,7 +67,10 @@ import * as THREE from 'three'
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js'
 import TWEEN from '@tweenjs/tween.js'
+import gsap from 'gsap'
 import avatar from "@/assets/images/talentEngine/avatar.png"
+
+const emit = defineEmits(['animationComplete'])
 
 const props = defineProps({
   talentData: { type: Array, default: () => [] }
@@ -80,8 +83,20 @@ const selectedTalent = ref(null)
 let scene, camera, renderer, controls
 let objects = []       // CSS3DObject
 let clickables = []    // { mesh: THREE.Mesh, index: number }
+let isAnimationStarted = false
 
 const formatText = (text, maxLength) => text && text.length > maxLength ? text.slice(0, maxLength) + '...' : text
+
+// 页面加载完成后启动动画
+function handlePageLoadComplete() {
+  // 页面加载完成后启动动画
+  nextTick(() => {
+    if (!isAnimationStarted) {
+      init3DScene()
+      isAnimationStarted = true
+    }
+  })
+}
 
 // 初始化 3D 场景
 const init3DScene = () => {
@@ -108,7 +123,6 @@ const init3DScene = () => {
   controls.addEventListener('change', render)
 
   initTalentObjects()
-  arrangeSphere()
   render()
   animate()
 
@@ -128,19 +142,17 @@ const initTalentObjects = () => {
   const sphereRadius = 420 // 减小球体半径
   const origin = new THREE.Vector3(0, 0, 0)
 
+  // 先隐藏所有卡片
+  cards.forEach((card) => {
+    card.style.opacity = 0
+  })
+
   cards.forEach((card, i) => {
     card.style.transform = 'rotateY(180deg)'
     const object3D = new CSS3DObject(card)
 
-    // 球状分布：使用斐波那契螺旋实现均匀分布
-    const phi = Math.acos(1 - 2 * (i + 0.5) / numObjects)
-    const theta = Math.PI * (1 + Math.sqrt(5)) * i
-    
-    const x = sphereRadius * Math.sin(phi) * Math.cos(theta)
-    const y = sphereRadius * Math.cos(phi)
-    const z = sphereRadius * Math.sin(phi) * Math.sin(theta)
-    
-    object3D.position.set(x, y, z)
+    // 初始位置设为场景中心
+    object3D.position.set(0, 0, 0)
     object3D.lookAt(origin)
 
     scene.add(object3D)
@@ -149,10 +161,15 @@ const initTalentObjects = () => {
     const geometry = new THREE.BoxGeometry(160, 180, 10)
     const material = new THREE.MeshBasicMaterial({ visible: false })
     const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.copy(object3D.position)
+    mesh.position.set(0, 0, 0)
     scene.add(mesh)
     clickables.push({ mesh, index: i })
   })
+  
+  // 添加延迟，确保DOM已经渲染，然后开始动画
+  setTimeout(() => {
+    animateToSphere()
+  }, 100)
 }
 
 // 布局球状 + 缓动
@@ -176,6 +193,44 @@ const arrangeSphere = () => {
       .start()
 
     obj.lookAt(origin)
+    clickables[i].mesh.position.set(x, y, z)
+  })
+}
+
+// 使用GSAP实现从中心到球形分布的动画
+const animateToSphere = () => {
+  const sphereRadius = 420
+  const numObjects = objects.length
+  
+  objects.forEach((obj, i) => {
+    // 使用斐波那契螺旋算法实现球面均匀分布
+    const phi = Math.acos(1 - 2 * (i + 0.5) / numObjects)
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i
+    
+    const x = sphereRadius * Math.sin(phi) * Math.cos(theta)
+    const y = sphereRadius * Math.cos(phi)
+    const z = sphereRadius * Math.sin(phi) * Math.sin(theta)
+    
+    // 在动画开始时显示卡片
+    obj.element.style.opacity = 1
+    
+    // 使用GSAP创建动画
+    gsap.to(obj.position, {
+      x: x,
+      y: y,
+      z: z,
+      duration: 1.5,
+      ease: "back.out(1.5)",
+      delay: i * 0.02, // 添加延迟，实现逐个出现的效果
+      onComplete: () => {
+        // 当最后一个元素动画完成时，发送animationComplete事件
+        if (i === numObjects - 1) {
+          emit('animationComplete')
+        }
+      }
+    })
+    
+    // 更新点击区域的位置
     clickables[i].mesh.position.set(x, y, z)
   })
 }
@@ -220,12 +275,12 @@ const onWindowResize = () => {
 }
 
 onMounted(() => {
-  nextTick(() => {
-    init3DScene()
-    window.addEventListener('resize', onWindowResize)
-  })
+  // 根据3D组件动画控制规范，动画应通过handlePageLoadComplete方法触发
+  // 不再在组件挂载时自动初始化场景
+  window.addEventListener('resize', onWindowResize)
 })
 
+// 在组件卸载前移除事件监听器
 onBeforeUnmount(() => {
   window.removeEventListener('resize', onWindowResize)
   window.removeEventListener('click', onMouseClick)
@@ -234,15 +289,19 @@ onBeforeUnmount(() => {
 })
 
 watch(() => props.talentData, (newData) => {
-  if (newData && newData.length && scene) {
+  if (newData && newData.length && scene && isAnimationStarted) {
     nextTick(() => {
       setTimeout(() => {
         initTalentObjects()
-        arrangeSphere()
       }, 100)
     })
   }
 }, { deep: true, immediate: true })
+
+// 暴露方法给父组件调用
+defineExpose({
+  handlePageLoadComplete
+})
 </script>
 
 
@@ -277,6 +336,7 @@ watch(() => props.talentData, (newData) => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  opacity: 0;
 
   .card-content {
     text-align: center;
@@ -434,4 +494,3 @@ watch(() => props.talentData, (newData) => {
   }
 }
 </style>
-
