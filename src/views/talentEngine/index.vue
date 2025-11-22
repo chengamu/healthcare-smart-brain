@@ -11,19 +11,22 @@
             <!-- 左边布局 图表 -->
             <div class="left-wrap">
                 <div class="left-wrap-3d">
-                    <!--人才总量与结构-->
-                    <talent-union-structure
-                        title="人才总量与结构" 
-                        :talent-data="state.talentData">
-                    </talent-union-structure>
                     <!--顶尖专家引进目标-->
-                    <top-expert-introduction-target 
+                    <top-expert-introduction-target
                         :talent-data="state.talentData">
                     </top-expert-introduction-target>
-                    <!--青年人才引育目标-->
-                    <the-goal-of-attracting-and-nurturing-young-talents 
+                    <!--人才结构分布-->
+                    <talent-union-structure
                         :talent-data="state.talentData">
-                    </the-goal-of-attracting-and-nurturing-young-talents>
+                    </talent-union-structure>
+                    <!--青年人才引育目标-->
+<!--                    <the-goal-of-attracting-and-nurturing-young-talents -->
+<!--                        :talent-data="state.talentData">-->
+<!--                    </the-goal-of-attracting-and-nurturing-young-talents>-->
+                    <!--研究领域TOP5-->
+                    <medical-field-talent-top5
+                        :talent-data="state.talentData">
+                    </medical-field-talent-top5>
                 </div>
             </div>
             <!-- 中间布局 -->
@@ -41,14 +44,18 @@
                         :talent-data="state.talentDataYS">
                     </key-talent>
                     <!--人才政策展示-->
-                    <talent-policy-display
-                        :talent-data="state.talentData">
-                    </talent-policy-display>
+<!--                    <talent-policy-display-->
+<!--                        :talent-data="state.talentData">-->
+<!--                    </talent-policy-display>-->
                     <!--人才新增趋势-->
-                    <talent-new-trend 
-                        position="right" 
-                        :talent-data="state.talentData">
-                    </talent-new-trend>
+<!--                    <talent-new-trend -->
+<!--                        position="right" -->
+<!--                        :talent-data="state.talentData">-->
+<!--                    </talent-new-trend>-->
+                    <!--人才项目政策-->
+                    <talent-project-policy></talent-project-policy>
+                    <!--人才就业政策-->
+                    <talent-employment-policy></talent-employment-policy>
                 </div>
             </div>
             <!-- 底部托盘 -->
@@ -88,6 +95,9 @@ import {listEnterpriseAll, listTalentAll} from '@/api/brain.js'
 import {listDictData} from "@/api/system.js";
 import MedicalFieldTalentDistribution from "@/views/talentEngine/components/medicalFieldTalentDistribution.vue";
 import TalentPolicyDisplay from "@/views/talentEngine/components/talentPolicyDisplay.vue";
+import MedicalFieldTalentTop5 from "@/views/talentEngine/components/medicalFieldTalentTop5.vue";
+import TalentProjectPolicy from "@/views/talentEngine/components/talent-project-policy.vue";
+import TalentEmploymentPolicy from "@/views/talentEngine/components/talentEmploymentPolicy.vue";
 
 const loadingRef = ref(null)
 const centerRef = ref(null)

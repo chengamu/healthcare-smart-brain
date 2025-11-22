@@ -1,6 +1,6 @@
 <template>
     <div class="left-card">
-        <m-card :title="title">
+        <m-card title="人才结构分布">
             <div class="population-proportion">
                 <div class="population-proportion-chart">
                     <v-chart ref="vChart" :option="option" :autoresize="true" />
@@ -24,10 +24,6 @@ import mCard from "@/components/mCard/index.vue"
 import VChart from "vue-echarts"
 
 const props = defineProps({
-    title: {
-        type: String,
-        default: "人才联盟构成",
-    },
     talentData: {
         type: Array,
         default: () => []

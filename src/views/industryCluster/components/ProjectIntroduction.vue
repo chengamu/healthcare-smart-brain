@@ -1,15 +1,21 @@
 <template>
-  <div class="left-card">
+  <div class="right-card">
     <m-card title="项目引进情况">
       <v-chart ref="vChart" :option="option" :autoresize="true" />
     </m-card>
   </div>
 </template>
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
+import { ref, onMounted, onBeforeUnmount, nextTick, computed } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
+import { useGetConfigKey } from '@/hooks/useGetConfigKey'
 import VChart from "vue-echarts"
+
+const {
+    configValue: xmyjqk,
+    getConfigKeyFunc: fetchXmyjqk
+} = useGetConfigKey('brain.industryCluster.xmyjqk')
 
 const colorMap = ref({
   '50亿元以上': '#30DCFF', // 医疗蓝
@@ -18,12 +24,42 @@ const colorMap = ref({
 });
 
 const data = ref({
-  '50亿元以上': [0, 0, 1, 1],
-  '10亿元以上': [1, 3, 2, 1],
-  '亿元以上': [2, 5, 2, 3]
+    'xAxis': [],
+    'yAxis': {
+        '50亿元以上': [],
+        '5亿元以上': [],
+        '亿元以上': []
+    }
 })
 
-const option = ref({
+onMounted(() => {
+    init()
+})
+
+async function init() {
+    // 获取需要的参数
+    await Promise.all([
+        fetchXmyjqk(),
+    ])
+
+    try {
+        const parsedData = JSON.parse(xmyjqk.value)
+        data.value = parsedData || []
+    } catch (e) {
+        console.error('数据解析失败:', e)
+        // 保留原始默认数据作为后备
+        data.value = {
+            'xAxis': ['2024', '2025'],
+            'yAxis': {
+                '50亿元以上': [1, 0],
+                '5亿元以上': [2, 0],
+                '亿元以上': [6, 7]
+            }
+        }
+    }
+}
+
+const option = computed(() => ({
   title: {
     text: "项目数量",
     left: "8%",
@@ -85,7 +121,7 @@ const option = ref({
       fontSize: 12,
       fontWeight: '500'
     },
-    data: Object.keys(data.value)
+    data: Object.keys(data.value.yAxis)
   },
   xAxis: [
     {
@@ -110,7 +146,7 @@ const option = ref({
         interval: 0,
         fontWeight: '500'
       },
-      data: ["2022", "2023", "2024", "2025"],
+      data: data.value.xAxis,
     }
   ],
   yAxis: {
@@ -135,15 +171,15 @@ const option = ref({
       opacity: 0.8
     },
   },
-  series: Object.keys(data.value).map((name, index) => {
+  series: Object.keys(data.value.yAxis).map((name, index) => {
     const colors = ['#30DCFF', '#00FF88', '#8B5CF6'];
-    const isTopStack = index === Object.keys(data.value).length - 1;
+    const isTopStack = index === Object.keys(data.value.yAxis).length - 1;
     return {
       name: name,
       type: 'bar',
       barWidth: 20,
       stack: 'total',
-      data: data.value[name],
+      data: data.value.yAxis[name],
       itemStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
           { offset: 0, color: colors[index] },
@@ -186,7 +222,7 @@ const option = ref({
       animationEasing: 'elasticOut'
     }
   })
-})
+}))
 
 </script>
 <style lang="scss"></style>

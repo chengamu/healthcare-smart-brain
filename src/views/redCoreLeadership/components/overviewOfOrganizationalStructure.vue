@@ -3,12 +3,12 @@
         <m-card title="组织架构总览">
             <div class="party-organization-container">
                 <div class="party-tree-structure">
-                    <div class="party-organization party-organization-main">绍兴医疗健康产业社区功能性联合党委</div>
+                    <div class="party-organization party-organization-main">中共绍兴医疗健康产业社区联合委员会</div>
                     <div class="party-organization-children">
                         <div class="party-organization party-organization-junior">科技型企业<br>党总支</div>
-                        <div class="party-organization party-organization-junior">服务性机构<br>党支部</div>
+                        <div class="party-organization party-organization-junior">创新型院所<br>党支部</div>
+                        <div class="party-organization party-organization-junior">服务型机构<br>党支部</div>
                         <div class="party-organization party-organization-junior">社区管理<br>党支部</div>
-                        <div class="party-organization party-organization-junior">新兴领域流动<br>党员党支部</div>
                     </div>
                 </div>
             </div>
@@ -109,7 +109,7 @@ import mCard from "@/components/mCard/index.vue"
         content: '★';
         position: absolute;
         top: 50%;
-        left: 10px;
+        left: 0px;
         transform: translateY(-50%);
         color: #fbbf24;
         font-size: 18px;

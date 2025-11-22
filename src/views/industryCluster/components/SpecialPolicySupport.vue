@@ -1,6 +1,6 @@
 <template>
   <div class="right-card">
-    <m-card title="专项政策支持">
+    <m-card title="企业规模形态">
       <div class="pie-chat-wrap">
         <div class="pie-chat">
           <m-pie
@@ -35,7 +35,7 @@
           <div class="pie-legend-item" v-for="(item, index) in state.pieData" :key="index">
             <div class="icon" :style="{ borderColor: state.pieDataColor[index] }"></div>
             <div class="name">{{ item.name }}</div>
-            <div class="value">{{ item.value }}<span class="unit">个</span></div>
+            <div class="value">{{ item.value }}<span class="unit">家</span></div>
           </div>
         </div>
       </div>
@@ -46,24 +46,26 @@
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue"
 import mCard from "@/components/mCard/index.vue"
 import mPie from "@/components/mPie/index.vue"
+import { useGetConfigKey } from '@/hooks/useGetConfigKey'
 import mCountTo from "@/components/mCountTo/index.js"
 import {countPolicyByType} from "@/api/brain.js";
+
+const {
+    configValue: qygmxt,
+    getConfigKeyFunc: fetchQygmxt
+} = useGetConfigKey('brain.industryCluster.qygmxt')
 
 const pie = ref(null)
 const state = reactive({
   pieDataColor: ["#30DCFF", "#00FF88", "#8B5CF6"],
   pieData: [
     {
-      name: "企业创新",
-      value: 5,
+      name: "产业化拿地项目",
+      value: 8,
     },
     {
-      name: "企业发展",
-      value: 10,
-    },
-    {
-      name: "构建产业生态",
-      value: 20,
+      name: "创新型租赁企业",
+      value: 29,
     },
   ],
 })
@@ -73,7 +75,29 @@ onMounted(() => {
 })
 
 async function init() {
-    await getCountPolicyByType()
+    // 获取需要的参数
+    await Promise.all([
+        fetchQygmxt(),
+    ])
+
+    try {
+        const parsedData = JSON.parse(qygmxt.value)
+        state.pieData = parsedData || []
+    } catch (e) {
+        console.error('数据解析失败:', e)
+        // 保留原始默认数据作为后备
+        state.pieData = [
+            {
+                name: "产业化拿地项目",
+                value: 8,
+            },
+            {
+                name: "创新型租赁企业",
+                value: 29,
+            },
+        ]
+    }
+    // await getCountPolicyByType()
 }
 
 function getCountPolicyByType() {

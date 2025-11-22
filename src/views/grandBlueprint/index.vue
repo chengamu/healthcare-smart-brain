@@ -12,7 +12,7 @@
             <!-- 左边布局 图表 -->
             <div class="left-wrap">
                 <div class="left-wrap-3d">
-                    <!--战略定位与背景-->
+                    <!--发展背景及定位-->
                     <strategic-positioning-and-background></strategic-positioning-and-background>
                     <!--空间规划解读-->
                     <interpretation-of-spatial-planning></interpretation-of-spatial-planning>

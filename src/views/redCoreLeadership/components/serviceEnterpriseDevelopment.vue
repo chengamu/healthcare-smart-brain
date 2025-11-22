@@ -1,6 +1,6 @@
 <template>
-    <div class="left-card">
-        <m-card title="服务企业发展">
+    <div class="right-card">
+        <m-card title="服务企业">
             <div class="service-container">
                 <div class="service-data" v-for="(item, index) in serviceData" :key="index">
                     <div class="service-top">

@@ -58,7 +58,7 @@ function sortByValue(data) {
   return data
 }
 export class World extends Mini3d {
-  constructor(canvas, assets, showPark, showEnterprise) {
+  constructor(canvas, assets) {
     super(canvas)
     // 中心坐标
     // this.geoProjectionCenter = [113.280637, 23.125178] //广东省
@@ -88,8 +88,8 @@ export class World extends Mini3d {
     //   center: [120.582112, 30.497117],
     // } //绍兴市（由北向南视角）
     this.mapFocusLabelInfo = {
-      name: "一核两翼",
-      enName: "ONE CORE, TWO WINGS",
+      name: "“一核两翼”空间规划",
+      enName: "",
       center: [120.4521, 29.5873],
     } //绍兴市（由南向北视角）
 
@@ -110,8 +110,6 @@ export class World extends Mini3d {
     this.interactionManager = new InteractionManager(this.renderer.instance, this.camera.instance, this.canvas)
 
     this.assets = assets
-    this.showPark = showPark
-    this.showEnterprise = showEnterprise
     // 创建环境光
     this.initEnvironment()
     this.init()
@@ -662,14 +660,13 @@ export class World extends Mini3d {
     this.allGuangquan = []
     this.allProvinceLabel = []
     let max = sortByValue(ShaoXingCityData)[0].value
-    if(this.showPark) {
       //一核两翼点
       // let data = sortByValue(provincesData).filter((item, index) => index < 7)
-      let parkData = ShaoXingCityData.filter(item => item.type === 'park')
+      let parkData = ShaoXingCityData
       const parkBarGroup = new Group()
       this.parkBarGroup = parkBarGroup
       parkData.map((item, index) => {
-        let geoHeight = height * (item.value / max)
+        let geoHeight = height * (item.value / max) + 1.75
         let material = new MeshBasicMaterial({
           color: 0xffffff,
           transparent: true,
@@ -718,7 +715,7 @@ export class World extends Mini3d {
         label.init(
             `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
       <div class="provinces-label-wrap park">
-        <div class="number"><span class="value">${data.value}</span><span class="unit">亿元</span></div>
+        <div class="number"><span class="value">${data.value}</span><span class="unit">亩</span></div>
         <div class="name">
           <span class="zh">${data.name}</span>
           <span class="en">${data.enName.toUpperCase()}</span>
@@ -734,84 +731,6 @@ export class World extends Mini3d {
         label.setParent(self.labelGroup)
         return label
       }
-    }
-
-    if(this.showEnterprise) {
-      //重点企业点
-      // let data = sortByValue(provincesData).filter((item, index) => index < 7)
-      let enterpriseData = ShaoXingCityData.filter(item => item.type === 'enterprise')
-      if(!this.showPark) {
-        max = sortByValue(enterpriseData)[0].value
-      }
-      const enterpriseBarGroup = new Group()
-      this.enterpriseBarGroup = enterpriseBarGroup
-      enterpriseData.map((item, index) => {
-        let geoHeight = height * (item.value / max)
-        let material = new MeshBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0,
-          depthTest: false,
-          fog: false,
-        })
-        new GradientShader(material, {
-          uColor1: index > 3 ? 0xfbdf88 : 0x50bbfe,
-          uColor2: index > 3 ? 0xfffef4 : 0x77fbf5,
-          size: geoHeight,
-          dir: "y",
-        })
-        const geo = new BoxGeometry(0.1 * factor, 0.1 * factor, geoHeight)
-        geo.translate(0, 0, geoHeight / 2)
-        const mesh = new Mesh(geo, material)
-        mesh.renderOrder = 5
-        let areaBar = mesh
-        let [x, y] = this.geoProjection(item.centroid)
-        areaBar.position.set(x, -y, this.depth + 0.45)
-        areaBar.scale.set(1, 1, 0)
-        areaBar.userData = { ...item }
-        let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
-        let hg = this.createHUIGUANG(geoHeight, index > 3 ? 0xfffef4 : 0x77fbf5)
-        areaBar.add(...hg)
-        enterpriseBarGroup.add(areaBar)
-        enterpriseBarGroup.rotation.x = -Math.PI / 2
-        let barLabel = labelStyle05(item, index, new Vector3(x + item.offsetX, -y, this.depth + 1.1 + geoHeight))
-        // // 确保启用指针事件
-        // barLabel.element.style.pointerEvents = 'auto';
-        //
-        // // 添加点击事件监听器
-        // barLabel.element.addEventListener('click', (event) => {
-        //   console.log('点击了标签:', item.name);
-        //   // 使用emitter触发事件，传递item
-        //   emitter.$emit('barLabelClick', item);
-        // });
-        this.allBar.push(areaBar)
-        this.allBarMaterial.push(material)
-        this.allGuangquan.push(guangQuan)
-        this.allProvinceLabel.push(barLabel)
-      })
-      this.scene.add(enterpriseBarGroup)
-      function labelStyle05(data, index, position) {
-        let label = self.label3d.create("", "provinces-label", false)
-        label.init(
-            `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
-      <div class="provinces-label-wrap">
-        <div class="number"><span class="value">${data.value}</span><span class="unit">亿元</span></div>
-        <div class="name">
-          <span class="zh">${data.name}</span>
-        </div>
-        
-      </div>
-    </div>`,
-            position
-        )
-        /*<div class="no">${index + 1}</div>*/
-        self.label3d.setLabelStyle(label, 0.01, "x")
-        // self.label3d.setLabelStyle(label, 0.01, "y", Math.PI) //绍兴市（由北向南视角）
-        label.setParent(self.labelGroup)
-        return label
-      }
-    }
-
   }
   createEvent() {
     let objectsHover = []
@@ -1178,7 +1097,6 @@ export class World extends Mini3d {
     })
     // 所有类型的区域都添加飞线，实现全地图覆盖
     ShaoXingCityData
-        .filter(item => item.type === 'park' || item.type === 'enterprise' || item.type === 'ecology')
         .map((city) => {
           let [x, y] = this.geoProjection(city.centroid)
           let point = new Vector3(x, -y, 0)
@@ -1197,7 +1115,7 @@ export class World extends Mini3d {
   // 创建焦点
   createFocus() {
     // 找到实际的三个园区数据
-    const parkData = ShaoXingCityData.filter(item => item.type === 'park')
+    const parkData = ShaoXingCityData
     
     // 为每个园区创建扩散效果
     parkData.forEach((park, index) => {

@@ -1,6 +1,6 @@
 <template>
-    <div class="right-card">
-        <m-card title="企业发展方向TOP5">
+    <div class="left-card">
+        <m-card title="细分赛道TOP5">
             <v-chart ref="vChart" :option="option" :autoresize="true" />
         </m-card>
     </div>
@@ -10,14 +10,15 @@
 import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
+import { useGetConfigKey } from '@/hooks/useGetConfigKey'
 import VChart from "vue-echarts"
 import {countEnterpriseByDevelopment} from "@/api/brain.js";
+import {func} from "three/examples/jsm/nodes/code/FunctionNode";
 
-const information = ref({
-    color: "#069DFD",
-    area: ["药学", "免疫学", "肿瘤学", "医疗影像", "医疗器械"],
-    dataArray: [20, 15, 10, 8, 5],
-});
+const {
+    configValue: xfsd,
+    getConfigKeyFunc: fetchXfsd
+} = useGetConfigKey('brain.industryCluster.xfsd')
 
 const style = {
     width: 32,
@@ -33,43 +34,84 @@ onMounted(() => {
 })
 
 async function init() {
-    await getCountEnterpriseByDevelopment()
+    // 获取需要的参数
+    await Promise.all([
+        fetchXfsd(),
+    ])
+
+    try {
+        const parsedData = JSON.parse(xfsd.value)
+        let data = parsedData || []
+        handleData(data)
+    } catch (e) {
+        console.error('数据解析失败:', e)
+        // 保留原始默认数据作为后备
+        let data = [
+            {
+                dictLabel: "生物制品",
+                count: 7
+            },
+            {
+                dictLabel: "化学药",
+                count: 6
+            },
+            {
+                dictLabel: "体外诊断",
+                count: 4
+            },
+            {
+                dictLabel: "植介入器材",
+                count: 4
+            },
+            {
+                dictLabel: "生物医用材料",
+                count: 3
+            },
+        ]
+        handleData(data)
+    }
+
+    // await getCountEnterpriseByDevelopment()
 }
 
 function getCountEnterpriseByDevelopment() {
     return countEnterpriseByDevelopment({ visible: '1' }).then(response => {
-        let data = response.data
-            .sort((a, b) => b.count - a.count)  // 按count降序排序
-            .slice(0, 5)  // 获取前5个数据
-        option.value.yAxis[0].data = data.map(it => it.dictLabel)
-        option.value.yAxis[1].data = data.map(it => it.count)
-        
-        // 使用医疗健康主题渐变色
-        const colors = [
-            ['#30DCFF', '#00FF88'], // 医疗蓝到生物绿
-            ['#00FF88', '#8B5CF6'], // 生物绿到制药紫
-            ['#8B5CF6', '#30DCFF'], // 制药紫到医疗蓝
-            ['#30DCFF', '#00FF88'], 
-            ['#00FF88', '#8B5CF6']
-        ];
-        
-        option.value.series[0].data = data.map((item, index) => {
-            return {
-                value: item.count,
-                itemStyle: {
-                    borderRadius: [0, 8, 8, 0],
-                    color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-                        { offset: 0, color: colors[index][0] },
-                        { offset: 1, color: colors[index][1] }
-                    ]),
-                    shadowColor: colors[index][0],
-                    shadowBlur: 10,
-                    shadowOffsetX: 2
-                },
-            };
-        })
-        option.value.series[1].data = data.map(it => it.count)
+        handleData(response.data)
     });
+}
+
+function handleData(rawData) {
+    let data = rawData
+        .sort((a, b) => b.count - a.count)  // 按count降序排序
+        .slice(0, 5)  // 获取前5个数据
+    option.value.yAxis[0].data = data.map(it => it.dictLabel)
+    option.value.yAxis[1].data = data.map(it => it.count)
+
+    // 使用医疗健康主题渐变色
+    const colors = [
+        ['#30DCFF', '#00FF88'], // 医疗蓝到生物绿
+        ['#00FF88', '#8B5CF6'], // 生物绿到制药紫
+        ['#8B5CF6', '#30DCFF'], // 制药紫到医疗蓝
+        ['#30DCFF', '#00FF88'],
+        ['#00FF88', '#8B5CF6']
+    ];
+
+    option.value.series[0].data = data.map((item, index) => {
+        return {
+            value: item.count,
+            itemStyle: {
+                borderRadius: [0, 8, 8, 0],
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                    { offset: 0, color: colors[index][0] },
+                    { offset: 1, color: colors[index][1] }
+                ]),
+                shadowColor: colors[index][0],
+                shadowBlur: 10,
+                shadowOffsetX: 2
+            },
+        };
+    })
+    option.value.series[1].data = data.map(it => it.count)
 }
 
 const option = ref({
@@ -113,10 +155,12 @@ const option = ref({
                 show: false,
             },
             inverse: true,
+            offset: 120,
             data: [],
             axisLabel: {
                 color: "rgba(255, 255, 255, 0.9)",
                 margin: 15,
+                align: 'left',
                 formatter: (name, index) => {
                     const id = index + 1;
                     const colors = ['#FFD700', '#C0C0C0', '#CD7F32', '#30DCFF', '#00FF88'];

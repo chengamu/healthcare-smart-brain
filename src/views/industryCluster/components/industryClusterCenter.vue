@@ -250,7 +250,7 @@ function initThreeJS() {
     flowerContainer.value.style.zIndex = '10';
     
     // 初始时隐藏渲染器
-    renderer.domElement.style.visibility = 'hidden';
+    renderer.domElement.style.opacity = '0';
   } else {
     console.error('flowerContainer is not available when appending renderer');
     return;
@@ -1001,7 +1001,7 @@ function handlePageLoadComplete() {
 
   // 显示渲染器
   if (renderer && renderer.domElement) {
-    renderer.domElement.style.visibility = 'visible';
+    renderer.domElement.style.opacity = '1';
   }
 
   // 添加光照

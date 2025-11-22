@@ -3,7 +3,7 @@
         <!-- 地图 -->
         <mapScene ref="mapSceneRef" show-enterprise show-park></mapScene>
         <div class="large-screen-wrap" id="large-screen">
-            <m-header title="绍兴医疗健康产业大脑" sub-text="Shaoxing Medical And Health Industry Community">
+            <m-header title="绍兴医疗健康产业社区智慧大脑" sub-text="Shaoxing Medical And Health Industry Community">
                 <!--左侧 天气 -->
                 <template v-slot:left>
                     <!--          <div class="m-header-weather"><span>小雨</span><span>27℃</span></div>-->

@@ -11,12 +11,14 @@
             <!-- 左边布局 图表 -->
             <div class="left-wrap">
                 <div class="left-wrap-3d">
-                    <!--金融资本助力-->
+                    <!--基金支持-->
                     <financial-capital-help></financial-capital-help>
-                    <!--智慧城市服务-->
-                    <smart-city-service></smart-city-service>
+                    <!--医疗器械一站式服务-->
+                    <medical-device-approval></medical-device-approval>
+                    <!--业务培训-->
+                    <business-training></business-training>
                     <!--关键技术攻坚-->
-                    <technological-hurdles-overcome></technological-hurdles-overcome>
+<!--                    <technological-hurdles-overcome></technological-hurdles-overcome>-->
                 </div>
             </div>
             <!-- 中间布局 -->
@@ -28,8 +30,10 @@
             <div class="right-wrap">
                 <div class="right-wrap-3d">
                     <!--创新成果转化-->
-                    <innovation-result-conversion></innovation-result-conversion>
-                    <!--人才公寓使用率-->
+<!--                    <innovation-result-conversion></innovation-result-conversion>-->
+                    <!--智慧城市服务-->
+                    <smart-city-service></smart-city-service>
+                    <!--配套公寓-->
                     <talent-apartment-usage-rate></talent-apartment-usage-rate>
                     <!--生活配套完善度-->
                     <satisfaction-with-life-services></satisfaction-with-life-services>
@@ -68,6 +72,8 @@ import InnovationResultConversion from "@/views/livableEcosystem/components/Inno
 import TechnologicalHurdlesOvercome from "@/views/livableEcosystem/components/TechnologicalHurdlesOvercome.vue";
 import LivableEcosystemBackground from "@/views/livableEcosystem/components/livableEcosystemBackground.vue";
 import LivableEcosystemCenter from "@/views/livableEcosystem/components/livableEcosystemCenter.vue";
+import MedicalDeviceApproval from "@/views/livableEcosystem/components/medicalDeviceApproval.vue";
+import BusinessTraining from "@/views/livableEcosystem/components/businessTraining.vue";
 
 const loadingRef = ref(null)
 const centerRef = ref(null)

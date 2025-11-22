@@ -8,6 +8,11 @@
       >
         <div class="card-content">
           <div class="talent-info">
+              <img
+                  :src="talent.avatar || avatar"
+                  alt="头像"
+                  class="avatar"
+              />
             <h3 class="talent-name">{{ talent.name }}</h3>
             <p class="position">{{ formatText(talent.position, 15) }}</p>
             <p class="field">{{ formatText(talent.development, 15) }}</p>
@@ -343,6 +348,14 @@ defineExpose({
   }
 
   .talent-info {
+      .avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid rgba(48,220,255,0.7);
+          box-shadow: 0 0 10px rgba(48,220,255,0.6);
+      }
     .talent-name {
       font-size: 18px;
       font-weight: bold;

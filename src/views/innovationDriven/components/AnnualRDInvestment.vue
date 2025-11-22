@@ -141,7 +141,7 @@ const option = computed(() => ({
                         <span style="color: #00FF88; font-weight: bold; margin-left: 4px;">${data.value} 亿元</span>
                     </div>
                     <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(48, 220, 255, 0.3); font-size: 11px; color: rgba(255, 255, 255, 0.7);">
-                        数据来源：绍兴医疗健康产业大脑
+                        数据来源：绍兴医疗健康产业社区智慧大脑
                     </div>
                 `;
             }

@@ -13,10 +13,10 @@
                 <div class="left-wrap-3d">
                     <!--产业规模增长曲线-->
                     <industry-union-development></industry-union-development>
-                    <!--总投资完成情况-->
-                    <completion-status-of-total-investment :current-value="175"></completion-status-of-total-investment>
-                    <!--重大项目落地进度-->
-                    <project-introduction></project-introduction>
+                    <!--产业联盟构成-->
+                    <industry-union></industry-union>
+                    <!--细分赛道TOP5-->
+                    <development-direction-top5></development-direction-top5>
                 </div>
             </div>
             <!-- 中间布局 -->
@@ -26,11 +26,11 @@
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
                 <div class="right-wrap-3d">
-                    <!--产业联盟构成-->
-                    <industry-union position="right"></industry-union>
-                    <!--企业发展方向TOP5-->
-                    <development-direction-top5></development-direction-top5>
-                    <!--专项政策支持-->
+                    <!--总投资完成情况-->
+                    <completion-status-of-total-investment :current-value="175"></completion-status-of-total-investment>
+                    <!--项目引进情况-->
+                    <project-introduction></project-introduction>
+                    <!--企业规模形态-->
                     <special-policy-support></special-policy-support>
                 </div>
             </div>

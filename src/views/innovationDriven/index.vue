@@ -12,13 +12,17 @@
             <!-- 左边布局 图表 -->
             <div class="left-wrap">
                 <div class="left-wrap-3d">
+                    <!--一类创新药研发进度-->
+                    <progress-of-new-drug-development @update:drugData="handleDrugData"></progress-of-new-drug-development>
+                    <!--医疗器械获批进度-->
+                    <progress-of-medical-device-approval @update:instrumentData="handleInstrumentData"></progress-of-medical-device-approval>
                     <!--研发投入(R&D)增长-->
-                    <annual-r-d-investment 
-                        title="研发投入(R&D)增长" 
-                        @update:yftrTypeData="handleYftrTypeData">
-                    </annual-r-d-investment>
+<!--                    <annual-r-d-investment -->
+<!--                        title="研发投入(R&D)增长" -->
+<!--                        @update:yftrTypeData="handleYftrTypeData">-->
+<!--                    </annual-r-d-investment>-->
                     <!--创新平台支撑-->
-                    <innovation-platform-support></innovation-platform-support>
+<!--                    <innovation-platform-support></innovation-platform-support>-->
                     <!--技术合作-->
                     <technology-cooperation @update:technologyData="handleTechnologyData"></technology-cooperation>
                 </div>
@@ -38,10 +42,10 @@
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
                 <div class="right-wrap-3d">
-                    <!--一类新药研发进度-->
-                    <progress-of-new-drug-development @update:drugData="handleDrugData"></progress-of-new-drug-development>
-                    <!--医疗器械获批进度-->
-                    <progress-of-medical-device-approval @update:instrumentData="handleInstrumentData"></progress-of-medical-device-approval>
+                    <!--研究院-->
+                    <research-institute></research-institute>
+                    <!--技术平台-->
+                    <technology-platform></technology-platform>
                     <!--共享设备使用率-->
                     <utilization-rate-of-shared-equipment position="right"></utilization-rate-of-shared-equipment>
                 </div>
@@ -79,6 +83,8 @@ import InnovationPlatformSupport from "@/views/innovationDriven/components/innov
 import InnovationDrivenBackground from "@/views/innovationDriven/components/innovationDrivenBackground.vue";
 import InnovationMoleculeCenter from "@/views/innovationDriven/components/innovationMoleculeCenter.vue";
 import TechnologyCooperation from "@/views/innovationDriven/components/technologyCooperation.vue";
+import ResearchInstitute from "@/views/innovationDriven/components/researchInstitute.vue";
+import TechnologyPlatform from "@/views/innovationDriven/components/technologyPlatform.vue";
 
 const loadingRef = ref(null)
 const centerRef = ref(null)

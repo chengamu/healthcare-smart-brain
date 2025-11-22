@@ -1,5 +1,5 @@
 <template>
-    <m-header title="绍兴医疗健康产业大脑" sub-text="Shaoxing Medical And Health Industry Community">
+    <m-header title="绍兴医疗健康产业社区智慧大脑" sub-text="Shaoxing Medical And Health Industry Community">
         <!--右侧 日期 -->
         <template v-slot:right>
             <div class="m-header-date">{{ currentTime }}</div>

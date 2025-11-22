@@ -4,7 +4,7 @@ import { onMounted, ref } from "vue"
 import gsap from "gsap"
 
 const coreData = {
-  center: { name: "医疗健康" },
+  center: { name: "医疗健康产业" },
   threeRings: [
     { name: "党建联建", color: "#FF6B6B" },
     { name: "产业联盟", color: "#4ECDC4" },

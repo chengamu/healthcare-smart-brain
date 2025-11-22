@@ -23,11 +23,11 @@ import {listFundDataAll, listFundTypeAll} from "@/api/brain.js";
 const props = defineProps({
     title: {
         type: String,
-        default: '产业规模增长曲线'
+        default: '总产值增长曲线'
     },
 })
 
-const cygmTypeId = ref('')
+const zczTypeId = ref('')
 const jhztzTypeId = ref('')
 
 const xAxisData = ref([])
@@ -40,7 +40,7 @@ onMounted(() => {
 
 async function init() {
     await getListFundTypeAll()
-    await getListFundDataAll(cygmTypeId.value, 0)
+    await getListFundDataAll(zczTypeId.value, 0)
     await getListFundDataAll(jhztzTypeId.value, 1)
     // 数据加载完成后刷新图表
     chartReady.value = true
@@ -51,7 +51,7 @@ async function init() {
 async function getListFundTypeAll() {
     try {
         const response = await listFundTypeAll()
-        cygmTypeId.value = response.find(it => it.code === 'cygm').id;
+        zczTypeId.value = response.find(it => it.code === 'zcz').id;
         jhztzTypeId.value = response.find(it => it.code === 'jhztz').id;
     } catch (error) {
         console.error('获取资金类型数据失败:', error)
@@ -101,7 +101,7 @@ const option = computed(() => ({
         },
         data: [
             {
-                name: "产业规模",
+                name: "总产值",
                 itemStyle: { color: '#30DCFF' }
             },
             {
@@ -187,7 +187,7 @@ const option = computed(() => ({
     },
     series: [
         {
-            name: "产业规模",
+            name: "总产值",
             data: yAxisData.value[0],
             type: xAxisData.value.length === 1 ? "bar" : "line",
             smooth: true,

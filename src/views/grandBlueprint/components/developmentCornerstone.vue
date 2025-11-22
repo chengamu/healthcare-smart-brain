@@ -1,39 +1,63 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import mCard from "@/components/mCard/index.vue"
+import { useGetConfigKey } from '@/hooks/useGetConfigKey'
 import mCountTo from "@/components/mCountTo/index.js"
 import gsap from "gsap"
 
-const kpiData = ref([
-  { title: '园区', value: 13, unit: '家', icon: '🏢' },
-  { title: '研究院', value: 2, unit: '家', icon: '🔬' },
-  { title: '基金', value: 108, unit: '亿元', icon: '💰' },
-  { title: '专项政策', value: 1, unit: '个', icon: '📋' }
-])
+const {
+    configValue: fzjs,
+    getConfigKeyFunc: fetchFzjs
+} = useGetConfigKey('brain.grandBlueprint.fzjs')
+
+const kpiData = ref([])
 
 const showCards = ref([false, false, false, false])
 const startCount = ref([false, false, false, false])
 const cardRefs = ref([])
 
 onMounted(() => {
-  // 依次显示卡片，每张卡片间隔300ms
-  showCards.value.forEach((_, index) => {
-    setTimeout(() => {
-      showCards.value[index] = true
-      // 延迟一点时间开始数字动画
-      setTimeout(() => {
-        startCount.value[index] = true
-        // 添加脉冲动画
-        addPulseAnimation(index)
-      }, 500)
-    }, index * 300)
-  })
-  
-  // 添加背景粒子动画
-  setTimeout(() => {
-    createParticleAnimation()
-  }, 1000)
+    init()
 })
+
+async function init() {
+    // 获取需要的参数
+    await Promise.all([
+        fetchFzjs(),
+    ])
+
+    try {
+        const parsedData = JSON.parse(fzjs.value)
+        kpiData.value = parsedData || []
+    } catch (e) {
+        console.error('数据解析失败:', e)
+        // 保留原始默认数据作为后备
+        kpiData.value = [
+            { title: '企业', value: 37, unit: '家', icon: '🏢' },
+            { title: '研究院', value: 2, unit: '家', icon: '🔬' },
+            { title: '基金', value: 108, unit: '亿元', icon: '💰' },
+            { title: '专项政策', value: 1, unit: '个', icon: '📋' }
+        ]
+    }
+
+    // 依次显示卡片，每张卡片间隔300ms
+    showCards.value.forEach((_, index) => {
+        setTimeout(() => {
+            showCards.value[index] = true
+            // 延迟一点时间开始数字动画
+            setTimeout(() => {
+                startCount.value[index] = true
+                // 添加脉冲动画
+                addPulseAnimation(index)
+            }, 500)
+        }, index * 300)
+    })
+
+    // 添加背景粒子动画
+    setTimeout(() => {
+        createParticleAnimation()
+    }, 1000)
+}
 
 const addPulseAnimation = (index) => {
   if (cardRefs.value[index]) {

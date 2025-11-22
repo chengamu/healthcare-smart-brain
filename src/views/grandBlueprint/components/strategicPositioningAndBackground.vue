@@ -73,7 +73,7 @@ const createParticleEffect = () => {
 
 <template>
     <div class="left-card">
-        <m-card title="战略定位与背景">
+        <m-card title="发展背景及定位">
             <div class="content-wrapper">
                 <!-- 背景光效 -->
                 <div class="ambient-glow"></div>
@@ -85,7 +85,7 @@ const createParticleEffect = () => {
                         <div class="title-underline"></div>
                     </div>
                     <div class="background-text">
-                        学习贯彻习近平总书记关于科技创新、产业创新的重要论述精神，全面落实浙江省<span class="highlight">加快建设创新浙江、因地制宜发展新质生产力</span>的决策部署，大力推进<span class="highlight">产城人文深度融合发展</span>。
+                        学习贯彻习近平总书记关于<span class="highlight">科技创新、产业创新</span>的重要论述精神，全面落实浙江省<span class="highlight">加快建设创新浙江、因地制宜发展新质生产力</span>的决策部署，大力推进<span class="highlight">产城人文深度融合发展</span>。
                     </div>
                     <div class="scroll-indicator"></div>
                 </div>
@@ -155,7 +155,7 @@ const createParticleEffect = () => {
 }
 
 .content-left, .content-right {
-  height: 100%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -188,7 +188,7 @@ const createParticleEffect = () => {
   font-size: 18px;
   font-weight: bold;
   color: #30DCFF;
-  margin-bottom: 20px;
+  margin-bottom: auto;
   text-align: center;
   position: relative;
   padding-bottom: 12px;
@@ -321,7 +321,7 @@ const createParticleEffect = () => {
   font-size: 16px;
   font-weight: bold;
   color: #30DCFF;
-  margin-bottom: 25px;
+  margin-bottom: auto;
   text-align: center;
   display: flex;
   align-items: center;
@@ -339,13 +339,15 @@ const createParticleEffect = () => {
   align-items: center;
   width: 100%;
   position: relative;
+  margin: auto 0;
 }
 
 .core-text-left, .core-text-right {
   position: relative;
   text-align: center;
   transition: all 1.5s ease-in-out;
-  padding: 12px 10px;
+  padding: 12px 4px;
+  margin: 0 5%;
   border-radius: 12px;
   background: linear-gradient(135deg, 
     rgba(48, 220, 255, 0.1) 0%, 
@@ -354,7 +356,6 @@ const createParticleEffect = () => {
   border: 1px solid rgba(48, 220, 255, 0.3);
   backdrop-filter: blur(10px);
   flex: 1;
-  margin: 0 5%;
   cursor: pointer;
   min-height: 70px;
   display: flex;
@@ -372,12 +373,20 @@ const createParticleEffect = () => {
   }
 }
 
+.core-text-left {
+  margin-right: 5%;
+}
+
+.core-text-right {
+  margin-left: 5%;
+}
+
 .positioning-badge {
   font-size: 12px;
   color: #00FF88;
   font-weight: bold;
   margin-bottom: 8px;
-  padding: 4px 12px;
+  padding: 4px 10px;
   background: rgba(0, 255, 136, 0.2);
   border-radius: 15px;
   border: 1px solid rgba(0, 255, 136, 0.4);
@@ -392,6 +401,7 @@ const createParticleEffect = () => {
                0 0 24px rgba(48, 220, 255, 0.6),
                0 0 36px rgba(48, 220, 255, 0.4);
   line-height: 1.3;
+  padding: 0 8px;
 }
 
 .positioning-connector {

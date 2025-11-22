@@ -75,7 +75,7 @@ function getCountEnterpriseByType() {
                 name: it.dictLabel,
                 value: it.count
             }
-        })
+        }).sort((a, b) => b.value - a.value)
     });
 }
 

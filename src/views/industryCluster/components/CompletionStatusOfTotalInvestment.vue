@@ -102,7 +102,7 @@ watch(() => jhztzData.value, () => {
 </script>
 
 <template>
-    <div class="left-card">
+    <div class="right-card">
         <m-card title="总投资完成情况">
             <div class="investment-container">
                 <!-- 主要数值显示区域 -->

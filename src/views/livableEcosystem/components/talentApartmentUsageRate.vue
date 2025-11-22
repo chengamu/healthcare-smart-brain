@@ -1,6 +1,6 @@
 <template>
     <div class="right-card">
-        <m-card title="人才公寓使用率">
+        <m-card title="配套公寓">
             <div class="apartment-container" v-auto-scroll>
                 <div class="apartment-list">
                     <div v-for="(apartment, index) in apartmentData" :key="index"
@@ -104,8 +104,9 @@ async function init(str) {
 .apartment-item {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    padding: 15px;
+    padding: 12px 16px;
     border: 1px solid rgba(48, 220, 255, 0.3);
+    height: calc(50% - 10px);
     
     .item-header {
         display: flex;

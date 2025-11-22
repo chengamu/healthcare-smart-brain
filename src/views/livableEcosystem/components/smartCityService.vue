@@ -1,5 +1,5 @@
 <template>
-    <div class="left-card enhanced-card">
+    <div class="right-card enhanced-card">
         <m-card :title="title">
             <div class="smart-service-container">
                 <div class="service-header">
@@ -70,19 +70,23 @@ const props = defineProps({
 })
 
 const state = reactive({
-    pieDataColor: ["#30DCFF", "#00FF88", "#8B5CF6"],
+    pieDataColor: ["#30DCFF", "#00FF88", "#8B5CF6", "#FF6B6B"],
     pieData: [
         // {
-        //     name: "一键报修",
+        //     name: "安装维修",
         //     value: 134,
         // },
         // {
-        //     name: "园区导航",
+        //     name: "场地租赁",
         //     value: 152,
         // },
         // {
-        //     name: "智能安防",
+        //     name: "拎包入驻",
         //     value: 177,
+        // },
+        // {
+        //     name: "美化保洁",
+        //     value: 125,
         // },
     ],
 })
@@ -109,9 +113,10 @@ const maxValue = computed(() => {
 
 const getServiceIcon = (name) => {
     const iconMap = {
-        '一键报修': '🔧',
-        '园区导航': '🗺️',
-        '智能安防': '🛡️'
+        '安装维修': '🔧',
+        '场地租赁': '🏢',
+        '拎包入驻': '📦',
+        '美化保洁': '🧹'
     }
     return iconMap[name] || '⚙️'
 }
@@ -176,7 +181,7 @@ const getServiceIcon = (name) => {
         background: rgba(0, 0, 0, 0.3);
         border: 1px solid rgba(48, 220, 255, 0.2);
         border-radius: 10px;
-        padding: 15px;
+        padding: 8px;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
@@ -221,6 +226,7 @@ const getServiceIcon = (name) => {
                 justify-content: center;
                 font-size: 14px;
                 box-shadow: 0 0 10px rgba(48, 220, 255, 0.3);
+                flex-shrink: 0;
             }
             
             .item-name {

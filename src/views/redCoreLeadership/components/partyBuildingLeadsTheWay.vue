@@ -1,15 +1,15 @@
 <template>
     <div class="right-card">
-        <m-card title="党的动态">
+        <m-card title="活动动态">
             <div class="activities-list" v-auto-scroll>
                 <div 
                     v-for="(item, index) in activitiesData" 
                     :key="index" 
                     class="activity-item"
                 >
-                    <div class="activity-party">{{ item.party }}</div>
+                    <div class="activity-name">{{ item.name }}</div>
                     <div class="activity-content">
-                        <div class="activity-activity">{{ item.activity }}</div>
+                        <div class="activity-content">{{ item.content }}</div>
                         <div class="activity-time">{{ item.time }}</div>
                     </div>
                 </div>
@@ -24,9 +24,9 @@ import mCard from "@/components/mCard/index.vue"
 import { useGetConfigKey } from '@/hooks/useGetConfigKey'
 
 const { 
-    configValue: dddt,
-    getConfigKeyFunc: fetchDddt 
-} = useGetConfigKey('brain.redCoreLeadership.dddt')
+    configValue: hddt,
+    getConfigKeyFunc: fetchHddt
+} = useGetConfigKey('brain.redCoreLeadership.hddt')
 
 const activitiesData = ref([])
 
@@ -37,21 +37,18 @@ onMounted(() => {
 async function init() {
     // 获取需要的参数
     await Promise.all([
-        fetchDddt(),
+        fetchHddt(),
     ])
     
     try {
-        const parsedData = JSON.parse(dddt.value)
+        const parsedData = JSON.parse(hddt.value)
         activitiesData.value = parsedData || []
     } catch (e) {
         console.error('数据解析失败:', e)
         // 保留原始默认数据作为后备
         activitiesData.value = [
-            { party: '绍兴医疗健康产业社区功能性联合党委', activity: '牵头建立健康产业党建联盟共建', time: '2025.01.04' },
-            { party: '科技型企业党总支', activity: '推广智慧健康平台', time: '2025.02.04' },
-            { party: '服务性机构党支部', activity: '组织健康讲座与科普宣传', time: '2025.03.04' },
-            { party: '社区管理党支部', activity: '组织医患沟通座谈会', time: '2025.04.04' },
-            { party: '新兴领域流动党员党支部', activity: '组建党员健康志愿服务队', time: '2025.05.04' },
+            { name: '2025东盛慧谷时光机·怀旧嘉年华', content: '锁定10月24日，广邀产业社区企业人才，进入80、90年代游戏区、电影区，重拾童真、共同怀旧。我们在现场，等你穿越而来！', time: '2025.10.24' },
+            { name: '阿尔茨海默病科普宣传活动', content: '9月，阿尔茨海默病科普宣传活动。邀请新兴领域流动党员充分发挥党员的先锋模范作用，系统学习阿尔茨海默病相关知识，积极参与科普宣讲与互动陪伴等环节，加深与产业社区的情感联结。', time: '2025.09' },
         ]
     }
 }
@@ -116,15 +113,15 @@ async function init() {
     }
 }
 
-.activity-party {
+.activity-name {
     font-size: 16px;
     font-weight: bold;
-    color: #ffffff;
+    color: #1890ff;
     margin-bottom: 12px;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
     padding-left: 35px;
     position: relative;
-    
+
     &::before {
         content: '★';
         position: absolute;
@@ -137,16 +134,13 @@ async function init() {
 
 .activity-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 35px;
+    flex-direction: column;
 }
 
-.activity-activity {
+.activity-content {
     font-size: 15px;
     color: #f3f4f6;
-    flex: 1;
-    margin-right: 15px;
+    margin-bottom: 8px;
     font-weight: 500;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
@@ -154,12 +148,12 @@ async function init() {
 .activity-time {
     font-size: 13px;
     color: #fbbf24;
-    white-space: nowrap;
     background: rgba(0, 0, 0, 0.3);
     padding: 4px 8px;
     border-radius: 6px;
     font-weight: 600;
     border: 1px solid rgba(251, 191, 36, 0.3);
+    align-self: flex-end;
 }
 
 @keyframes shimmer {

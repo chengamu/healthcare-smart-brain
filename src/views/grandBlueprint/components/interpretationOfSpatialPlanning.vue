@@ -3,6 +3,7 @@ import {ref, onMounted} from "vue"
 import mCard from "@/components/mCard/index.vue"
 import mCountTo from "@/components/mCountTo/index.js"
 import gsap from "gsap"
+import ShaoXingCityData from "@/views/gdMap/map/ShaoXingCityData"
 
 const showCards = ref([false, false, false])
 const startCount = ref([false, false, false])
@@ -52,11 +53,24 @@ const handleCardHover = (index, isHover) => {
   }
 }
 
-const kpiData = [
-    {name: '生命谷', value1: 1200, unit1: '亩', value2: 0, unit2: '', icon: '🏥', color: '#30DCFF'},
-    {name: '东盛慧谷', value1: 150, unit1: '亩', value2: 28, unit2: '万方', icon: '🏢', color: '#00FF88'},
-    {name: '健康岛', value1: 1100, unit1: '亩', value2: 0, unit2: '', icon: '🌴', color: '#8B5CF6'}
-]
+const kpiData = JSON.parse(JSON.stringify(ShaoXingCityData))
+
+// 控制弹窗显示的状态
+const showDialog = ref(false)
+const selectPoint = ref(null)
+
+function handleBarLabelClick(item) {
+    // 当接收到barLabelClick事件时，可以在这里处理
+    console.log('接收到点击事件，名称：', item);
+    showDialog.value = true
+    selectPoint.value = item
+}
+
+// 关闭弹窗
+const closeDialog = () => {
+    showDialog.value = false
+    selectPoint.value = null
+}
 </script>
 
 <template>
@@ -75,6 +89,7 @@ const kpiData = [
                     :style="{ '--card-color': item.color }"
                     @mouseenter="handleCardHover(index, true)"
                     @mouseleave="handleCardHover(index, false)"
+                    @click="handleBarLabelClick(item)"
                 >
                     <div class="kpi-card-inner">
                         <div class="kpi-card-back">
@@ -85,10 +100,10 @@ const kpiData = [
                                     <mCountTo 
                                         v-if="startCount[index]"
                                         :startVal="0" 
-                                        :endVal="item.value1" 
+                                        :endVal="item.value"
                                         :duration="2000"
                                     />
-                                    <span class="unit">{{ item.unit1 }}</span>
+                                    <span class="unit">{{ item.unit }}</span>
                                 </div>
                                 <div v-if="item.value2 > 0" class="value-secondary">
                                     <mCountTo 
@@ -106,6 +121,26 @@ const kpiData = [
             </div>
         </m-card>
     </div>
+    <Teleport to="body">
+          <div v-if="showDialog" class="dialog-overlay" @click="closeDialog">
+              <div class="dialog-content" @click.stop>
+                  <m-card :title="selectPoint?.name" width="800" height="530">
+                      <div class="select-point-container">
+                          <div class="select-point-info">
+                              <div class="select-point-title-intro">简&emsp;介：</div>
+                              <div class="select-point-content-intro">{{ selectPoint?.intro }}</div>
+                          </div>
+                          <div class="select-point-info">
+                              <div class="select-point-title-img">示意图：</div>
+                              <div class="select-point-content-img">
+                                  <img :src="selectPoint?.img" style="width: 100%; height: 100%" alt="" />
+                              </div>
+                          </div>
+                      </div>
+                  </m-card>
+              </div>
+          </div>
+      </Teleport>
 </template>
 
 <style scoped lang="scss">
@@ -283,6 +318,59 @@ const kpiData = [
     
     &.card-2.show {
         animation-delay: 1s;
+    }
+}
+
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.dialog-content {
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80%;
+    overflow: hidden;
+}
+.select-point-container {
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    .select-point-info {
+        display: flex;
+        .select-point-title-intro, .select-point-title-img {
+            flex-shrink: 0;
+            color: #fff;
+            font-size: 16px;
+            line-height: 20px;
+            font-family: "PingFangSc";
+            font-weight: 600;
+            background: -webkit-linear-gradient(rgba(219, 249, 255, 1), rgba(169, 240, 255, 1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .select-point-content-intro {
+            font-size: 16px;
+            line-height: 24px;
+            color: #ffffff;
+        }
+        .select-point-content-img {
+            flex-grow: 1;
+        }
     }
 }
 </style>

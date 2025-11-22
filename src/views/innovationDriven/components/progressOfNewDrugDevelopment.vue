@@ -1,10 +1,10 @@
 <template>
-    <div class="right-card">
-        <m-card title="一类新药研发进度">
+    <div class="left-card">
+        <m-card title="一类创新药研发进度">
             <div class="population-proportion">
                 <div class="population-proportion-chart">
                     <v-chart ref="vChart" :option="option" :autoresize="true" />
-                    <div class="label-name">研发进度</div>
+                    <div class="label-name">临床阶段</div>
                 </div>
                 <div class="pie-legend">
                     <div class="pie-legend-item" v-for="(item, index) in state.pieData" :key="index">

@@ -13,10 +13,12 @@
                 <div class="left-wrap-3d">
                     <!--组织架构总览-->
                     <overview-of-organizational-structure></overview-of-organizational-structure>
-                    <!--服务企业发展-->
-                    <service-enterprise-development></service-enterprise-development>
+                    <!--党建品牌-->
+                    <party-brand></party-brand>
+                    <!--组织动态-->
+                    <organization-dynamic></organization-dynamic>
                     <!--服务人才群众-->
-                    <serve-talents-and-the-masses></serve-talents-and-the-masses>
+<!--                    <serve-talents-and-the-masses></serve-talents-and-the-masses>-->
                 </div>
             </div>
             <!-- 中间布局 -->
@@ -27,11 +29,13 @@
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
                 <div class="right-wrap-3d">
+                    <!--服务企业-->
+                    <service-enterprise-development></service-enterprise-development>
                     <!--党员先锋岗-->
-                    <party-member-vanguard-post :height="272"></party-member-vanguard-post>
-                    <!--党的动态-->
+<!--                    <party-member-vanguard-post :height="272"></party-member-vanguard-post>-->
+                    <!--活动动态-->
                     <party-building-leads-the-way></party-building-leads-the-way>
-                    <!--强化理论学习-->
+                    <!--理论学习-->
                     <reinforcement-theory-learning></reinforcement-theory-learning>
                 </div>
             </div>
@@ -68,6 +72,8 @@ import PartyMemberVanguardPost from "@/views/redCoreLeadership/components/partyM
 import ReinforcementTheoryLearning from "@/views/redCoreLeadership/components/reinforcementTheoryLearning.vue";
 import PartyBuildingLeadsTheWay from "@/views/redCoreLeadership/components/partyBuildingLeadsTheWay.vue";
 import RedCoreLeadershipBackground from "@/views/redCoreLeadership/components/redCoreLeadershipBackground.vue";
+import PartyBrand from "@/views/redCoreLeadership/components/partyBrand.vue";
+import OrganizationDynamic from "@/views/redCoreLeadership/components/organizationDynamic.vue";
 
 const loadingRef = ref(null)
 const centerRef = ref(null)

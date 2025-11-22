@@ -93,7 +93,7 @@ defineProps({
 
   &-title {
     color: #fff;
-    font-size: 44px;
+    font-size: 36px;
     letter-spacing: 1px;
     font-family: "YouSheBiaoTiHei", "阿里妈妈数黑体 Bold";
     background: -webkit-linear-gradient(rgba(117, 232, 255, 1), rgba(255, 255, 255, 1));
