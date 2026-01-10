@@ -1,6 +1,6 @@
 <template>
     <div class="left-card">
-        <m-card title="细分赛道TOP5">
+        <m-card title="银发企业细分赛道">
             <v-chart ref="vChart" :option="option" :autoresize="true" />
         </m-card>
     </div>

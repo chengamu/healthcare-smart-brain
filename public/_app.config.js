@@ -5,7 +5,7 @@
  */
 window.__APP_CONFIG__ = {
   // 应用标题
-  VITE_APP_TITLE: '智慧大脑',
+  VITE_APP_TITLE: '银发经济生命健康产业社区智慧大脑',
   
   // 环境标识
   VITE_APP_ENV: 'production',

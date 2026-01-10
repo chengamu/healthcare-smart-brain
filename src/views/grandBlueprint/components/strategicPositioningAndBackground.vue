@@ -85,7 +85,9 @@ const createParticleEffect = () => {
                         <div class="title-underline"></div>
                     </div>
                     <div class="background-text">
-                        学习贯彻习近平总书记关于<span class="highlight">科技创新、产业创新</span>的重要论述精神，全面落实浙江省<span class="highlight">加快建设创新浙江、因地制宜发展新质生产力</span>的决策部署，大力推进<span class="highlight">产城人文深度融合发展</span>。
+<!--                        学习贯彻习近平总书记关于<span class="highlight">科技创新、产业创新</span>的重要论述精神，全面落实浙江省<span class="highlight">加快建设创新浙江、因地制宜发展新质生产力</span>的决策部署，大力推进<span class="highlight">产城人文深度融合发展</span>。-->
+                        习近平总书记提出，"要大力发展<span class="highlight">银发经济</span>。支持养老业<span class="highlight">规模化、标准化、集群化、品牌化</span>发展，培育<span class="highlight">高精尖产品和高品质服务</span>模式"。
+                        立足柯桥区现代产业体系，紧扣银发经济高质量发展时代机遇，聚焦<span class="highlight">康养服务、适老智造、银发健康科技</span>等核心领域培育壮大产业规模，全面打造<span class="highlight">产业集聚、创新引领、要素集成、社群活跃</span>的银发经济-健康产业社区，以产城融合模式赋能养老服务体系升级与银发经济全产业链发展。
                     </div>
                     <div class="scroll-indicator"></div>
                 </div>
@@ -103,16 +105,20 @@ const createParticleEffect = () => {
                         </div>
                         <div class="core-text-row">
                             <div class="core-text-left">
-                                <div class="positioning-badge">示范窗口</div>
-                                <div class="positioning-text">创绍兴产城人文献示范窗口</div>
+                                <div class="positioning-text">建设“产养结合-人才集聚-生态共荣”的银发经济高质量发展样板园区</div>
                                 <div class="glow-ring"></div>
                             </div>
-                            <div class="positioning-connector"></div>
-                            <div class="core-text-right">
-                                <div class="positioning-badge">产业高地</div>
-                                <div class="positioning-text">建杭州湾生命健康产业新高地</div>
-                                <div class="glow-ring"></div>
-                            </div>
+<!--                            <div class="core-text-left">-->
+<!--                                <div class="positioning-badge">示范窗口</div>-->
+<!--                                <div class="positioning-text">创绍兴产城人文献示范窗口</div>-->
+<!--                                <div class="glow-ring"></div>-->
+<!--                            </div>-->
+<!--                            <div class="positioning-connector"></div>-->
+<!--                            <div class="core-text-right">-->
+<!--                                <div class="positioning-badge">产业高地</div>-->
+<!--                                <div class="positioning-text">建杭州湾生命健康产业新高地</div>-->
+<!--                                <div class="glow-ring"></div>-->
+<!--                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -168,7 +174,8 @@ const createParticleEffect = () => {
 }
 
 .content-left {
-  width: 55%;
+  //width: 55%;
+  width: 65%;
   position: relative;
   margin-right: auto;
   &.show {
@@ -177,7 +184,8 @@ const createParticleEffect = () => {
 }
 
 .content-right {
-  width: calc(100% - 60%); 
+  //width: calc(100% - 60%);
+  width: calc(100% - 70%);
   margin-left: auto;
   &.show {
     transform: translateX(0);
@@ -215,9 +223,11 @@ const createParticleEffect = () => {
 }
 
 .background-text {
-  font-size: 15px;
+  //font-size: 15px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.9);
-  line-height: 1.8;
+  //line-height: 28px;
+  line-height: 18px;
   text-align: justify;
   text-indent: 2em;
   transition: all 1.5s ease-in-out;

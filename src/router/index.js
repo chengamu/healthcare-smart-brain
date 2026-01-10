@@ -7,6 +7,8 @@ const talentEngine = () => import("@/views/talentEngine/index.vue")
 const livableEcosystem = () => import("@/views/livableEcosystem/index.vue")
 const redCoreLeadership = () => import("@/views/redCoreLeadership/index.vue")
 
+const silverEconomy = () => import("@/views/silverEconomy/index.vue")
+
 const gdMap = () => import("@/views/gdMap/index.vue")
 const login = () => import("@/views/login.vue")
 const index = () => import("@/views/index.vue")
@@ -41,6 +43,11 @@ const router = createRouter({
         {
             path: "/redCoreLeadership",
             component: redCoreLeadership,
+        },
+
+        {
+            path: "/silverEconomy",
+            component: silverEconomy,
         },
 
         {

@@ -58,7 +58,7 @@
         <!-- 科技副标题 -->
         <div class="tech-subtitle">
             <div class="subtitle-container">
-                <span class="subtitle-text">医疗健康产业大脑</span>
+                <span class="subtitle-text">银发经济生命健康产业大脑</span>
                 <div class="subtitle-effects">
                     <div class="typing-cursor"></div>
                     <div class="scan-overlay"></div>

@@ -33,7 +33,7 @@ async function init() {
         console.error('数据解析失败:', e)
         // 保留原始默认数据作为后备
         kpiData.value = [
-            { title: '企业', value: 37, unit: '家', icon: '🏢' },
+            { title: '企业', value: 40, unit: '家', icon: '🏢' },
             { title: '研究院', value: 2, unit: '家', icon: '🔬' },
             { title: '基金', value: 108, unit: '亿元', icon: '💰' },
             { title: '专项政策', value: 1, unit: '个', icon: '📋' }

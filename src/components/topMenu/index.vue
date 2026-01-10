@@ -1,5 +1,5 @@
 <template>
-    <m-header title="绍兴医疗健康产业社区智慧大脑" sub-text="Shaoxing Medical And Health Industry Community">
+    <m-header title="银发经济生命健康产业社区智慧大脑" sub-text="The Silver Economy Life And Health Industry Community">
         <!--右侧 日期 -->
         <template v-slot:right>
             <div class="m-header-date">{{ currentTime }}</div>
@@ -9,9 +9,9 @@
     <!-- 顶部菜单 - 非首页模式 -->
     <div class="top-menu" :class="{isIndex: isIndex}" v-if="!isIndex">
         <mMenu :default-active="activeIndex" @select="handleMenuSelect" large>
-            <div 
-                v-for="item in leftMenuItems" 
-                :key="item.index" 
+            <div
+                v-for="item in leftMenuItems"
+                :key="item.index"
                 class="menu-item-wrapper"
                 @mouseenter="() => showTooltip(item.index)"
                 @mouseleave="hideTooltip"
@@ -19,17 +19,17 @@
                 <mMenuItem :index="item.index">
                     {{ item.title }}
                 </mMenuItem>
-                <div 
-                    class="menu-tooltip" 
+                <div
+                    class="menu-tooltip"
                     :class="{ visible: tooltipVisible === item.index }"
                 >
                     {{ item.description }}
                 </div>
             </div>
             <div class="top-menu-mid-space"></div>
-            <div 
-                v-for="item in rightMenuItems" 
-                :key="item.index" 
+            <div
+                v-for="item in rightMenuItems"
+                :key="item.index"
                 class="menu-item-wrapper"
                 @mouseenter="() => showTooltip(item.index)"
                 @mouseleave="hideTooltip"
@@ -37,8 +37,8 @@
                 <mMenuItem :index="item.index">
                     {{ item.title }}
                 </mMenuItem>
-                <div 
-                    class="menu-tooltip" 
+                <div
+                    class="menu-tooltip"
                     :class="{ visible: tooltipVisible === item.index }"
                 >
                     {{ item.description }}
@@ -100,60 +100,62 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    leftMenuItems: {
+        type: Array,
+        default: () => [
+            { 
+                index: 'left-1', 
+                title: '总览 · 擘画蓝图',
+                subtitle: '产业发展蓝图',
+                icon: '🎨',
+                description: '🎨 展示银发经济生命健康产业发展的整体规划与战略蓝图，包含产业布局、发展目标和核心指标'
+            },
+            { 
+                index: 'left-2', 
+                title: '聚链 · 产业集群',
+                subtitle: '产业生态圈',
+                icon: '🌐',
+                description: '🌐 聚焦产业链上下游企业集聚发展，打造生命健康产业生态圈和创新集群'
+            },
+            { 
+                index: 'left-3', 
+                title: '策源 · 创新驱动',
+                subtitle: '科技创新引擎',
+                icon: '🚀',
+                description: '🚀 以科技创新为核心驱动力，推动生命健康产业发展'
+            }
+        ]
+    },
+    rightMenuItems: {
+        type: Array,
+        default: () => [
+            { 
+                index: 'right-1', 
+                title: '引智 · 人才引擎',
+                subtitle: '人才发展体系',
+                icon: '🎆',
+                description: '🎆 汇聚高端医疗健康人才，构建人才引进、培养和激励机制'
+            },
+            { 
+                index: 'right-2', 
+                title: '融合 · 产城生态',
+                subtitle: '产城融合发展',
+                icon: '🌳',
+                description: '🌳 推进产业与城市融合发展，打造宜居宜业的生命健康产业生态环境'
+            },
+            { 
+                index: 'right-3', 
+                title: '领航 · 红核强基',
+                subtitle: '党建引领保障',
+                icon: '⭐',
+                description: '⭐ 发挥党建引领作用，夯实生命健康产业发展的组织基础和政治保障'
+            }
+        ]
+    },
 })
 
-// 左侧菜单项
-const leftMenuItems = [
-    { 
-        index: 'left-1', 
-        title: '总览 · 擘画蓝图',
-        subtitle: '产业发展蓝图',
-        icon: '🎨',
-        description: '🎨 展示绍兴医疗健康产业发展的整体规划与战略蓝图，包含产业布局、发展目标和核心指标'
-    },
-    { 
-        index: 'left-2', 
-        title: '聚链 · 产业集群',
-        subtitle: '产业生态圈',
-        icon: '🌐',
-        description: '🌐 聚焦产业链上下游企业集聚发展，打造医疗健康产业生态圈和创新集群'
-    },
-    { 
-        index: 'left-3', 
-        title: '策源 · 创新驱动',
-        subtitle: '科技创新引擎',
-        icon: '🚀',
-        description: '🚀 以科技创新为核心驱动力，推动医疗健康产业技术突破和成果转化'
-    }
-]
-
-// 右侧菜单项
-const rightMenuItems = [
-    { 
-        index: 'right-1', 
-        title: '引智 · 人才引擎',
-        subtitle: '人才发展体系',
-        icon: '🎆',
-        description: '🎆 汇聚高端医疗健康人才，构建人才引进、培养和激励机制'
-    },
-    { 
-        index: 'right-2', 
-        title: '融合 · 产城生态',
-        subtitle: '产城融合发展',
-        icon: '🌳',
-        description: '🌳 推进产业与城市融合发展，打造宜居宜业的医疗健康产业生态环境'
-    },
-    { 
-        index: 'right-3', 
-        title: '领航 · 红核强基',
-        subtitle: '党建引领保障',
-        icon: '⭐',
-        description: '⭐ 发挥党建引领作用，夯实医疗健康产业发展的组织基础和政治保障'
-    }
-]
-
 // 合并所有菜单项用于全屏展示
-const allMenuItems = [...leftMenuItems, ...rightMenuItems]
+const allMenuItems = [...props.leftMenuItems, ...props.rightMenuItems]
 
 // 显示提示
 function showTooltip(index) {

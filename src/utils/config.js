@@ -73,7 +73,7 @@ export function getApiBaseUrl() {
  * @returns {string}
  */
 export function getAppTitle() {
-  return getAppConfig('VITE_APP_TITLE', '智慧大脑');
+  return getAppConfig('VITE_APP_TITLE', '银发经济生命健康产业社区智慧大脑');
 }
 
 /**

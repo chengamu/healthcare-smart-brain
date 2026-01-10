@@ -54,7 +54,7 @@ async function init() {
             },
             {
                 name: '资源对接会',
-                num: 1,
+                num: 3,
                 unit: '次',
                 icon: 'fas fa-hands-helping'
             },

@@ -1,8 +1,8 @@
 <template>
   <div class="talent-3d-container" ref="containerRef">
     <div class="talent-card-list" ref="cardListRef">
-      <div 
-        v-for="(talent, index) in talentData" 
+      <div
+        v-for="(talent, index) in talentData"
         :key="`talent-${index}`"
         class="talent-card"
       >
@@ -29,9 +29,9 @@
 
       <!-- 头像 + 姓名 -->
       <div class="header">
-        <img 
-          :src="selectedTalent.avatar || avatar" 
-          alt="头像" 
+        <img
+          :src="selectedTalent.avatar || avatar"
+          alt="头像"
           class="avatar"
         />
         <div class="basic-info">
@@ -170,7 +170,7 @@ const initTalentObjects = () => {
     scene.add(mesh)
     clickables.push({ mesh, index: i })
   })
-  
+
   // 添加延迟，确保DOM已经渲染，然后开始动画
   setTimeout(() => {
     animateToSphere()
@@ -187,7 +187,7 @@ const arrangeSphere = () => {
     // 使用斐波那契螺旋算法实现球面均匀分布
     const phi = Math.acos(1 - 2 * (i + 0.5) / numObjects)
     const theta = Math.PI * (1 + Math.sqrt(5)) * i
-    
+
     const x = sphereRadius * Math.sin(phi) * Math.cos(theta)
     const y = sphereRadius * Math.cos(phi)
     const z = sphereRadius * Math.sin(phi) * Math.sin(theta)
@@ -206,19 +206,19 @@ const arrangeSphere = () => {
 const animateToSphere = () => {
   const sphereRadius = 420
   const numObjects = objects.length
-  
+
   objects.forEach((obj, i) => {
     // 使用斐波那契螺旋算法实现球面均匀分布
     const phi = Math.acos(1 - 2 * (i + 0.5) / numObjects)
     const theta = Math.PI * (1 + Math.sqrt(5)) * i
-    
+
     const x = sphereRadius * Math.sin(phi) * Math.cos(theta)
     const y = sphereRadius * Math.cos(phi)
     const z = sphereRadius * Math.sin(phi) * Math.sin(theta)
-    
+
     // 在动画开始时显示卡片
     obj.element.style.opacity = 1
-    
+
     // 使用GSAP创建动画
     gsap.to(obj.position, {
       x: x,
@@ -234,7 +234,7 @@ const animateToSphere = () => {
         }
       }
     })
-    
+
     // 更新点击区域的位置
     clickables[i].mesh.position.set(x, y, z)
   })

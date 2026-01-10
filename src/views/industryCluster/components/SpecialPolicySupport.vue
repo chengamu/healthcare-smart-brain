@@ -93,7 +93,7 @@ async function init() {
             },
             {
                 name: "创新型租赁企业",
-                value: 29,
+                value: 32,
             },
         ]
     }

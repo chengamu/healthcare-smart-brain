@@ -15,7 +15,7 @@
                     <industry-union-development></industry-union-development>
                     <!--产业联盟构成-->
                     <industry-union></industry-union>
-                    <!--细分赛道TOP5-->
+                    <!--银发企业细分赛道-->
                     <development-direction-top5></development-direction-top5>
                 </div>
             </div>

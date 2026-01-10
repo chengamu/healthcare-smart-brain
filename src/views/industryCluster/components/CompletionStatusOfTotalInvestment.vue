@@ -88,10 +88,10 @@ const animateValues = () => {
     );
     
     // 添加信息项动画
-    gsap.fromTo('.info-item',
-        { x: 50, opacity: 0 },
-        { x: 0, opacity: 1, duration: 1, stagger: 0.2, delay: 0.5, ease: "power3.out" }
-    );
+    // gsap.fromTo('.info-item',
+    //     { x: 50, opacity: 0 },
+    //     { x: 0, opacity: 1, duration: 1, stagger: 0.2, delay: 0.5, ease: "power3.out" }
+    // );
 };
 
 // 监听数据变化

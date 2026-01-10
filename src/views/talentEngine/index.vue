@@ -31,8 +31,10 @@
             </div>
             <!-- 中间布局 -->
             <div class="center-wrap">
+                <!--银发经济助跑团-->
+                <talent-engine-center ref="centerRef" @animationComplete="animationCompleteC"></talent-engine-center>
                 <!--三级人才联通-->
-                <talent-engine-center3-d :talent-data="state.talentData" ref="centerRef" @animationComplete="animationCompleteC"></talent-engine-center3-d>
+<!--                <talent-engine-center3-d :talent-data="state.talentData" ref="centerRef" @animationComplete="animationCompleteC"></talent-engine-center3-d>-->
             </div>
             <!-- 右边布局 图表 -->
             <div class="right-wrap">
@@ -62,7 +64,7 @@
             <bottom-tray></bottom-tray>
             <!-- 雷达 -->
             <div class="bottom-radar">
-                <mRadar></mRadar>
+<!--                <mRadar></mRadar>-->
             </div>
             <!-- 左右装饰线 -->
             <div class="large-screen-left-zsline"></div>
@@ -98,6 +100,7 @@ import TalentPolicyDisplay from "@/views/talentEngine/components/talentPolicyDis
 import MedicalFieldTalentTop5 from "@/views/talentEngine/components/medicalFieldTalentTop5.vue";
 import TalentProjectPolicy from "@/views/talentEngine/components/talent-project-policy.vue";
 import TalentEmploymentPolicy from "@/views/talentEngine/components/talentEmploymentPolicy.vue";
+import TalentEngineCenter from "@/views/talentEngine/components/talentEngineCenter.vue";
 
 const loadingRef = ref(null)
 const centerRef = ref(null)
